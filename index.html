@@ -412,10 +412,7 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="14" height="14" rx="2"/><path d="M4 8h8M8 4v8"/></svg>
         <span>Simulador</span>
       </div>
-      <div class="nav-item" onclick="showPage('compare',this)">
-        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h12M6 4l-4 4 4 4M10 4l4 4-4 4"/></svg>
-        <span>Comparar</span>
-      </div>
+
       <div class="nav-item" onclick="showPage('summary',this)">
         <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12V8M6 12V5M10 12V7M14 12V3"/></svg>
         <span>Resumen</span>
@@ -521,11 +518,7 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
       </div>
     </div>
 
-    <!-- COMPARE -->
-    <div class="page" id="page-compare">
-      <button class="clear-btn" onclick="clearCompare()">Limpiar comparación</button>
-      <div id="compare-out"><div class="no-results">Ve al Catálogo y pulsa "Añadir a comparar" en hasta 4 programas.</div></div>
-    </div>
+
 
     <!-- SUMMARY -->
     <div class="page" id="page-summary">
@@ -848,7 +841,7 @@ function countAlerts(){
 // ══════════════════════════════════════════════
 // PAGES
 // ══════════════════════════════════════════════
-const pageTitles={catalog:'Catálogo de Programas',simulator:'Simulador de Precios',compare:'Comparar Programas',summary:'Resumen por Tipo',proposals:'Propuestas',stats:'Estadísticas',admin:'Gestión de Usuarios'};
+const pageTitles={catalog:'Catálogo de Programas',simulator:'Simulador de Precios',summary:'Resumen por Tipo',proposals:'Propuestas',stats:'Estadísticas',admin:'Gestión de Usuarios'};
 
 function showPage(id,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -858,7 +851,6 @@ function showPage(id,el){
   document.getElementById('page-title').textContent=pageTitles[id]||id;
   const show=id==='catalog';
   ['sw','ft','fm','rc'].forEach(x=>{const el=document.getElementById(x);if(el)el.style.display=show?'':'none';});
-  if(id==='compare') renderCompare();
   if(id==='summary') renderSummary();
   if(id==='proposals'){renderAlertBanner();renderHistory();checkStorageWarning();}
   if(id==='admin') renderAdmin();
@@ -869,6 +861,25 @@ function showPage(id,el){
 // CATALOG
 // ══════════════════════════════════════════════
 let compareList = [];
+
+function createProposalFromCatalog(progId){
+  // Switch to proposals page
+  const navItem = document.querySelector('.nav-item[onclick*="proposals"]');
+  if(navItem) showPage('proposals', navItem);
+  // Switch to generator tab
+  setTimeout(()=>{
+    const tab = document.querySelector('.ptab');
+    if(tab) showPropTab('generator', tab);
+    // Select the program
+    const sel = document.getElementById('p-prog');
+    if(sel){
+      sel.value = progId;
+      onPProg();
+      // Scroll to form
+      sel.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+  }, 100);
+}
 
 function filterCatalog(){
   const q=document.querySelector('#sw input').value.toLowerCase();
@@ -906,7 +917,7 @@ function renderCards(list){
         <div class="price-box"><div class="price-mode">Videopres.</div><div class="price-val">${fmt(p.vpres)}</div></div>
         <div class="price-box"><div class="price-mode">Online</div><div class="price-val">${fmt(p.online)}</div></div>
       </div>
-      <button class="cmp-btn" onclick="toggleCompare(${p.id})">${inC?'Quitar de comparar':'Añadir a comparar'}</button>
+      <button class="cmp-btn" onclick="createProposalFromCatalog(${p.id})" style="border-color:var(--teal);color:var(--teal);background:rgba(0,196,160,0.05);">Crear propuesta</button>
     </div>`;
   }).join('');
 }
