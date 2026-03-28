@@ -514,6 +514,9 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         <div class="result-box">
           <div class="res-lbl">Resultado del cálculo</div>
           <div id="sim-result" style="color:var(--muted);text-align:center;font-size:0.82rem">Selecciona un programa para calcular</div>
+          <div id="sim-cta" style="display:none;margin-top:1rem;text-align:center;">
+            <button onclick="createProposalFromSim()" style="padding:0.65rem 2rem;background:var(--teal);border:none;border-radius:6px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:0.06em;">Crear propuesta con estos datos</button>
+          </div>
         </div>
       </div>
     </div>
@@ -547,49 +550,68 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 
       <!-- GENERATOR -->
       <div id="ptab-generator">
-        <div class="prop-form">
-          <div class="full"><div style="font-size:0.62rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;"><span style="display:inline-block;width:3px;height:12px;background:var(--teal);border-radius:2px"></span>Datos del alumno</div></div>
-          <div class="field"><label>Nombre completo *</label><input type="text" id="p-nombre" placeholder="Nombre y apellidos" oninput="updatePV()"></div>
-          <div class="field"><label>Email *</label><input type="email" id="p-email" placeholder="correo@email.com" oninput="updatePV()"></div>
-          <div class="field"><label>Teléfono</label><input type="tel" id="p-tel" placeholder="+34 600 000 000"></div>
-          <div class="full" style="height:0.5rem"></div>
-          <div class="full"><div style="font-size:0.62rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;"><span style="display:inline-block;width:3px;height:12px;background:var(--teal);border-radius:2px"></span>Programa</div></div>
-          <div class="field full"><label>Programa seleccionado *</label><select id="p-prog" onchange="onPProg()"><option value="">— Selecciona un programa —</option></select></div>
-          <div class="tbox" id="p-tbox">
-            <div class="tit-row"><span class="tit-k">Universidad</span><span class="tit-v" id="pt-univ">—</span></div>
-            <div class="tit-row"><span class="tit-k">Con título universitario</span><span class="tit-v" id="pt-con">—</span></div>
-            <div class="tit-row"><span class="tit-k">Sin título universitario</span><span class="tit-v dim" id="pt-sin">—</span></div>
-            <div class="tit-row"><span class="tit-k">Certificado IM</span><span class="tit-v dim" id="pt-im">—</span></div>
-          </div>
-          <div class="full" style="height:0.5rem"></div>
-          <div class="full"><div style="font-size:0.62rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;"><span style="display:inline-block;width:3px;height:12px;background:var(--teal);border-radius:2px"></span>Condiciones</div></div>
-          <div class="field">
-            <label>Modalidad</label>
-            <div class="rgroup" id="rg-pmod">
-              <div class="rbtn on" data-val="presencial" onclick="pick(this,'rg-pmod');updatePV()">Presencial</div>
-              <div class="rbtn" data-val="videopresencial" onclick="pick(this,'rg-pmod');updatePV()">Videopresencial</div>
-              <div class="rbtn" data-val="online" onclick="pick(this,'rg-pmod');updatePV()">Online</div>
+        <div style="max-width:860px;">
+
+          <!-- BLOQUE 1: Datos del alumno -->
+          <div class="panel" style="margin-bottom:1rem;">
+            <div class="panel-title"><span class="ptbar"></span>Datos del alumno</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+              <div class="field"><label>Nombre completo *</label><input type="text" id="p-nombre" placeholder="Nombre y apellidos" oninput="updatePV()"></div>
+              <div class="field"><label>Email *</label><input type="email" id="p-email" placeholder="correo@email.com" oninput="updatePV()"></div>
+              <div class="field"><label>Teléfono</label><input type="tel" id="p-tel" placeholder="+34 600 000 000"></div>
             </div>
           </div>
-          <div class="field">
-            <label>Descuento / Beca</label>
-            <div class="rgroup" id="rg-pdesc">
-              <div class="rbtn on" data-val="0" onclick="pick(this,'rg-pdesc');updatePV()">Sin descuento</div>
-              <div class="rbtn" data-val="25" onclick="pick(this,'rg-pdesc');updatePV()">Promoción 25%</div>
-              <div class="rbtn" data-val="35" onclick="pick(this,'rg-pdesc');updatePV()">Beca 35%</div>
-              <div class="rbtn" data-val="10" onclick="pick(this,'rg-pdesc');updatePV()">Empresa / FUNDAE 10%</div>
+
+          <!-- BLOQUE 2: Programa -->
+          <div class="panel" style="margin-bottom:1rem;">
+            <div class="panel-title"><span class="ptbar"></span>Programa seleccionado</div>
+            <div class="field" style="margin-bottom:0.8rem;">
+              <label>Programa *</label>
+              <select id="p-prog" onchange="onPProg()"><option value="">— Selecciona un programa —</option></select>
+            </div>
+            <div class="tbox" id="p-tbox" style="margin-bottom:0;">
+              <div class="tit-row"><span class="tit-k">Universidad</span><span class="tit-v" id="pt-univ">—</span></div>
+              <div class="tit-row"><span class="tit-k">Con título universitario</span><span class="tit-v" id="pt-con">—</span></div>
+              <div class="tit-row"><span class="tit-k">Sin título universitario</span><span class="tit-v dim" id="pt-sin">—</span></div>
+              <div class="tit-row"><span class="tit-k">Certificado IM</span><span class="tit-v dim" id="pt-im">—</span></div>
             </div>
           </div>
-          <div class="field">
-            <label>Forma de pago</label>
-            <div class="rgroup" id="rg-ppago">
-              <div class="rbtn on" data-val="0" onclick="pick(this,'rg-ppago');updatePV()">Fraccionado</div>
-              <div class="rbtn gold" data-val="10" onclick="pick(this,'rg-ppago');updatePV()">Pago único — 10% adicional</div>
+
+          <!-- BLOQUE 3: Condiciones -->
+          <div class="panel" style="margin-bottom:1rem;">
+            <div class="panel-title"><span class="ptbar"></span>Condiciones de la oferta</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;">
+              <div class="field">
+                <label>Modalidad</label>
+                <div class="rgroup" id="rg-pmod">
+                  <div class="rbtn on" data-val="presencial" onclick="pick(this,'rg-pmod');updatePV()">Presencial</div>
+                  <div class="rbtn" data-val="videopresencial" onclick="pick(this,'rg-pmod');updatePV()">Videopresencial</div>
+                  <div class="rbtn" data-val="online" onclick="pick(this,'rg-pmod');updatePV()">Online</div>
+                </div>
+              </div>
+              <div class="field">
+                <label>Descuento / Beca</label>
+                <div class="rgroup" id="rg-pdesc">
+                  <div class="rbtn on" data-val="0" onclick="pick(this,'rg-pdesc');updatePV()">Sin descuento</div>
+                  <div class="rbtn" data-val="25" onclick="pick(this,'rg-pdesc');updatePV()">Promoción 25%</div>
+                  <div class="rbtn" data-val="35" onclick="pick(this,'rg-pdesc');updatePV()">Beca 35%</div>
+                  <div class="rbtn" data-val="10" onclick="pick(this,'rg-pdesc');updatePV()">Empresa / FUNDAE 10%</div>
+                </div>
+              </div>
+              <div class="field">
+                <label>Forma de pago</label>
+                <div class="rgroup" id="rg-ppago">
+                  <div class="rbtn on" data-val="0" onclick="pick(this,'rg-ppago');updatePV()">Fraccionado</div>
+                  <div class="rbtn gold" data-val="10" onclick="pick(this,'rg-ppago');updatePV()">Pago único — 10% adicional</div>
+                </div>
+              </div>
             </div>
           </div>
-          <div class="pv-box">
-            <div class="pv-title">Vista previa — Precios</div>
-            <div class="pv-grid">
+
+          <!-- BLOQUE 4: Preview + Generar -->
+          <div class="panel" style="margin-bottom:1rem;">
+            <div class="panel-title"><span class="ptbar"></span>Vista previa — Precios</div>
+            <div class="pv-grid" style="margin-bottom:0.8rem;">
               <div class="pvc"><div class="pvl">Precio base</div><div class="pvv" id="pv-base" style="color:var(--muted);text-decoration:line-through;font-size:0.95rem">—</div><div class="pvs" id="pv-mod">—</div></div>
               <div class="pvc"><div class="pvl">Descuento</div><div class="pvv" id="pv-desc" style="font-size:0.95rem">—</div><div class="pvs" id="pv-dsub">—</div></div>
               <div class="pvc"><div class="pvl">Pago único</div><div class="pvv" id="pv-pago" style="font-size:0.95rem">—</div><div class="pvs" id="pv-psub">—</div></div>
@@ -598,10 +620,8 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
             <div id="pv-saving" style="display:none" class="saving-bar"></div>
             <div style="margin-top:0.5rem;padding:0.5rem;background:rgba(245,200,66,0.07);border:1px solid rgba(245,200,66,0.15);border-radius:5px;font-size:0.72rem;color:var(--gold);text-align:center;font-weight:600;" id="pv-valid"></div>
           </div>
-          <div class="full">
-            <button class="gen-btn" id="gen-btn" onclick="generateProposal()" disabled>Generar propuesta PDF</button>
-            <div style="font-size:0.68rem;color:var(--muted);margin-top:0.5rem;">Se guardará automáticamente en el histórico. Abre el PDF en una nueva pestaña para imprimir o guardar.</div>
-          </div>
+          <button class="gen-btn" id="gen-btn" onclick="generateProposal()" disabled>Generar propuesta PDF</button>
+          <div style="font-size:0.68rem;color:var(--muted);margin-top:0.5rem;">Se guardará automáticamente en el histórico.</div>
         </div>
       </div>
 
@@ -659,6 +679,35 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 
 <!-- PRINT VIEW -->
 <div id="print-view"></div>
+
+<!-- EDIT USER MODAL -->
+<div id="edit-user-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9998;align-items:center;justify-content:center;">
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2rem;width:100%;max-width:480px;margin:1rem;">
+    <div style="font-weight:700;font-size:1rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:0.5rem;">
+      <span style="display:inline-block;width:3px;height:14px;background:var(--teal);border-radius:2px;"></span>
+      Editar usuario
+    </div>
+    <input type="hidden" id="edit-user-key">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem;">
+      <div class="field"><label>Nombre completo</label><input type="text" id="edit-name" placeholder="Nombre y apellidos"></div>
+      <div class="field"><label>Usuario</label><input type="text" id="edit-user" placeholder="nombre.apellido" disabled style="opacity:0.5;"></div>
+      <div class="field"><label>Email corporativo</label><input type="email" id="edit-email" placeholder="nombre@im.education"></div>
+      <div class="field"><label>Nueva contraseña</label><input type="password" id="edit-pass" placeholder="Dejar vacío para no cambiar"></div>
+    </div>
+    <div class="field" style="max-width:200px;margin-bottom:1.2rem;">
+      <label>Rol</label>
+      <select id="edit-role">
+        <option value="comercial">Comercial</option>
+        <option value="admin">Administrador</option>
+      </select>
+    </div>
+    <div id="edit-err" style="font-size:0.72rem;color:var(--red);margin-bottom:0.8rem;display:none;"></div>
+    <div style="display:flex;gap:0.8rem;justify-content:flex-end;">
+      <button onclick="closeEditUser()" style="padding:0.55rem 1.2rem;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;cursor:pointer;">Cancelar</button>
+      <button onclick="saveEditUser()" style="padding:0.55rem 1.2rem;background:var(--teal);border:none;border-radius:6px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;font-weight:700;cursor:pointer;">Guardar cambios</button>
+    </div>
+  </div>
+</div>
 
 <script>
 
@@ -936,6 +985,40 @@ function clearCompare(){ compareList=[]; saveCompare([]); filterCatalog(); rende
 // ══════════════════════════════════════════════
 // SIMULATOR
 // ══════════════════════════════════════════════
+function createProposalFromSim(){
+  const sel = document.getElementById('sim-prog').value;
+  if(!sel) return;
+  const mod = getVal('rg-mod');
+  const desc = parseInt(getVal('rg-desc'));
+  const pago = parseInt(getVal('rg-pago'));
+  // Navigate to proposals
+  const navItem = document.querySelector('.nav-item[onclick*="proposals"]');
+  if(navItem) showPage('proposals', navItem);
+  setTimeout(()=>{
+    const tab = document.querySelector('.ptab');
+    if(tab) showPropTab('generator', tab);
+    // Set program
+    const pSel = document.getElementById('p-prog');
+    if(pSel){ pSel.value = sel; onPProg(); }
+    // Set modalidad
+    document.querySelectorAll('#rg-pmod .rbtn').forEach(r=>{
+      r.classList.remove('on');
+      if(r.dataset.val===mod) r.classList.add('on');
+    });
+    // Set descuento
+    document.querySelectorAll('#rg-pdesc .rbtn').forEach(r=>{
+      r.classList.remove('on');
+      if(r.dataset.val===String(desc)) r.classList.add('on');
+    });
+    // Set pago
+    document.querySelectorAll('#rg-ppago .rbtn').forEach(r=>{
+      r.classList.remove('on');
+      if(r.dataset.val===String(pago)) r.classList.add('on');
+    });
+    updatePV();
+  }, 100);
+}
+
 function calcSim(){
   const sel=document.getElementById('sim-prog').value;
   const res=document.getElementById('sim-result');
@@ -943,6 +1026,7 @@ function calcSim(){
   const p=PROGRAMAS.find(x=>x.id===parseInt(sel));
   const mod=getVal('rg-mod'), desc=parseInt(getVal('rg-desc')), pago=parseInt(getVal('rg-pago'));
   const base=getPrice(p,mod), conDesc=Math.round(base*(1-desc/100)), final=pago?Math.round(conDesc*0.9):conDesc, ahorro=base-final;
+  document.getElementById('sim-cta').style.display='block';
   res.innerHTML=`<div class="res-cols">
     <div class="rc"><div class="rc-lbl">Precio base</div><div class="rc-val" style="color:var(--muted);text-decoration:line-through;font-size:1.1rem">${fmt(base)}</div><div class="rc-sub">${mod}</div></div>
     <div class="rc"><div class="rc-lbl">Descuento</div><div class="rc-val" style="font-size:1.2rem">${desc}%</div><div class="rc-sub">${desc?'− '+fmt(base-conDesc):'—'}</div></div>
@@ -1845,7 +1929,10 @@ function renderAdmin(){
         ${u.email?`<div style="font-size:0.7rem;color:var(--teal)">${u.email}</div>`:''}
       </div>
       <div class="u-role">${u.role==='admin'?'Administrador':'Comercial'}</div>
-      ${u.user!=='admin'?`<button class="u-del" onclick="deleteUser('${u.user}')">Eliminar</button>`:'<span style="font-size:0.65rem;color:var(--muted)">Protegido</span>'}
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <button class="action-btn" style="border-color:var(--teal);color:var(--teal)" onclick="editUser('${u.user}')">Editar</button>
+        ${u.user!=='admin'?`<button class="u-del" onclick="deleteUser('${u.user}')">Eliminar</button>`:'<span style="font-size:0.65rem;color:var(--muted)">Protegido</span>'}
+      </div>
     </div>`).join('');
   // Refresh last update date
   const lastDate=localStorage.getItem('im_catalog_date');
@@ -2162,6 +2249,48 @@ function renderStats(){
       <div style="font-size:0.72rem;color:var(--muted)">${ganadas} ganadas de ${total} propuestas generadas</div>
     </div>`}
   `;
+}
+
+// ══════════════════════════════════════════════
+// EDIT USER
+// ══════════════════════════════════════════════
+function editUser(userKey){
+  const users = getUsers();
+  const u = users.find(x=>x.user===userKey);
+  if(!u) return;
+  document.getElementById('edit-user-key').value = userKey;
+  document.getElementById('edit-name').value = u.name||'';
+  document.getElementById('edit-user').value = u.user;
+  document.getElementById('edit-email').value = u.email||'';
+  document.getElementById('edit-pass').value = '';
+  document.getElementById('edit-role').value = u.role||'comercial';
+  document.getElementById('edit-err').style.display='none';
+  const modal = document.getElementById('edit-user-modal');
+  modal.style.display='flex';
+}
+
+function closeEditUser(){
+  document.getElementById('edit-user-modal').style.display='none';
+}
+
+function saveEditUser(){
+  const key = document.getElementById('edit-user-key').value;
+  const name = document.getElementById('edit-name').value.trim();
+  const email = document.getElementById('edit-email').value.trim();
+  const pass = document.getElementById('edit-pass').value.trim();
+  const role = document.getElementById('edit-role').value;
+  const err = document.getElementById('edit-err');
+  if(!name){ err.textContent='El nombre es obligatorio.'; err.style.display='block'; return; }
+  const users = getUsers();
+  const idx = users.findIndex(u=>u.user===key);
+  if(idx===-1) return;
+  users[idx].name = name;
+  users[idx].email = email;
+  users[idx].role = role;
+  if(pass) users[idx].pass = pass;
+  saveUsers(users);
+  closeEditUser();
+  renderAdmin();
 }
 
 // ══════════════════════════════════════════════
