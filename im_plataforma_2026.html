@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IM Education — Plataforma Comercial 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0D0D0D; --card:#1A1A1A; --card2:#1f1f1f; --border:#2A2A2A; --hover:#353535;
+  --text:#F0F0F0; --muted:#8B8FA8; --teal:#00C4A0; --gold:#F5C842;
+  --red:#ff4444; --orange:#ff8c42; --green:#00C4A0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;}
+
+/* ── LOGIN ── */
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem;}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:2.5rem;width:100%;max-width:380px;}
+.login-logo{display:flex;align-items:center;gap:0.7rem;margin-bottom:2rem;}
+.lbox{width:34px;height:34px;border:2.5px solid #fff;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.85rem;color:#fff;position:relative;background:var(--bg);}
+.lbox::before{content:'';position:absolute;bottom:-2px;left:-2px;width:10px;height:2.5px;background:var(--card);}
+.lword{font-weight:700;font-size:1rem;}
+.lclaim{font-size:0.58rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;margin-top:1px;}
+.teal-bar{height:1.5px;background:var(--teal);margin-bottom:2rem;}
+.login-title{font-weight:700;font-size:1.1rem;margin-bottom:0.3rem;}
+.login-sub{font-size:0.75rem;color:var(--muted);margin-bottom:1.5rem;}
+.lfield{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:1rem;}
+.lfield label{font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;}
+.lfield input{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:0.6rem 0.9rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;outline:none;transition:border-color 0.2s;width:100%;}
+.lfield input:focus{border-color:var(--teal);}
+.login-btn{width:100%;padding:0.75rem;background:var(--teal);border:none;border-radius:6px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;font-weight:800;cursor:pointer;margin-top:0.5rem;text-transform:uppercase;letter-spacing:0.06em;transition:background 0.15s;}
+.login-btn:hover{background:#00ddb5;}
+.login-err{font-size:0.75rem;color:var(--red);margin-top:0.5rem;display:none;text-align:center;}
+
+/* ── APP SHELL ── */
+#app{display:none;flex;height:100vh;overflow:hidden;}
+.sidebar{width:230px;flex-shrink:0;background:#111;border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;}
+.sb-logo{padding:1.3rem 1.2rem 1.1rem;border-bottom:1px solid var(--border);}
+.sb-logo-row{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.5rem;}
+.sb-lbox{width:28px;height:28px;border:2px solid #fff;border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:0.75rem;color:#fff;position:relative;background:#111;}
+.sb-lbox::before{content:'';position:absolute;bottom:-1.5px;left:-1.5px;width:8px;height:2px;background:#111;}
+.sb-word{font-weight:700;font-size:0.9rem;}
+.sb-claim{font-size:0.55rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;}
+.sb-tline{height:1.5px;background:var(--teal);margin-top:0.7rem;}
+.nav-sec{padding:0.7rem 0;}
+.nav-lbl{font-size:0.56rem;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);padding:0 1.2rem;margin-bottom:0.3rem;margin-top:0.6rem;}
+.nav-item{padding:0.58rem 1.2rem;cursor:pointer;font-size:0.8rem;color:var(--muted);display:flex;align-items:center;gap:0.65rem;border-left:2px solid transparent;transition:all 0.15s;font-weight:500;position:relative;}
+.nav-item:hover{color:var(--text);background:var(--hover);}
+.nav-item.active{color:var(--teal);border-left-color:var(--teal);background:rgba(0,196,160,0.06);}
+.nav-badge{position:absolute;right:1rem;background:var(--red);color:#fff;font-size:0.55rem;font-weight:700;padding:0.1rem 0.4rem;border-radius:99px;min-width:16px;text-align:center;}
+.sb-user{padding:1rem 1.2rem;border-top:1px solid var(--border);margin-top:auto;}
+.sb-user-name{font-size:0.8rem;font-weight:700;margin-bottom:0.2rem;}
+.sb-user-role{font-size:0.65rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.06em;}
+.sb-logout{margin-top:0.7rem;width:100%;padding:0.4rem;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--muted);font-size:0.72rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.05em;}
+.sb-logout:hover{border-color:var(--red);color:var(--red);}
+.sb-counts{padding:0.8rem 1.2rem;border-top:1px solid var(--border);}
+.cnt-row{display:flex;justify-content:space-between;font-size:0.7rem;color:var(--muted);padding:0.28rem 0;border-bottom:1px solid var(--border);}
+.cnt-row:last-child{border:none;}
+.cnt-dot{width:5px;height:5px;border-radius:50%;display:inline-block;margin-right:0.4rem;}
+
+/* ── MAIN ── */
+.main{flex:1;overflow-y:auto;display:flex;flex-direction:column;}
+.topbar{background:#111;border-bottom:1px solid var(--border);padding:0.85rem 1.5rem;display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap;position:sticky;top:0;z-index:50;}
+.page-title{font-weight:700;font-size:0.95rem;}
+.search-box{position:relative;flex:1;min-width:180px;max-width:300px;}
+.search-box input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:0.48rem 0.8rem 0.48rem 2rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;outline:none;transition:border-color 0.2s;}
+.search-box input:focus{border-color:var(--teal);}
+.si{position:absolute;left:0.65rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.75rem;}
+.topbar select{background:var(--card);border:1px solid var(--border);border-radius:5px;padding:0.48rem 0.8rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;outline:none;cursor:pointer;}
+.res-count{font-size:0.72rem;color:var(--muted);margin-left:auto;}
+
+/* ── PAGES ── */
+.page{display:none;padding:1.3rem 1.5rem;}
+.page.active{display:block;}
+
+/* ── CARDS ── */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:1rem;}
+.prog-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.1rem;transition:all 0.15s;position:relative;overflow:hidden;}
+.prog-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.prog-card[data-tipo="master"]::before{background:var(--teal);}
+.prog-card[data-tipo="diploma"]::before{background:var(--gold);}
+.prog-card[data-tipo="micro"]::before{background:var(--muted);}
+.prog-card:hover{border-color:var(--hover);background:#1e1e1e;}
+.prog-card.selected{border-color:var(--teal);background:rgba(0,196,160,0.03);}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;margin-bottom:0.75rem;}
+.prog-name{font-weight:700;font-size:0.83rem;line-height:1.45;flex:1;}
+.badge{font-size:0.57rem;font-weight:700;padding:0.17rem 0.5rem;border-radius:3px;text-transform:uppercase;letter-spacing:0.06em;white-space:nowrap;flex-shrink:0;}
+.badge-master{background:rgba(0,196,160,0.1);color:var(--teal);border:1px solid rgba(0,196,160,0.18);}
+.badge-diploma{background:rgba(245,200,66,0.1);color:var(--gold);border:1px solid rgba(245,200,66,0.18);}
+.badge-micro{background:rgba(139,143,168,0.1);color:var(--muted);border:1px solid rgba(139,143,168,0.18);}
+.dur-tag{display:inline-block;background:rgba(245,200,66,0.08);border:1px solid rgba(245,200,66,0.2);color:var(--gold);font-size:0.6rem;font-weight:700;padding:0.12rem 0.45rem;border-radius:3px;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:0.6rem;}
+.card-meta{display:flex;gap:1rem;margin-bottom:0.75rem;flex-wrap:wrap;}
+.meta-item{font-size:0.68rem;color:var(--muted);}
+.meta-item strong{color:var(--text);font-weight:600;}
+.titulo-info{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:0.55rem 0.7rem;margin-bottom:0.75rem;}
+.tit-row{display:flex;justify-content:space-between;font-size:0.65rem;padding:0.15rem 0;border-bottom:1px solid var(--border);}
+.tit-row:last-child{border:none;}
+.tit-k{color:var(--muted);}
+.tit-v{color:var(--teal);font-weight:600;text-align:right;max-width:60%;}
+.tit-v.dim{color:var(--muted);}
+.card-prices{display:grid;grid-template-columns:repeat(3,1fr);gap:0.3rem;margin-bottom:0.75rem;}
+.price-box{background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:0.38rem;text-align:center;}
+.price-mode{font-size:0.54rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:0.18rem;}
+.price-val{font-weight:700;font-size:0.8rem;}
+.cmp-btn{width:100%;padding:0.38rem;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:0.7rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.05em;}
+.cmp-btn:hover,.prog-card.selected .cmp-btn{border-color:var(--teal);color:var(--teal);background:rgba(0,196,160,0.05);}
+
+/* ── SIMULATOR ── */
+.sim-wrap{display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;max-width:860px;}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.2rem;}
+.panel-title{font-weight:700;font-size:0.88rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:0.5rem;}
+.ptbar{width:3px;height:13px;background:var(--teal);border-radius:2px;flex-shrink:0;}
+.field{display:flex;flex-direction:column;gap:0.3rem;margin-bottom:0.85rem;}
+.field label{font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.09em;font-weight:600;}
+.field select{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:0.52rem 0.8rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;outline:none;width:100%;}
+.field select:focus{border-color:var(--teal);}
+.field input{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:0.52rem 0.8rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;outline:none;width:100%;}
+.field input:focus{border-color:var(--teal);}
+.rgroup{display:flex;flex-direction:column;gap:0.3rem;}
+.rbtn{padding:0.48rem 0.72rem;border:1px solid var(--border);border-radius:5px;cursor:pointer;font-size:0.8rem;color:var(--muted);transition:all 0.15s;font-weight:500;}
+.rbtn:hover{border-color:var(--hover);color:var(--text);background:var(--hover);}
+.rbtn.on{border-color:var(--teal);color:var(--teal);background:rgba(0,196,160,0.05);}
+.rbtn.gold.on{border-color:var(--gold);color:var(--gold);background:rgba(245,200,66,0.05);}
+.result-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:1.2rem;grid-column:1/-1;}
+.res-lbl{font-size:0.58rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:1rem;font-weight:600;}
+.res-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}
+.rc{text-align:center;}
+.rc-lbl{font-size:0.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.4rem;}
+.rc-val{font-weight:800;font-size:1.4rem;}
+.rc-sub{font-size:0.62rem;color:var(--muted);margin-top:0.2rem;}
+.saving-bar{margin-top:1rem;padding:0.65rem 1rem;background:rgba(0,196,160,0.07);border:1px solid rgba(0,196,160,0.18);border-radius:5px;font-size:0.78rem;color:var(--teal);text-align:center;font-weight:600;}
+
+/* ── COMPARE ── */
+.table-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border);}
+table{width:100%;border-collapse:collapse;font-size:0.78rem;}
+thead th{background:#111;color:var(--muted);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.08em;padding:0.72rem 1rem;text-align:left;font-weight:600;border-bottom:1px solid var(--border);white-space:nowrap;}
+thead th.prog-th{color:var(--text);font-size:0.75rem;font-weight:700;}
+tbody td{padding:0.65rem 1rem;border-bottom:1px solid rgba(42,42,42,0.7);vertical-align:middle;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:rgba(255,255,255,0.01);}
+.row-label{color:var(--muted);font-weight:500;white-space:nowrap;}
+.td-teal{color:var(--teal);font-weight:700;}
+.td-gold{color:var(--gold);font-weight:700;}
+.clear-btn{padding:0.42rem 1rem;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--muted);font-size:0.72rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;transition:all 0.15s;margin-bottom:1rem;text-transform:uppercase;letter-spacing:0.05em;}
+.clear-btn:hover{border-color:var(--red);color:var(--red);}
+
+/* ── SUMMARY ── */
+.sum-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.2rem;}
+.sum-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.1rem;}
+.sum-hdr{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.9rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);}
+.sum-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sum-title{font-weight:700;font-size:0.88rem;}
+.sum-row{display:flex;justify-content:space-between;align-items:center;padding:0.32rem 0;border-bottom:1px solid var(--border);font-size:0.76rem;}
+.sum-row:last-child{border:none;}
+.sum-k{color:var(--muted);}
+.sum-v{font-weight:600;}
+.pr-box{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.1rem;}
+.pr-title{font-weight:700;font-size:0.88rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;}
+.pr-bar{width:3px;height:13px;background:var(--teal);border-radius:2px;}
+.pr-row{margin-bottom:0.85rem;}
+.pr-labels{display:flex;justify-content:space-between;font-size:0.73rem;margin-bottom:0.28rem;}
+.pr-labels span:first-child{color:var(--muted);}
+.pr-labels span:last-child{font-weight:600;}
+.pr-track{height:4px;background:var(--border);border-radius:99px;overflow:hidden;}
+.pr-fill{height:100%;border-radius:99px;}
+
+/* ── PROPOSALS ── */
+.prop-tabs{display:flex;gap:0.5rem;margin-bottom:1.2rem;}
+.ptab{padding:0.45rem 1rem;border:1px solid var(--border);border-radius:5px;cursor:pointer;font-size:0.78rem;color:var(--muted);font-weight:600;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.05em;}
+.ptab.on{background:var(--teal);border-color:var(--teal);color:#000;}
+
+/* Alert banner */
+.alert-banner{background:rgba(255,68,68,0.08);border:1px solid rgba(255,68,68,0.25);border-radius:8px;padding:0.8rem 1.2rem;margin-bottom:1.2rem;display:flex;align-items:center;gap:0.8rem;}
+.alert-dot{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.alert-text{font-size:0.8rem;color:var(--text);}
+.alert-text strong{color:var(--red);}
+
+/* Proposal form */
+.prop-form{display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-width:860px;}
+.prop-form .full{grid-column:1/-1;}
+.gen-btn{margin-top:1.2rem;padding:0.8rem 2rem;background:var(--teal);border:none;border-radius:6px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:0.06em;transition:background 0.15s;}
+.gen-btn:hover{background:#00ddb5;}
+.gen-btn:disabled{background:var(--border);color:var(--muted);cursor:not-allowed;}
+
+/* Preview prices */
+.pv-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-top:1rem;grid-column:1/-1;}
+.pv-title{font-size:0.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.8rem;font-weight:600;}
+.pv-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.8rem;}
+.pvc{text-align:center;}
+.pvl{font-size:0.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.3rem;}
+.pvv{font-weight:800;font-size:1.1rem;}
+.pvs{font-size:0.6rem;color:var(--muted);margin-top:0.15rem;}
+
+/* Titulo box in form */
+.tbox{background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:0.65rem 0.9rem;display:none;grid-column:1/-1;}
+
+/* History table */
+.hist-table{width:100%;border-collapse:collapse;font-size:0.78rem;background:var(--card);border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+.hist-table thead th{background:#111;color:var(--muted);font-size:0.6rem;text-transform:uppercase;letter-spacing:0.07em;padding:0.7rem 1rem;text-align:left;font-weight:600;border-bottom:1px solid var(--border);white-space:nowrap;}
+.hist-table tbody td{padding:0.7rem 1rem;border-bottom:1px solid var(--border);vertical-align:middle;font-size:0.78rem;}
+.hist-table tbody tr:last-child td{border-bottom:none;}
+.hist-table tbody tr:hover td{background:rgba(255,255,255,0.01);}
+
+/* Status badges */
+.st-badge{display:inline-block;font-size:0.58rem;font-weight:700;padding:0.18rem 0.55rem;border-radius:99px;text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap;}
+.st-active{background:rgba(0,196,160,0.12);color:var(--teal);border:1px solid rgba(0,196,160,0.2);}
+.st-soon{background:rgba(255,140,66,0.12);color:var(--orange);border:1px solid rgba(255,140,66,0.2);}
+.st-expired{background:rgba(255,68,68,0.12);color:var(--red);border:1px solid rgba(255,68,68,0.2);}
+.st-won{background:rgba(0,196,160,0.08);color:#00a884;border:1px solid rgba(0,196,160,0.15);}
+.st-lost{background:rgba(139,143,168,0.12);color:var(--muted);border:1px solid rgba(139,143,168,0.2);}
+
+.action-btn{padding:0.22rem 0.6rem;background:transparent;border:1px solid var(--border);border-radius:3px;color:var(--muted);font-size:0.62rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;transition:all 0.15s;margin-left:0.25rem;}
+.action-btn:hover{border-color:var(--teal);color:var(--teal);}
+.action-btn.lost:hover{border-color:var(--muted);color:var(--muted);}
+.action-btn.del:hover{border-color:var(--red);color:var(--red);}
+
+/* Proposal print view */
+#print-view{display:none;}
+@media print{
+  #app{display:none!important;}
+  #login-screen{display:none!important;}
+  #print-view{display:block!important;}
+}
+
+/* PDF print styles */
+.pdf-page{background:#0D0D0D;color:#F0F0F0;font-family:'Plus Jakarta Sans',sans-serif;padding:10mm 14mm;width:210mm;min-height:297mm;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.pdf-topbar{height:3mm;background:#00C4A0;margin:-10mm -14mm 8mm;width:calc(100% + 28mm);}
+.pdf-logo-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5mm;}
+.pdf-logo{display:flex;align-items:center;gap:3mm;}
+.pdf-lbox{width:9mm;height:9mm;border:0.6mm solid #fff;border-radius:1.5mm;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:3.5mm;color:#fff;background:#0D0D0D;position:relative;}
+.pdf-lbox::after{content:'';position:absolute;bottom:-0.5mm;left:-0.5mm;width:3mm;height:0.6mm;background:#0D0D0D;}
+.pdf-ltext{font-weight:700;font-size:4.5mm;}
+.pdf-lclaim{font-size:2mm;color:#00C4A0;text-transform:uppercase;letter-spacing:0.05em;}
+.pdf-ltline{width:46mm;height:0.4mm;background:#00C4A0;margin-top:1.5mm;}
+.pdf-date{text-align:right;font-size:2.8mm;color:#8B8FA8;line-height:1.6;}
+.pdf-prop-lbl{font-size:2.4mm;color:#00C4A0;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2mm;}
+.pdf-saludo{font-size:8mm;font-weight:800;margin-bottom:1.5mm;}
+.pdf-saludo-sub{font-size:3.5mm;color:#8B8FA8;margin-bottom:2.5mm;}
+.pdf-divider{height:0.3mm;background:#2A2A2A;margin-bottom:4mm;}
+.pdf-personas{display:grid;grid-template-columns:1fr 1fr;gap:4mm;margin-bottom:4mm;}
+.pdf-p-lbl{font-size:2.4mm;color:#8B8FA8;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1mm;}
+.pdf-p-name{font-size:4mm;font-weight:700;margin-bottom:0.8mm;}
+.pdf-p-sub{font-size:3mm;color:#8B8FA8;}
+.pdf-sec-lbl{font-size:2.4mm;color:#00C4A0;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2mm;}
+.pdf-prog-card{background:#1A1A1A;border-radius:2mm;padding:4mm;margin-bottom:3mm;border-left:1.5mm solid #00C4A0;}
+.pdf-tags{display:flex;justify-content:space-between;margin-bottom:2.5mm;}
+.pdf-dur{background:rgba(245,200,66,0.1);border:0.3mm solid rgba(245,200,66,0.3);color:#F5C842;font-size:2.2mm;font-weight:700;padding:0.6mm 2mm;border-radius:0.8mm;text-transform:uppercase;letter-spacing:0.06em;}
+.pdf-tipo{background:rgba(0,196,160,0.1);border:0.3mm solid rgba(0,196,160,0.25);color:#00C4A0;font-size:2.2mm;font-weight:700;padding:0.6mm 2mm;border-radius:0.8mm;text-transform:uppercase;}
+.pdf-nombre{font-size:4mm;font-weight:800;line-height:1.3;margin-bottom:3mm;}
+.pdf-metas{display:grid;grid-template-columns:repeat(4,1fr);gap:2mm;margin-bottom:3mm;padding-bottom:3mm;border-bottom:0.3mm solid #2A2A2A;}
+.pdf-mk{font-size:2mm;color:#8B8FA8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.8mm;}
+.pdf-mv{font-size:3.5mm;font-weight:700;}
+.pdf-tgrid{display:grid;grid-template-columns:1fr 1fr;gap:2mm;}
+.pdf-ti{background:#0D0D0D;border-radius:1.5mm;padding:2mm 2.5mm;}
+.pdf-tik{font-size:2mm;color:#8B8FA8;margin-bottom:0.5mm;}
+.pdf-tiv{font-size:3mm;font-weight:700;color:#00C4A0;}
+.pdf-tiv.dim{color:#8B8FA8;}
+.pdf-precios{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2mm;margin-bottom:3mm;}
+.pdf-pbox{background:#1A1A1A;border-radius:2mm;padding:3mm;text-align:center;}
+.pdf-pbox.hi{background:rgba(0,26,20,0.8);border:0.4mm solid #00C4A0;}
+.pdf-pk{font-size:2.2mm;color:#8B8FA8;margin-bottom:1.5mm;}
+.pdf-pv{font-size:6mm;font-weight:800;}
+.pdf-pv.strike{text-decoration:line-through;color:#8B8FA8;font-size:5mm;}
+.pdf-pv.teal{color:#00C4A0;font-size:7mm;}
+.pdf-ps{font-size:2mm;color:#8B8FA8;margin-top:0.8mm;}
+.pdf-saving{background:rgba(0,196,160,0.08);border:0.3mm solid rgba(0,196,160,0.2);border-radius:1.5mm;padding:2mm;text-align:center;font-size:3mm;color:#00C4A0;font-weight:700;margin-bottom:3mm;}
+.pdf-validez{background:rgba(245,200,66,0.08);border:0.4mm solid rgba(245,200,66,0.3);border-radius:1.5mm;padding:3mm;text-align:center;margin-bottom:3mm;}
+.pdf-vt{font-size:3.5mm;font-weight:800;color:#F5C842;margin-bottom:0.8mm;}
+.pdf-vs{font-size:2.5mm;color:#8B8FA8;}
+.pdf-cond{font-size:2.5mm;color:#8B8FA8;line-height:1.5;margin-bottom:1.5mm;padding-left:3mm;position:relative;}
+.pdf-cond::before{content:'·';position:absolute;left:0;color:#00C4A0;}
+.pdf-footer{background:#1A1A1A;border-top:0.3mm solid #00C4A0;padding:3mm 14mm;margin:4mm -14mm 0;text-align:center;}
+.pdf-ft{font-size:2.2mm;color:#8B8FA8;line-height:1.7;}
+.pdf-fbar{height:1.5mm;background:#00C4A0;margin:0 -14mm;}
+
+/* No results */
+.no-results{text-align:center;padding:3rem;color:var(--muted);font-size:0.82rem;}
+.empty-hist{text-align:center;padding:3rem;color:var(--muted);}
+
+/* Admin panel */
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-width:700px;margin-bottom:1.2rem;}
+.user-row{display:flex;justify-content:space-between;align-items:center;padding:0.6rem 0;border-bottom:1px solid var(--border);font-size:0.8rem;}
+.user-row:last-child{border:none;}
+.u-name{font-weight:600;}
+.u-role{font-size:0.65rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.05em;}
+.u-del{padding:0.2rem 0.55rem;background:transparent;border:1px solid var(--border);border-radius:3px;color:var(--muted);font-size:0.62rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.15s;}
+.u-del:hover{border-color:var(--red);color:var(--red);}
+.add-user-form{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.2rem;}
+.add-user-form .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.8rem;align-items:end;}
+.add-btn{padding:0.52rem 1rem;background:var(--teal);border:none;border-radius:5px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;font-weight:700;cursor:pointer;width:100%;}
+.add-btn:hover{background:#00ddb5;}
+
+@media(max-width:768px){
+  .sidebar{width:52px;}
+  .sb-logo,.nav-item span:not(.nav-icon),.nav-lbl,.sb-user,.sb-counts{display:none;}
+  .page{padding:1rem;}
+  .cards-grid{grid-template-columns:1fr;}
+  .sim-wrap{grid-template-columns:1fr;}
+  .sum-grid{grid-template-columns:1fr;}
+  .prop-form{grid-template-columns:1fr;}
+  .prop-form .full{grid-column:1;}
+  .pv-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ LOGIN ═══ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="lbox">IM</div>
+      <div>
+        <div class="lword">Education</div>
+        <div class="lclaim">Digital Business School</div>
+      </div>
+    </div>
+    <div class="teal-bar"></div>
+    <div class="login-title">Acceso a la plataforma</div>
+    <div class="login-sub">Plataforma comercial interna 2026</div>
+    <div class="lfield">
+      <label>Usuario</label>
+      <input type="text" id="l-user" placeholder="Tu usuario" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="lfield">
+      <label>Contraseña</label>
+      <input type="password" id="l-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="login-btn" onclick="doLogin()">Entrar</button>
+    <div class="login-err" id="login-err">Usuario o contraseña incorrectos.</div>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="app" style="display:none;flex-direction:row;height:100vh;overflow:hidden;">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-row">
+        <div class="sb-lbox">IM</div>
+        <div>
+          <div class="sb-word">Education</div>
+          <div class="sb-claim">Digital Business School</div>
+        </div>
+      </div>
+      <div class="sb-tline"></div>
+    </div>
+    <div class="nav-sec">
+      <div class="nav-lbl">Herramienta</div>
+      <div class="nav-item active" onclick="showPage('catalog',this)">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+        <span>Catálogo</span>
+      </div>
+      <div class="nav-item" onclick="showPage('simulator',this)">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="1" width="14" height="14" rx="2"/><path d="M4 8h8M8 4v8"/></svg>
+        <span>Simulador</span>
+      </div>
+      <div class="nav-item" onclick="showPage('compare',this)">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 8h12M6 4l-4 4 4 4M10 4l4 4-4 4"/></svg>
+        <span>Comparar</span>
+      </div>
+      <div class="nav-item" onclick="showPage('summary',this)">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12V8M6 12V5M10 12V7M14 12V3"/></svg>
+        <span>Resumen</span>
+      </div>
+      <div class="nav-item" onclick="showPage('proposals',this)" id="nav-proposals">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="1" width="12" height="14" rx="1.5"/><path d="M5 5h6M5 8h6M5 11h4"/></svg>
+        <span>Propuestas</span>
+        <span class="nav-badge" id="nav-badge" style="display:none">0</span>
+      </div>
+      <div class="nav-item" onclick="showPage('admin',this)" id="nav-admin" style="display:none">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6"/></svg>
+        <span>Usuarios</span>
+      </div>
+    </div>
+    <div class="sb-counts">
+      <div class="cnt-row"><span><span class="cnt-dot" style="background:var(--teal)"></span>Másteres</span><span style="font-weight:700" id="cnt-m">0</span></div>
+      <div class="cnt-row"><span><span class="cnt-dot" style="background:var(--gold)"></span>Diplomas</span><span style="font-weight:700" id="cnt-d">0</span></div>
+      <div class="cnt-row"><span><span class="cnt-dot" style="background:var(--muted)"></span>Microcred.</span><span style="font-weight:700" id="cnt-mc">0</span></div>
+    </div>
+    <div class="sb-user">
+      <div class="sb-user-name" id="sb-uname">—</div>
+      <div class="sb-user-role" id="sb-urole">—</div>
+      <button class="sb-logout" onclick="doLogout()">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="page-title" id="page-title">Catálogo de Programas</div>
+      <div class="search-box" id="sw">
+        <span class="si">&#128269;</span>
+        <input type="text" placeholder="Buscar programa..." oninput="filterCatalog()">
+      </div>
+      <select id="ft" onchange="filterCatalog()">
+        <option value="">Todos los tipos</option>
+        <option value="master">Máster F.P.</option>
+        <option value="diploma">Diploma Esp.</option>
+        <option value="micro">Microcredencial</option>
+      </select>
+      <select id="fm" onchange="filterCatalog()">
+        <option value="">Todas las duraciones</option>
+        <option value="24">24 meses</option>
+        <option value="12">12 meses</option>
+        <option value="6">6 meses</option>
+        <option value="4">4 meses</option>
+        <option value="2">2 meses</option>
+      </select>
+      <div class="res-count" id="rc"></div>
+    </div>
+
+    <!-- CATALOG -->
+    <div class="page active" id="page-catalog">
+      <div class="cards-grid" id="cards-grid"></div>
+    </div>
+
+    <!-- SIMULATOR -->
+    <div class="page" id="page-simulator">
+      <div class="sim-wrap">
+        <div class="panel">
+          <div class="panel-title"><span class="ptbar"></span>Programa y modalidad</div>
+          <div class="field"><label>Programa</label><select id="sim-prog" onchange="calcSim()"><option value="">— Selecciona —</option></select></div>
+          <div class="field"><label>Modalidad</label>
+            <div class="rgroup" id="rg-mod">
+              <div class="rbtn on" data-val="presencial" onclick="pick(this,'rg-mod');calcSim()">Presencial</div>
+              <div class="rbtn" data-val="videopresencial" onclick="pick(this,'rg-mod');calcSim()">Videopresencial</div>
+              <div class="rbtn" data-val="online" onclick="pick(this,'rg-mod');calcSim()">Online</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-title"><span class="ptbar"></span>Descuentos</div>
+          <div class="field"><label>Promoción / Beca</label>
+            <div class="rgroup" id="rg-desc">
+              <div class="rbtn on" data-val="0" onclick="pick(this,'rg-desc');calcSim()">Sin descuento</div>
+              <div class="rbtn" data-val="25" onclick="pick(this,'rg-desc');calcSim()">Promoción 25%</div>
+              <div class="rbtn" data-val="35" onclick="pick(this,'rg-desc');calcSim()">Beca 35%</div>
+              <div class="rbtn" data-val="10" onclick="pick(this,'rg-desc');calcSim()">Empresa / FUNDAE 10%</div>
+            </div>
+          </div>
+          <div class="field"><label>Forma de pago</label>
+            <div class="rgroup" id="rg-pago">
+              <div class="rbtn on" data-val="0" onclick="pick(this,'rg-pago');calcSim()">Fraccionado</div>
+              <div class="rbtn gold" data-val="10" onclick="pick(this,'rg-pago');calcSim()">Pago único — 10% adicional</div>
+            </div>
+          </div>
+        </div>
+        <div class="result-box">
+          <div class="res-lbl">Resultado del cálculo</div>
+          <div id="sim-result" style="color:var(--muted);text-align:center;font-size:0.82rem">Selecciona un programa para calcular</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPARE -->
+    <div class="page" id="page-compare">
+      <button class="clear-btn" onclick="clearCompare()">Limpiar comparación</button>
+      <div id="compare-out"><div class="no-results">Ve al Catálogo y pulsa "Añadir a comparar" en hasta 4 programas.</div></div>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="page" id="page-summary">
+      <div class="sum-grid" id="sum-grid"></div>
+      <div class="pr-box" id="pr-out"></div>
+    </div>
+
+    <!-- PROPOSALS -->
+    <div class="page" id="page-proposals">
+      <div id="alert-banner" style="display:none" class="alert-banner">
+        <div class="alert-dot"></div>
+        <div class="alert-text" id="alert-text"></div>
+      </div>
+      <div class="prop-tabs">
+        <div class="ptab on" onclick="showPropTab('generator',this)">Nueva propuesta</div>
+        <div class="ptab" onclick="showPropTab('history',this)">Histórico</div>
+      </div>
+
+      <!-- GENERATOR -->
+      <div id="ptab-generator">
+        <div class="prop-form">
+          <div class="full"><div style="font-size:0.62rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;"><span style="display:inline-block;width:3px;height:12px;background:var(--teal);border-radius:2px"></span>Datos del alumno</div></div>
+          <div class="field"><label>Nombre completo *</label><input type="text" id="p-nombre" placeholder="Nombre y apellidos" oninput="updatePV()"></div>
+          <div class="field"><label>Email *</label><input type="email" id="p-email" placeholder="correo@email.com" oninput="updatePV()"></div>
+          <div class="field"><label>Teléfono</label><input type="tel" id="p-tel" placeholder="+34 600 000 000"></div>
+          <div class="full" style="height:0.5rem"></div>
+          <div class="full"><div style="font-size:0.62rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;"><span style="display:inline-block;width:3px;height:12px;background:var(--teal);border-radius:2px"></span>Programa</div></div>
+          <div class="field full"><label>Programa seleccionado *</label><select id="p-prog" onchange="onPProg()"><option value="">— Selecciona un programa —</option></select></div>
+          <div class="tbox" id="p-tbox">
+            <div class="tit-row"><span class="tit-k">Universidad</span><span class="tit-v" id="pt-univ">—</span></div>
+            <div class="tit-row"><span class="tit-k">Con título universitario</span><span class="tit-v" id="pt-con">—</span></div>
+            <div class="tit-row"><span class="tit-k">Sin título universitario</span><span class="tit-v dim" id="pt-sin">—</span></div>
+            <div class="tit-row"><span class="tit-k">Certificado IM</span><span class="tit-v dim" id="pt-im">—</span></div>
+          </div>
+          <div class="full" style="height:0.5rem"></div>
+          <div class="full"><div style="font-size:0.62rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;"><span style="display:inline-block;width:3px;height:12px;background:var(--teal);border-radius:2px"></span>Condiciones</div></div>
+          <div class="field">
+            <label>Modalidad</label>
+            <div class="rgroup" id="rg-pmod">
+              <div class="rbtn on" data-val="presencial" onclick="pick(this,'rg-pmod');updatePV()">Presencial</div>
+              <div class="rbtn" data-val="videopresencial" onclick="pick(this,'rg-pmod');updatePV()">Videopresencial</div>
+              <div class="rbtn" data-val="online" onclick="pick(this,'rg-pmod');updatePV()">Online</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Descuento / Beca</label>
+            <div class="rgroup" id="rg-pdesc">
+              <div class="rbtn on" data-val="0" onclick="pick(this,'rg-pdesc');updatePV()">Sin descuento</div>
+              <div class="rbtn" data-val="25" onclick="pick(this,'rg-pdesc');updatePV()">Promoción 25%</div>
+              <div class="rbtn" data-val="35" onclick="pick(this,'rg-pdesc');updatePV()">Beca 35%</div>
+              <div class="rbtn" data-val="10" onclick="pick(this,'rg-pdesc');updatePV()">Empresa / FUNDAE 10%</div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Forma de pago</label>
+            <div class="rgroup" id="rg-ppago">
+              <div class="rbtn on" data-val="0" onclick="pick(this,'rg-ppago');updatePV()">Fraccionado</div>
+              <div class="rbtn gold" data-val="10" onclick="pick(this,'rg-ppago');updatePV()">Pago único — 10% adicional</div>
+            </div>
+          </div>
+          <div class="pv-box">
+            <div class="pv-title">Vista previa — Precios</div>
+            <div class="pv-grid">
+              <div class="pvc"><div class="pvl">Precio base</div><div class="pvv" id="pv-base" style="color:var(--muted);text-decoration:line-through;font-size:0.95rem">—</div><div class="pvs" id="pv-mod">—</div></div>
+              <div class="pvc"><div class="pvl">Descuento</div><div class="pvv" id="pv-desc" style="font-size:0.95rem">—</div><div class="pvs" id="pv-dsub">—</div></div>
+              <div class="pvc"><div class="pvl">Pago único</div><div class="pvv" id="pv-pago" style="font-size:0.95rem">—</div><div class="pvs" id="pv-psub">—</div></div>
+              <div class="pvc"><div class="pvl">Precio final</div><div class="pvv" id="pv-final" style="color:var(--teal)">—</div><div class="pvs" id="pv-dto">—</div></div>
+            </div>
+            <div id="pv-saving" style="display:none" class="saving-bar"></div>
+            <div style="margin-top:0.5rem;padding:0.5rem;background:rgba(245,200,66,0.07);border:1px solid rgba(245,200,66,0.15);border-radius:5px;font-size:0.72rem;color:var(--gold);text-align:center;font-weight:600;" id="pv-valid"></div>
+          </div>
+          <div class="full">
+            <button class="gen-btn" id="gen-btn" onclick="generateProposal()" disabled>Generar propuesta PDF</button>
+            <div style="font-size:0.68rem;color:var(--muted);margin-top:0.5rem;">Se guardará automáticamente en el histórico. Abre el PDF en una nueva pestaña para imprimir o guardar.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTORY -->
+      <div id="ptab-history" style="display:none">
+        <div id="hist-content"></div>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div class="page" id="page-admin">
+      <div style="font-size:0.62rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;"><span style="display:inline-block;width:3px;height:12px;background:var(--teal);border-radius:2px"></span>Usuarios registrados</div>
+      <div class="panel" style="max-width:600px;margin-bottom:1.2rem;">
+        <div id="users-list"></div>
+      </div>
+      <div style="font-size:0.62rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;"><span style="display:inline-block;width:3px;height:12px;background:var(--teal);border-radius:2px"></span>Añadir usuario</div>
+      <div class="add-user-form" style="max-width:600px;">
+        <div class="g3">
+          <div class="field"><label>Usuario</label><input type="text" id="nu-user" placeholder="nombre.apellido"></div>
+          <div class="field"><label>Contraseña</label><input type="password" id="nu-pass" placeholder="••••••••"></div>
+          <div class="field"><label>Rol</label>
+            <select id="nu-role">
+              <option value="comercial">Comercial</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+        </div>
+        <button class="add-btn" onclick="addUser()" style="margin-top:0.8rem;">Añadir usuario</button>
+        <div id="add-err" style="font-size:0.72rem;color:var(--red);margin-top:0.5rem;display:none;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT VIEW -->
+<div id="print-view"></div>
+
+<script>
+// ══════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════
+const TITULOS = {
+  master:  {utamed_con:'Máster de Formación Permanente',utamed_sin:'Curso de Estudios Avanzados',abat_con:'Máster de Formación Permanente',abat_sin:'No disponible',im:'Professional Mastery Program'},
+  diploma: {utamed_con:'Diploma de Especialización',utamed_sin:'Curso Superior',abat_con:'—',abat_sin:'—',im:'Advanced Diploma'},
+  micro:   {utamed_con:'Microcredencial',utamed_sin:'Microcredencial',abat_con:'—',abat_sin:'—',im:'Professional Certificate'},
+};
+const PROGRAMAS = [
+  {id:1,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente Global en Marketing Digital, Comunicación y Emprendimiento con IA',meses:24,ects:120,pres:12000,vpres:9600,online:8400,prac:true},
+  {id:2,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente en Dirección y Gestión de Marketing Digital — DUAL',meses:12,ects:90,pres:9000,vpres:7800,online:6600,prac:true},
+  {id:3,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente en Dirección y Gestión de Negocios Digitales — DUAL',meses:12,ects:90,pres:9000,vpres:7800,online:6600,prac:true},
+  {id:4,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente en Dirección y Gestión en Comunicación Digital — DUAL',meses:12,ects:90,pres:9000,vpres:7800,online:6600,prac:true},
+  {id:5,tipo:'master',univ:'ABAT',nombre:'Máster de Formación Permanente en Global Digital Marketing — Abat Oliba CEU',meses:12,ects:60,pres:9000,vpres:7800,online:6600,prac:true},
+  {id:6,tipo:'master',univ:'ABAT',nombre:'Máster de Formación Permanente en Marketing Digital + Inteligencia Artificial — Abat Oliba CEU',meses:6,ects:60,pres:5400,vpres:4800,online:4200,prac:true},
+  {id:7,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente en Traffic Management and Lead Generation',meses:6,ects:60,pres:5400,vpres:4800,online:4200,prac:true},
+  {id:8,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente en Digital Project Management',meses:6,ects:60,pres:5400,vpres:4800,online:4200,prac:true},
+  {id:9,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente en Dirección Comunicación Digital (DIRCOM)',meses:6,ects:60,pres:5400,vpres:4800,online:4200,prac:true},
+  {id:10,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente en Ecommerce Manager',meses:6,ects:60,pres:5400,vpres:4800,online:4200,prac:true},
+  {id:11,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente en Growth Hacking y Emprendimiento Digital',meses:6,ects:60,pres:5400,vpres:4800,online:4200,prac:true},
+  {id:12,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente en Content Management y Social Media Strategy',meses:6,ects:60,pres:5400,vpres:4800,online:4200,prac:true},
+  {id:13,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente en IA & Automation aplicada al Marketing Digital',meses:6,ects:60,pres:5400,vpres:4800,online:4200,prac:true},
+  {id:14,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente en Dirección y Gestión de Empresas Digitales (MBA)',meses:6,ects:60,pres:5400,vpres:4800,online:4200,prac:true},
+  {id:15,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de Especialización en Marketing Digital & Social Media',meses:4,ects:32,pres:2800,vpres:2560,online:2240,prac:true},
+  {id:16,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de Especialización en Trafficker & Growth Hacking',meses:4,ects:32,pres:2800,vpres:2560,online:2240,prac:true},
+  {id:17,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de Especialización en Social Media & Community Manager',meses:4,ects:32,pres:2800,vpres:2560,online:2240,prac:true},
+  {id:18,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de Especialización en Digital Project Manager',meses:4,ects:32,pres:2800,vpres:2560,online:2240,prac:true},
+  {id:19,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Email Marketing, Afiliación y CRM',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:20,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Google Ads',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:21,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Google Analytics',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:22,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Marketing Digital & Inbound Marketing',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:23,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Mobile Marketing y Digital Trends',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:24,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Posicionamiento en Buscadores (SEO)',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:25,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Tecnología Web y RGPD',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:26,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Usabilidad y Experiencia de Usuario — UX',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:27,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Estrategias de Marketing en Contenidos',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:28,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en E-Commerce',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:29,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Blogger Profesional',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:30,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Organización de Eventos Digitales',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:31,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Growth Hacking',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:32,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Lean Start Up',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:33,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Video Marketing y Youtube',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:34,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Social Media Strategist y Community Manager',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:35,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Social Ads',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:36,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Brand Management',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:37,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Dirección de Proyectos Digitales',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:38,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Reputación Online en la Empresa (ORM)',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+  {id:39,tipo:'micro',univ:'UTAMED',nombre:'Microcredencial en Decisiones Estratégicas Digitales',meses:2,ects:8,pres:1350,vpres:1050,online:750,prac:false},
+];
+
+// ══════════════════════════════════════════════
+// STORAGE (localStorage — persists between sessions)
+// ══════════════════════════════════════════════
+function getUsers(){
+  try{
+    const u = JSON.parse(localStorage.getItem('im_users')||'null');
+    if(u) return u;
+  }catch(e){}
+  // Default users
+  const defaults = [
+    {user:'admin',pass:'admin2026',role:'admin',name:'Administrador'},
+    {user:'comercial1',pass:'im2026',role:'comercial',name:'Comercial 1'},
+  ];
+  localStorage.setItem('im_users', JSON.stringify(defaults));
+  return defaults;
+}
+function saveUsers(u){ localStorage.setItem('im_users', JSON.stringify(u)); }
+function getProposals(){ try{ return JSON.parse(localStorage.getItem('im_proposals')||'[]'); }catch(e){ return []; } }
+function saveProposals(p){ localStorage.setItem('im_proposals', JSON.stringify(p)); }
+function getCompare(){ try{ return JSON.parse(localStorage.getItem('im_compare')||'[]'); }catch(e){ return []; } }
+function saveCompare(c){ localStorage.setItem('im_compare', JSON.stringify(c)); }
+
+// ══════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════
+let currentUser = null;
+
+function doLogin(){
+  const u = document.getElementById('l-user').value.trim();
+  const p = document.getElementById('l-pass').value;
+  const users = getUsers();
+  const found = users.find(x=>x.user===u && x.pass===p);
+  if(!found){ document.getElementById('login-err').style.display='block'; return; }
+  currentUser = found;
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app').style.display='flex';
+  document.getElementById('sb-uname').textContent = found.name||found.user;
+  document.getElementById('sb-urole').textContent = found.role==='admin'?'Administrador':'Comercial';
+  if(found.role==='admin') document.getElementById('nav-admin').style.display='flex';
+  initApp();
+}
+
+function doLogout(){
+  currentUser=null;
+  document.getElementById('app').style.display='none';
+  document.getElementById('login-screen').style.display='flex';
+  document.getElementById('l-user').value='';
+  document.getElementById('l-pass').value='';
+  document.getElementById('login-err').style.display='none';
+}
+
+// ══════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════
+const fmt = n => n.toLocaleString('es-ES',{style:'currency',currency:'EUR',minimumFractionDigits:0});
+const fmtDate = d => new Date(d).toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric'});
+const TL = {master:'Máster F.P.',diploma:'Diploma Esp.',micro:'Microcredencial'};
+const TB = {master:'badge-master',diploma:'badge-diploma',micro:'badge-micro'};
+const TLong = {master:'Máster de Formación Permanente',diploma:'Diploma de Especialización',micro:'Microcredencial'};
+const getPrice = (p,m) => m==='presencial'?p.pres:m==='videopresencial'?p.vpres:p.online;
+const getVal = id => document.querySelector('#'+id+' .rbtn.on')?.dataset.val||'0';
+
+function pick(el,gid){
+  document.querySelectorAll('#'+gid+' .rbtn').forEach(r=>r.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function propStatus(prop){
+  if(prop.estado==='ganada') return {cls:'st-won',txt:'Ganada'};
+  if(prop.estado==='perdida') return {cls:'st-lost',txt:'Perdida'};
+  const now = Date.now();
+  const exp = new Date(prop.vencimiento).getTime();
+  const diff = (exp-now)/(1000*60*60*24);
+  if(diff<0) return {cls:'st-expired',txt:'Vencida'};
+  if(diff<=2) return {cls:'st-soon',txt:`Vence en ${Math.ceil(diff)}d`};
+  return {cls:'st-active',txt:'Activa'};
+}
+
+function countAlerts(){
+  const props = getProposals();
+  const visible = currentUser.role==='admin'?props:props.filter(p=>p.comercial===currentUser.user);
+  let count=0;
+  visible.forEach(p=>{
+    if(p.estado==='activa'){
+      const s=propStatus(p);
+      if(s.cls==='st-expired'||s.cls==='st-soon') count++;
+    }
+  });
+  const badge = document.getElementById('nav-badge');
+  if(count>0){badge.textContent=count;badge.style.display='block';}
+  else badge.style.display='none';
+  return count;
+}
+
+// ══════════════════════════════════════════════
+// PAGES
+// ══════════════════════════════════════════════
+const pageTitles={catalog:'Catálogo de Programas',simulator:'Simulador de Precios',compare:'Comparar Programas',summary:'Resumen por Tipo',proposals:'Propuestas',admin:'Gestión de Usuarios'};
+
+function showPage(id,el){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  el.classList.add('active');
+  document.getElementById('page-title').textContent=pageTitles[id]||id;
+  const show=id==='catalog';
+  ['sw','ft','fm','rc'].forEach(x=>{const el=document.getElementById(x);if(el)el.style.display=show?'':'none';});
+  if(id==='compare') renderCompare();
+  if(id==='summary') renderSummary();
+  if(id==='proposals'){renderAlertBanner();renderHistory();}
+  if(id==='admin') renderAdmin();
+}
+
+// ══════════════════════════════════════════════
+// CATALOG
+// ══════════════════════════════════════════════
+let compareList = [];
+
+function filterCatalog(){
+  const q=document.querySelector('#sw input').value.toLowerCase();
+  const t=document.getElementById('ft').value;
+  const m=document.getElementById('fm').value;
+  const f=PROGRAMAS.filter(p=>p.nombre.toLowerCase().includes(q)&&(!t||p.tipo===t)&&(!m||String(p.meses)===m));
+  renderCards(f);
+  document.getElementById('rc').textContent=`${f.length} programa${f.length!==1?'s':''}`;
+}
+
+function renderCards(list){
+  const g=document.getElementById('cards-grid');
+  if(!list.length){g.innerHTML='<div class="no-results">No se encontraron programas.</div>';return;}
+  g.innerHTML=list.map(p=>{
+    const inC=compareList.find(c=>c.id===p.id);
+    const t=TITULOS[p.tipo];
+    const ck=p.univ==='ABAT'?'abat_con':'utamed_con';
+    const sk=p.univ==='ABAT'?'abat_sin':'utamed_sin';
+    const univStr=p.univ==='ABAT'?'Abat Oliba CEU':'UTAMED';
+    return `<div class="prog-card ${inC?'selected':''}" data-tipo="${p.tipo}">
+      <div class="card-top"><div class="prog-name">${p.nombre}</div><span class="badge ${TB[p.tipo]}">${TL[p.tipo]}</span></div>
+      <div><span class="dur-tag">[${p.meses} MESES]</span></div>
+      <div class="card-meta">
+        <span class="meta-item"><strong>${p.ects}</strong> ECTS</span>
+        <span class="meta-item"><strong>${p.horas||'—'}</strong> horas</span>
+        <span class="meta-item">${p.prac?'<strong>Prácticas</strong> remuneradas':'Sin prácticas'}</span>
+      </div>
+      <div class="titulo-info">
+        <div class="tit-row"><span class="tit-k">Universidad</span><span class="tit-v">${univStr}</span></div>
+        <div class="tit-row"><span class="tit-k">Con título univ.</span><span class="tit-v">${t[ck]}</span></div>
+        <div class="tit-row"><span class="tit-k">Sin título univ.</span><span class="tit-v dim">${t[sk]}</span></div>
+      </div>
+      <div class="card-prices">
+        <div class="price-box"><div class="price-mode">Presencial</div><div class="price-val">${fmt(p.pres)}</div></div>
+        <div class="price-box"><div class="price-mode">Videopres.</div><div class="price-val">${fmt(p.vpres)}</div></div>
+        <div class="price-box"><div class="price-mode">Online</div><div class="price-val">${fmt(p.online)}</div></div>
+      </div>
+      <button class="cmp-btn" onclick="toggleCompare(${p.id})">${inC?'Quitar de comparar':'Añadir a comparar'}</button>
+    </div>`;
+  }).join('');
+}
+
+function toggleCompare(id){
+  const p=PROGRAMAS.find(x=>x.id===id);
+  const i=compareList.findIndex(c=>c.id===id);
+  if(i>-1) compareList.splice(i,1);
+  else{ if(compareList.length>=4){alert('Máximo 4 programas.');return;} compareList.push(p); }
+  saveCompare(compareList);
+  filterCatalog();
+}
+
+function clearCompare(){ compareList=[]; saveCompare([]); filterCatalog(); renderCompare(); }
+
+// ══════════════════════════════════════════════
+// SIMULATOR
+// ══════════════════════════════════════════════
+function calcSim(){
+  const sel=document.getElementById('sim-prog').value;
+  const res=document.getElementById('sim-result');
+  if(!sel){res.innerHTML='<span style="color:var(--muted)">Selecciona un programa</span>';return;}
+  const p=PROGRAMAS.find(x=>x.id===parseInt(sel));
+  const mod=getVal('rg-mod'), desc=parseInt(getVal('rg-desc')), pago=parseInt(getVal('rg-pago'));
+  const base=getPrice(p,mod), conDesc=Math.round(base*(1-desc/100)), final=pago?Math.round(conDesc*0.9):conDesc, ahorro=base-final;
+  res.innerHTML=`<div class="res-cols">
+    <div class="rc"><div class="rc-lbl">Precio base</div><div class="rc-val" style="color:var(--muted);text-decoration:line-through;font-size:1.1rem">${fmt(base)}</div><div class="rc-sub">${mod}</div></div>
+    <div class="rc"><div class="rc-lbl">Descuento</div><div class="rc-val" style="font-size:1.2rem">${desc}%</div><div class="rc-sub">${desc?'− '+fmt(base-conDesc):'—'}</div></div>
+    <div class="rc"><div class="rc-lbl">Pago único</div><div class="rc-val" style="font-size:1.2rem">${pago}%</div><div class="rc-sub">${pago?'− '+fmt(conDesc-final):'—'}</div></div>
+    <div class="rc"><div class="rc-lbl">Precio final</div><div class="rc-val" style="color:var(--teal)">${fmt(final)}</div><div class="rc-sub">Dto. total ${desc+pago}%</div></div>
+  </div>${ahorro>0?`<div class="saving-bar">Ahorro total: ${fmt(ahorro)}</div>`:''}`;
+}
+
+// ══════════════════════════════════════════════
+// COMPARE
+// ══════════════════════════════════════════════
+function renderCompare(){
+  const el=document.getElementById('compare-out');
+  if(!compareList.length){el.innerHTML='<div class="no-results">Ve al Catálogo y pulsa "Añadir a comparar" en hasta 4 programas.</div>';return;}
+  const rows=[
+    {l:'Tipo',f:p=>`<span class="badge ${TB[p.tipo]}">${TL[p.tipo]}</span>`},
+    {l:'Universidad',f:p=>p.univ==='ABAT'?'Abat Oliba CEU':'UTAMED'},
+    {l:'Duración',f:p=>`<span class="td-gold">[${p.meses} MESES]</span>`},
+    {l:'ECTS',f:p=>p.ects},
+    {l:'Prácticas',f:p=>p.prac?'Remuneradas':'No'},
+    {l:'Título con univ.',f:p=>TITULOS[p.tipo][p.univ==='ABAT'?'abat_con':'utamed_con']},
+    {l:'Título sin univ.',f:p=>TITULOS[p.tipo][p.univ==='ABAT'?'abat_sin':'utamed_sin']},
+    {l:'Presencial',f:p=>`<span class="td-teal">${fmt(p.pres)}</span>`},
+    {l:'Videopresencial',f:p=>`<span class="td-teal">${fmt(p.vpres)}</span>`},
+    {l:'Online',f:p=>`<span class="td-teal">${fmt(p.online)}</span>`},
+    {l:'Online + 25%',f:p=>fmt(Math.round(p.online*0.75))},
+    {l:'Online + 35%',f:p=>fmt(Math.round(p.online*0.65))},
+    {l:'Online pago único 35%+10%',f:p=>fmt(Math.round(p.online*0.65*0.9))},
+  ];
+  el.innerHTML=`<button class="clear-btn" onclick="clearCompare()">Limpiar comparación</button>
+  <div class="table-wrap"><table>
+    <thead><tr><th>Campo</th>${compareList.map(p=>`<th class="prog-th">${p.nombre}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map(r=>`<tr><td class="row-label">${r.l}</td>${compareList.map(p=>`<td>${r.f(p)}</td>`).join('')}</tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+// ══════════════════════════════════════════════
+// SUMMARY
+// ══════════════════════════════════════════════
+function renderSummary(){
+  const tipos=['master','diploma','micro'];
+  const colors={master:'var(--teal)',diploma:'var(--gold)',micro:'var(--muted)'};
+  document.getElementById('sum-grid').innerHTML=tipos.map(tipo=>{
+    const list=PROGRAMAS.filter(p=>p.tipo===tipo);
+    const minO=Math.min(...list.map(p=>p.online)), maxP=Math.max(...list.map(p=>p.pres));
+    const durs=[...new Set(list.map(p=>p.meses))].sort((a,b)=>a-b);
+    return `<div class="sum-card">
+      <div class="sum-hdr"><span class="sum-dot" style="background:${colors[tipo]}"></span><span class="sum-title">${TL[tipo]}s</span></div>
+      <div class="sum-row"><span class="sum-k">Programas</span><span class="sum-v">${list.length}</span></div>
+      <div class="sum-row"><span class="sum-k">Con prácticas</span><span class="sum-v">${list.filter(p=>p.prac).length}/${list.length}</span></div>
+      <div class="sum-row"><span class="sum-k">Duraciones</span><span class="sum-v">${durs.join(', ')} meses</span></div>
+      <div class="sum-row"><span class="sum-k">Online desde</span><span class="sum-v" style="color:var(--teal)">${fmt(minO)}</span></div>
+      <div class="sum-row"><span class="sum-k">Presencial hasta</span><span class="sum-v">${fmt(maxP)}</span></div>
+    </div>`;
+  }).join('');
+  const barras=[
+    {l:'Másteres — Presencial',c:'var(--teal)',v:12000},
+    {l:'Másteres — Online',c:'rgba(0,196,160,0.35)',v:8400},
+    {l:'Diplomas — Presencial',c:'var(--gold)',v:2800},
+    {l:'Microcredenciales — Online',c:'var(--muted)',v:1350},
+  ];
+  document.getElementById('pr-out').innerHTML=`<div class="pr-title"><span class="pr-bar"></span>Rangos de precio</div>`+
+    barras.map(b=>`<div class="pr-row"><div class="pr-labels"><span>${b.l}</span><span>${fmt(b.v)}</span></div><div class="pr-track"><div class="pr-fill" style="width:${(b.v/12000)*100}%;background:${b.c}"></div></div></div>`).join('');
+}
+
+// ══════════════════════════════════════════════
+// PROPOSALS
+// ══════════════════════════════════════════════
+function showPropTab(id,el){
+  document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('ptab-generator').style.display=id==='generator'?'block':'none';
+  document.getElementById('ptab-history').style.display=id==='history'?'block':'none';
+  if(id==='history') renderHistory();
+}
+
+function onPProg(){
+  const sel=document.getElementById('p-prog').value;
+  const tb=document.getElementById('p-tbox');
+  if(!sel){tb.style.display='none';updatePV();return;}
+  const p=PROGRAMAS.find(x=>x.id===parseInt(sel));
+  const t=TITULOS[p.tipo];
+  const ck=p.univ==='ABAT'?'abat_con':'utamed_con';
+  const sk=p.univ==='ABAT'?'abat_sin':'utamed_sin';
+  document.getElementById('pt-univ').textContent=p.univ==='ABAT'?'Abat Oliba CEU':'UTAMED';
+  document.getElementById('pt-con').textContent=t[ck];
+  document.getElementById('pt-sin').textContent=t[sk];
+  document.getElementById('pt-im').textContent=t.im;
+  tb.style.display='block';
+  updatePV();
+}
+
+function updatePV(){
+  const today=new Date(), valido=new Date(today);
+  valido.setDate(valido.getDate()+7);
+  document.getElementById('pv-valid').textContent=`Validez: ${fmtDate(today)} — ${fmtDate(valido)} (7 días naturales)`;
+  const sel=document.getElementById('p-prog').value;
+  if(!sel){
+    ['pv-base','pv-desc','pv-pago','pv-final'].forEach(id=>document.getElementById(id).textContent='—');
+    document.getElementById('pv-saving').style.display='none';
+    document.getElementById('gen-btn').disabled=true;
+    return;
+  }
+  const p=PROGRAMAS.find(x=>x.id===parseInt(sel));
+  const mod=getVal('rg-pmod'), desc=parseInt(getVal('rg-pdesc')), pago=parseInt(getVal('rg-ppago'));
+  const base=getPrice(p,mod), conDesc=Math.round(base*(1-desc/100)), final=pago?Math.round(conDesc*0.9):conDesc, ahorro=base-final;
+  document.getElementById('pv-base').textContent=fmt(base);
+  document.getElementById('pv-mod').textContent=mod;
+  document.getElementById('pv-desc').textContent=desc+'%';
+  document.getElementById('pv-dsub').textContent=desc?'− '+fmt(base-conDesc):'—';
+  document.getElementById('pv-pago').textContent=pago+'%';
+  document.getElementById('pv-psub').textContent=pago?'− '+fmt(conDesc-final):'—';
+  document.getElementById('pv-final').textContent=fmt(final);
+  document.getElementById('pv-dto').textContent=`Descuento total ${desc+pago}%`;
+  const sv=document.getElementById('pv-saving');
+  if(ahorro>0){sv.textContent=`Ahorro total del alumno: ${fmt(ahorro)}`;sv.style.display='block';}
+  else sv.style.display='none';
+  const nombre=document.getElementById('p-nombre').value.trim();
+  document.getElementById('gen-btn').disabled=!nombre;
+}
+
+function generateProposal(){
+  const nombre=document.getElementById('p-nombre').value.trim();
+  const email=document.getElementById('p-email').value.trim();
+  const tel=document.getElementById('p-tel').value.trim();
+  const sel=document.getElementById('p-prog').value;
+  const p=PROGRAMAS.find(x=>x.id===parseInt(sel));
+  const mod=getVal('rg-pmod'), desc=parseInt(getVal('rg-pdesc')), pago=parseInt(getVal('rg-ppago'));
+  const base=getPrice(p,mod), conDesc=Math.round(base*(1-desc/100)), final=pago?Math.round(conDesc*0.9):conDesc, ahorro=base-final;
+  const today=new Date(), valido=new Date(today);
+  valido.setDate(valido.getDate()+7);
+  const t=TITULOS[p.tipo];
+  const ck=p.univ==='ABAT'?'abat_con':'utamed_con';
+  const sk=p.univ==='ABAT'?'abat_sin':'utamed_sin';
+  const univStr=p.univ==='ABAT'?'Abat Oliba CEU':'UTAMED';
+
+  // Save to history
+  const proposals=getProposals();
+  const newProp={
+    id: Date.now(),
+    alumno: nombre, email, tel,
+    comercial: currentUser.user,
+    comercialName: currentUser.name||currentUser.user,
+    programa: p.nombre,
+    progId: p.id,
+    tipo: p.tipo,
+    modalidad: mod,
+    descuento: desc,
+    pagoUnico: pago,
+    precioBase: base,
+    precioFinal: final,
+    emision: today.toISOString(),
+    vencimiento: valido.toISOString(),
+    estado: 'activa',
+  };
+  proposals.unshift(newProp);
+  saveProposals(proposals);
+  countAlerts();
+
+  // Build print HTML
+  const condiciones=[
+    'La presente propuesta es personal e intransferible y ha sido elaborada específicamente para el alumno indicado.',
+    'Los precios indicados incluyen acceso completo al programa, materiales didácticos y titulación universitaria propia.',
+    p.prac?'Las prácticas remuneradas están sujetas a la superación del programa y disponibilidad de empresa colaboradora.':'Este programa no incluye prácticas.',
+    `Esta propuesta tiene validez hasta el ${fmtDate(valido.toISOString())}. Transcurrido este plazo los precios y condiciones podrán variar.`,
+    pago?'El precio indicado corresponde a pago único, abonado íntegramente antes del inicio del programa.':'Las condiciones de fraccionamiento se detallarán en la documentación de matrícula.',
+    'IM Education se reserva el derecho de modificar la oferta formativa en función de la planificación académica.',
+  ];
+
+  const html=`<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Propuesta IM — ${nombre}</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+@page{size:A4;margin:0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#0D0D0D;color:#F0F0F0;width:210mm;min-height:297mm;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.topbar{height:3mm;background:#00C4A0;}
+.content{padding:10mm 14mm;}
+.logo-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5mm;}
+.lbox{width:9mm;height:9mm;border:0.6mm solid #fff;border-radius:1.5mm;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:3.5mm;color:#fff;background:#0D0D0D;position:relative;}
+.lbox::after{content:'';position:absolute;bottom:-0.5mm;left:-0.5mm;width:3mm;height:0.6mm;background:#0D0D0D;}
+.ltext{font-weight:700;font-size:4.5mm;}
+.lclaim{font-size:2mm;color:#00C4A0;text-transform:uppercase;letter-spacing:0.05em;}
+.ltline{width:46mm;height:0.4mm;background:#00C4A0;margin-top:1.5mm;}
+.date-r{text-align:right;font-size:2.8mm;color:#8B8FA8;line-height:1.6;}
+.sec-lbl{font-size:2.4mm;color:#00C4A0;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2mm;}
+.saludo{font-size:8mm;font-weight:800;margin-bottom:1.5mm;}
+.saludo-sub{font-size:3.5mm;color:#8B8FA8;margin-bottom:2.5mm;}
+.div{height:0.3mm;background:#2A2A2A;margin-bottom:4mm;}
+.personas{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4mm;margin-bottom:4mm;}
+.p-lbl{font-size:2.4mm;color:#8B8FA8;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1mm;}
+.p-name{font-size:4mm;font-weight:700;margin-bottom:0.8mm;}
+.p-sub{font-size:3mm;color:#8B8FA8;}
+.prog-card{background:#1A1A1A;border-radius:2mm;padding:4mm;margin-bottom:3mm;border-left:1.5mm solid #00C4A0;}
+.tags{display:flex;justify-content:space-between;margin-bottom:2.5mm;}
+.dur-tag{background:rgba(245,200,66,0.1);border:0.3mm solid rgba(245,200,66,0.3);color:#F5C842;font-size:2.2mm;font-weight:700;padding:0.6mm 2mm;border-radius:0.8mm;text-transform:uppercase;letter-spacing:0.06em;}
+.tipo-tag{background:rgba(0,196,160,0.1);border:0.3mm solid rgba(0,196,160,0.25);color:#00C4A0;font-size:2.2mm;font-weight:700;padding:0.6mm 2mm;border-radius:0.8mm;}
+.pnom{font-size:4mm;font-weight:800;line-height:1.3;margin-bottom:3mm;}
+.metas{display:grid;grid-template-columns:repeat(4,1fr);gap:2mm;margin-bottom:3mm;padding-bottom:3mm;border-bottom:0.3mm solid #2A2A2A;}
+.mk{font-size:2mm;color:#8B8FA8;text-transform:uppercase;margin-bottom:0.8mm;}
+.mv{font-size:3.5mm;font-weight:700;}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:2mm;}
+.ti{background:#0D0D0D;border-radius:1.5mm;padding:2mm 2.5mm;}
+.tik{font-size:2mm;color:#8B8FA8;margin-bottom:0.5mm;}
+.tiv{font-size:3mm;font-weight:700;color:#00C4A0;}
+.tiv.dim{color:#8B8FA8;}
+.precios{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2mm;margin-bottom:3mm;}
+.pbox{background:#1A1A1A;border-radius:2mm;padding:3mm;text-align:center;}
+.pbox.hi{background:rgba(0,26,20,0.8);border:0.4mm solid #00C4A0;}
+.pk{font-size:2.2mm;color:#8B8FA8;margin-bottom:1.5mm;}
+.pv{font-size:6mm;font-weight:800;}
+.pv.strike{text-decoration:line-through;color:#8B8FA8;font-size:5mm;}
+.pv.teal{color:#00C4A0;font-size:7mm;}
+.ps{font-size:2mm;color:#8B8FA8;margin-top:0.8mm;}
+.saving{background:rgba(0,196,160,0.08);border:0.3mm solid rgba(0,196,160,0.2);border-radius:1.5mm;padding:2mm;text-align:center;font-size:3mm;color:#00C4A0;font-weight:700;margin-bottom:3mm;}
+.validez{background:rgba(245,200,66,0.08);border:0.4mm solid rgba(245,200,66,0.3);border-radius:1.5mm;padding:3mm;text-align:center;margin-bottom:3mm;}
+.vt{font-size:3.5mm;font-weight:800;color:#F5C842;margin-bottom:0.8mm;}
+.vs{font-size:2.5mm;color:#8B8FA8;}
+.cond{font-size:2.5mm;color:#8B8FA8;line-height:1.5;margin-bottom:1.5mm;padding-left:3mm;position:relative;}
+.cond::before{content:'·';position:absolute;left:0;color:#00C4A0;}
+.footer{background:#1A1A1A;border-top:0.3mm solid #00C4A0;padding:3mm 14mm;margin-top:4mm;text-align:center;}
+.ft{font-size:2.2mm;color:#8B8FA8;line-height:1.7;}
+.fbar{height:1.5mm;background:#00C4A0;}
+</style></head><body>
+<div class="topbar"></div>
+<div class="content">
+<div class="logo-row">
+  <div><div style="display:flex;align-items:center;gap:3mm"><div class="lbox">IM</div><div><div class="ltext">Education</div><div class="lclaim">Digital Business School</div></div></div><div class="ltline"></div></div>
+  <div class="date-r"><div>Madrid, ${fmtDate(today.toISOString())}</div><div>www.im.education</div></div>
+</div>
+<div class="sec-lbl">Propuesta Formativa Personalizada</div>
+<div class="saludo">Hola, ${nombre.split(' ')[0]}</div>
+<div class="saludo-sub">Hemos preparado esta propuesta exclusivamente para ti.</div>
+<div class="div"></div>
+<div class="personas">
+  <div><div class="p-lbl">Alumno</div><div class="p-name">${nombre}</div><div class="p-sub">${email||'—'}</div>${tel?`<div class="p-sub">${tel}</div>`:''}</div>
+  <div><div class="p-lbl">Asesor comercial</div><div class="p-name">${currentUser.name||currentUser.user}</div><div class="p-sub">IM Education</div></div>
+  <div><div class="p-lbl">Fecha emisión</div><div class="p-name" style="font-size:3.5mm">${fmtDate(today.toISOString())}</div><div class="p-sub">Válida hasta ${fmtDate(valido.toISOString())}</div></div>
+</div>
+<div class="div"></div>
+<div class="sec-lbl">Programa seleccionado</div>
+<div class="prog-card">
+  <div class="tags"><span class="dur-tag">[${p.meses} MESES]</span><span class="tipo-tag">${TLong[p.tipo]}</span></div>
+  <div class="pnom">${p.nombre}</div>
+  <div class="metas">
+    <div><div class="mk">ECTS</div><div class="mv">${p.ects}</div></div>
+    <div><div class="mk">Modalidad</div><div class="mv">${mod.charAt(0).toUpperCase()+mod.slice(1)}</div></div>
+    <div><div class="mk">Universidad</div><div class="mv">${univStr}</div></div>
+    <div><div class="mk">Prácticas</div><div class="mv">${p.prac?'Remuneradas':'No'}</div></div>
+  </div>
+  <div class="tgrid">
+    <div class="ti"><div class="tik">Con título universitario</div><div class="tiv">${t[ck]}</div></div>
+    <div class="ti"><div class="tik">Sin título universitario</div><div class="tiv dim">${t[sk]}</div></div>
+  </div>
+</div>
+<div class="sec-lbl">Condiciones económicas</div>
+<div class="precios">
+  <div class="pbox"><div class="pk">Precio base</div><div class="pv strike">${fmt(base)}</div><div class="ps">${mod}</div></div>
+  <div class="pbox"><div class="pk">Con descuento${desc?` (${desc}%)`:'s'}</div><div class="pv">${fmt(conDesc)}</div><div class="ps">${desc?`− ${fmt(base-conDesc)}`:'Sin descuento'}</div></div>
+  <div class="pbox hi"><div class="pk">Precio final</div><div class="pv teal">${fmt(final)}</div><div class="ps">Descuento total ${desc+pago}%</div></div>
+</div>
+${ahorro>0?`<div class="saving">Ahorro total: ${fmt(ahorro)} respecto al precio base${pago?' · Con pago único':''}</div>`:''}
+<div class="validez"><div class="vt">Propuesta válida hasta el ${fmtDate(valido.toISOString())}</div><div class="vs">Esta oferta tiene una validez de 7 días naturales desde la fecha de emisión.</div></div>
+<div class="sec-lbl">Condiciones generales</div>
+${condiciones.map(c=>`<div class="cond">${c}</div>`).join('')}
+</div>
+<div class="footer"><div class="ft">IM Education · www.im.education · info@im.education · Barcelona · Madrid<br>En colaboración con UTAMED — Universidad Tecnológica Atlántico Mediterráneo · Universidad Abat Oliba CEU</div></div>
+<div class="fbar"></div>
+<script>window.onload=function(){window.print();}<\/script>
+</body></html>`;
+
+  // Write to print-view and print
+  const pv = document.getElementById('print-view');
+  pv.innerHTML = html;
+
+  // Extract and run the inline styles + trigger print via iframe trick
+  const iframe = document.createElement('iframe');
+  iframe.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;border:none;z-index:9999;background:#0D0D0D;';
+  document.body.appendChild(iframe);
+  iframe.contentDocument.open();
+  iframe.contentDocument.write(html);
+  iframe.contentDocument.close();
+  iframe.contentWindow.focus();
+  setTimeout(()=>{
+    try{iframe.contentWindow.print();}catch(e){}
+    setTimeout(()=>document.body.removeChild(iframe), 2000);
+  }, 800);
+
+  renderHistory();
+  countAlerts();
+}
+
+// ══════════════════════════════════════════════
+// HISTORY
+// ══════════════════════════════════════════════
+function renderAlertBanner(){
+  const props=getProposals();
+  const visible=currentUser.role==='admin'?props:props.filter(p=>p.comercial===currentUser.user);
+  let expired=0, soon=0;
+  visible.forEach(p=>{
+    if(p.estado==='activa'){
+      const s=propStatus(p);
+      if(s.cls==='st-expired') expired++;
+      else if(s.cls==='st-soon') soon++;
+    }
+  });
+  const banner=document.getElementById('alert-banner');
+  const txt=document.getElementById('alert-text');
+  if(expired>0||soon>0){
+    let msg='';
+    if(expired>0) msg+=`<strong>${expired} propuesta${expired>1?'s':''} vencida${expired>1?'s':''}</strong>`;
+    if(expired>0&&soon>0) msg+=' y ';
+    if(soon>0) msg+=`<strong>${soon} propuesta${soon>1?'s':''} próxima${soon>1?'s':''} a vencer</strong>`;
+    txt.innerHTML=msg+'. Revisa el histórico y actualiza el estado.';
+    banner.style.display='flex';
+  } else banner.style.display='none';
+}
+
+function renderHistory(){
+  const props=getProposals();
+  const visible=currentUser.role==='admin'?props:props.filter(p=>p.comercial===currentUser.user);
+  const el=document.getElementById('hist-content');
+  if(!visible.length){el.innerHTML='<div class="empty-hist"><div style="font-weight:700;margin-bottom:0.4rem">Sin propuestas generadas</div><div style="font-size:0.78rem">Genera tu primera propuesta desde la pestaña "Nueva propuesta".</div></div>';return;}
+  el.innerHTML=`<div class="table-wrap"><table class="hist-table">
+    <thead><tr>
+      <th>Alumno</th><th>Teléfono</th><th>Programa</th><th>Comercial</th>
+      <th>Precio final</th><th>Emisión</th><th>Vencimiento</th><th>Estado</th><th>Acciones</th>
+    </tr></thead>
+    <tbody>
+    ${visible.map(prop=>{
+      const st=propStatus(prop);
+      const prog=PROGRAMAS.find(x=>x.id===prop.progId);
+      const progName=prog?prog.nombre.split(' ').slice(0,5).join(' ')+'…':prop.programa.substring(0,40)+'…';
+      const canEdit=prop.estado==='activa';
+      return `<tr>
+        <td><div style="font-weight:600;font-size:0.8rem">${prop.alumno}</div><div style="font-size:0.68rem;color:var(--muted)">${prop.email||'—'}</div></td>
+        <td style="color:var(--muted);font-size:0.75rem">${prop.tel||'—'}</td>
+        <td style="font-size:0.75rem;max-width:180px"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px" title="${prop.programa}">${progName}</div><div style="font-size:0.65rem;color:var(--muted)">${prop.modalidad} · ${prop.descuento+prop.pagoUnico}% dto.</div></td>
+        <td style="font-size:0.75rem;color:var(--muted)">${prop.comercialName||prop.comercial}</td>
+        <td style="font-weight:700;color:var(--teal)">${fmt(prop.precioFinal)}</td>
+        <td style="font-size:0.72rem;color:var(--muted)">${fmtDate(prop.emision)}</td>
+        <td style="font-size:0.72rem;color:var(--muted)">${fmtDate(prop.vencimiento)}</td>
+        <td><span class="st-badge ${st.cls}">${st.txt}</span></td>
+        <td>
+          ${canEdit?`<button class="action-btn" onclick="setPropState(${prop.id},'ganada')">Ganada</button><button class="action-btn lost" onclick="setPropState(${prop.id},'perdida')">Perdida</button>`:''}
+          <button class="action-btn del" onclick="deleteProp(${prop.id})">Eliminar</button>
+        </td>
+      </tr>`;
+    }).join('')}
+    </tbody>
+  </table></div>`;
+}
+
+function setPropState(id,estado){
+  const props=getProposals();
+  const p=props.find(x=>x.id===id);
+  if(p) p.estado=estado;
+  saveProposals(props);
+  renderHistory();
+  renderAlertBanner();
+  countAlerts();
+}
+
+function deleteProp(id){
+  if(!confirm('¿Eliminar esta propuesta del histórico?')) return;
+  const props=getProposals().filter(x=>x.id!==id);
+  saveProposals(props);
+  renderHistory();
+  renderAlertBanner();
+  countAlerts();
+}
+
+// ══════════════════════════════════════════════
+// ADMIN
+// ══════════════════════════════════════════════
+function renderAdmin(){
+  const users=getUsers();
+  document.getElementById('users-list').innerHTML=users.map(u=>`
+    <div class="user-row">
+      <div><div class="u-name">${u.name||u.user}</div><div style="font-size:0.72rem;color:var(--muted)">@${u.user}</div></div>
+      <div class="u-role">${u.role==='admin'?'Administrador':'Comercial'}</div>
+      ${u.user!=='admin'?`<button class="u-del" onclick="deleteUser('${u.user}')">Eliminar</button>`:'<span style="font-size:0.65rem;color:var(--muted)">Protegido</span>'}
+    </div>`).join('');
+}
+
+function addUser(){
+  const user=document.getElementById('nu-user').value.trim();
+  const pass=document.getElementById('nu-pass').value.trim();
+  const role=document.getElementById('nu-role').value;
+  const err=document.getElementById('add-err');
+  if(!user||!pass){err.textContent='Completa usuario y contraseña.';err.style.display='block';return;}
+  const users=getUsers();
+  if(users.find(u=>u.user===user)){err.textContent='Ese usuario ya existe.';err.style.display='block';return;}
+  users.push({user,pass,role,name:user});
+  saveUsers(users);
+  err.style.display='none';
+  document.getElementById('nu-user').value='';
+  document.getElementById('nu-pass').value='';
+  renderAdmin();
+}
+
+function deleteUser(user){
+  if(!confirm(`¿Eliminar el usuario "${user}"?`)) return;
+  saveUsers(getUsers().filter(u=>u.user!==user));
+  renderAdmin();
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+function initApp(){
+  // Sidebar counts
+  document.getElementById('cnt-m').textContent=PROGRAMAS.filter(p=>p.tipo==='master').length;
+  document.getElementById('cnt-d').textContent=PROGRAMAS.filter(p=>p.tipo==='diploma').length;
+  document.getElementById('cnt-mc').textContent=PROGRAMAS.filter(p=>p.tipo==='micro').length;
+
+  // Restore compare
+  compareList=getCompare();
+
+  // Populate simulator select
+  const simSel=document.getElementById('sim-prog');
+  simSel.innerHTML='<option value="">— Selecciona —</option>';
+  const TLabels={master:'Másteres',diploma:'Diplomas',micro:'Microcredenciales'};
+  ['master','diploma','micro'].forEach(tipo=>{
+    const g=document.createElement('optgroup');
+    g.label=TLabels[tipo];
+    PROGRAMAS.filter(p=>p.tipo===tipo).forEach(p=>{
+      const o=document.createElement('option');
+      o.value=p.id;
+      o.textContent=p.nombre.length>65?p.nombre.slice(0,65)+'…':p.nombre;
+      g.appendChild(o);
+    });
+    simSel.appendChild(g);
+  });
+
+  // Populate proposal select
+  const propSel=document.getElementById('p-prog');
+  propSel.innerHTML='<option value="">— Selecciona un programa —</option>';
+  ['master','diploma','micro'].forEach(tipo=>{
+    const g=document.createElement('optgroup');
+    g.label=TLabels[tipo];
+    PROGRAMAS.filter(p=>p.tipo===tipo).forEach(p=>{
+      const o=document.createElement('option');
+      o.value=p.id;
+      o.textContent=p.nombre.length>65?p.nombre.slice(0,65)+'…':p.nombre;
+      g.appendChild(o);
+    });
+    propSel.appendChild(g);
+  });
+
+  filterCatalog();
+  updatePV();
+  countAlerts();
+
+  // Check expiry every minute
+  setInterval(countAlerts, 60000);
+}
+</script>
+</body>
+</html>
