@@ -932,6 +932,40 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         <div id="add-err" style="font-size:0.72rem;color:var(--red);margin-top:0.5rem;display:none;"></div>
       </div>
     </div>
+
+    <!-- EMAIL TEMPLATE SECTION -->
+    <div style="margin-top:2rem;">
+      <div style="font-size:0.62rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;">
+        <span style="display:inline-block;width:3px;height:12px;background:var(--teal);border-radius:2px"></span>
+        Plantilla de email
+      </div>
+      <div class="panel" style="max-width:660px;">
+        <div style="font-size:0.75rem;color:var(--muted);margin-bottom:1rem;line-height:1.6;">
+          Esta plantilla se usa como base cuando se envía una propuesta por email. Los comerciales pueden modificarla antes de enviar. 
+          <br>Variables disponibles: 
+          <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{nombre}}</span> · 
+          <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{url}}</span> · 
+          <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{fecha_validez}}</span> · 
+          <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{comercial}}</span> · 
+          <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{programa}}</span> · 
+          <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{precio}}</span>
+        </div>
+        <div class="field" style="margin-bottom:0.8rem;">
+          <label>Asunto del email</label>
+          <input type="text" id="tpl-subject" placeholder="Asunto del email" style="width:100%;">
+        </div>
+        <div class="field" style="margin-bottom:1rem;">
+          <label>Cuerpo del mensaje</label>
+          <textarea id="tpl-body" rows="12" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:0.6rem 0.8rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;outline:none;resize:vertical;line-height:1.6;"></textarea>
+        </div>
+        <div style="display:flex;gap:0.7rem;align-items:center;">
+          <button onclick="saveEmailTemplate()" style="padding:0.55rem 1.4rem;background:var(--teal);border:none;border-radius:6px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;">Guardar plantilla</button>
+          <button onclick="resetEmailTemplate()" style="padding:0.55rem 1rem;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;cursor:pointer;">Restaurar por defecto</button>
+          <span id="tpl-saved-msg" style="font-size:0.72rem;color:var(--teal);display:none;">Guardada correctamente</span>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -2461,8 +2495,7 @@ async function sendGmail(prop, url){
   if(false){
     const comercialName = currentUser.name||currentUser.user;
     const comercialEmail = currentUser.email||'admisiones@im.education';
-    const subject = 'Tu propuesta formativa — IM Education';
-    const body = buildEmailBody(prop, url, comercialName);
+    const {subject, body} = applyEmailTemplate(prop, url, comercialName);
     const htmlEmail = buildHtmlEmail(body, prop, url, comercialName);
     try{
       const res = await fetch(APPS_SCRIPT_URL, {
@@ -2676,6 +2709,74 @@ async function deletePropDefinitive(id){
 // ══════════════════════════════════════════════
 // ADMIN
 // ══════════════════════════════════════════════
+// ══════════════════════════════════════════════
+// EMAIL TEMPLATE
+// ══════════════════════════════════════════════
+const DEFAULT_EMAIL_SUBJECT = 'Tu propuesta formativa — IM Education';
+const DEFAULT_EMAIL_BODY = `Estimado/a {{nombre}},
+
+Es un placer compartirte tu propuesta formativa personalizada de IM Education.
+
+Hemos preparado esta propuesta a medida para ti, con el programa {{programa}} que mejor se adapta a tu perfil y objetivos profesionales.
+
+Puedes consultar tu propuesta en el siguiente enlace:
+{{url}}
+
+Recuerda que esta oferta es válida hasta el {{fecha_validez}}.
+
+Quedo a tu disposición para cualquier consulta.
+
+Un cordial saludo,
+{{comercial}}
+IM Education
+www.im.education
+BCN 931 593 373 · MAD 911 593 433`;
+
+function getEmailTemplate(){
+  try{
+    const t = JSON.parse(localStorage.getItem('im_email_template')||'null');
+    if(t) return t;
+  }catch(e){}
+  return {subject: DEFAULT_EMAIL_SUBJECT, body: DEFAULT_EMAIL_BODY};
+}
+
+function saveEmailTemplate(){
+  const subject = document.getElementById('tpl-subject').value.trim();
+  const body = document.getElementById('tpl-body').value;
+  if(!subject){ showToast('El asunto no puede estar vacío','','warning'); return; }
+  localStorage.setItem('im_email_template', JSON.stringify({subject, body}));
+  const msg = document.getElementById('tpl-saved-msg');
+  if(msg){ msg.style.display='inline'; setTimeout(()=>msg.style.display='none', 3000); }
+  showToast('Plantilla guardada','Todos los comerciales usarán esta plantilla.','success');
+}
+
+function resetEmailTemplate(){
+  localStorage.removeItem('im_email_template');
+  document.getElementById('tpl-subject').value = DEFAULT_EMAIL_SUBJECT;
+  document.getElementById('tpl-body').value = DEFAULT_EMAIL_BODY;
+  showToast('Plantilla restaurada','Se ha restablecido la plantilla por defecto.','success');
+}
+
+function applyEmailTemplate(prop, url, comercialName){
+  const tpl = getEmailTemplate();
+  const alumno = prop.alumno || prop.nombre || 'alumno/a';
+  const subject = tpl.subject
+    .replace(/{{nombre}}/g, alumno)
+    .replace(/{{comercial}}/g, comercialName)
+    .replace(/{{programa}}/g, prop.programa||'')
+    .replace(/{{precio}}/g, prop.precioFinal ? fmt(prop.precioFinal) : '')
+    .replace(/{{url}}/g, url)
+    .replace(/{{fecha_validez}}/g, new Date(prop.vencimiento).toLocaleDateString('es-ES'));
+  const body = tpl.body
+    .replace(/{{nombre}}/g, alumno)
+    .replace(/{{comercial}}/g, comercialName)
+    .replace(/{{programa}}/g, prop.programa||'')
+    .replace(/{{precio}}/g, prop.precioFinal ? fmt(prop.precioFinal) : '')
+    .replace(/{{url}}/g, url)
+    .replace(/{{fecha_validez}}/g, new Date(prop.vencimiento).toLocaleDateString('es-ES'));
+  return {subject, body};
+}
+
 function renderAdmin(){
   const users=getUsers();
   document.getElementById('users-list').innerHTML=users.map(u=>`
@@ -3469,42 +3570,128 @@ function openEmailEditor(prop, url){
 }
 
 function buildHtmlEmail(bodyText, prop, url, comercialName){
-  const lines = bodyText.split('\n').map(l=>l.trim()?`<p style="margin:0 0 8px;color:#333;font-size:14px;line-height:1.6;">${l}</p>`:'<br>').join('');
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f5f5f5;font-family:'Helvetica Neue',Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f5;padding:30px 0;">
+  const alumno = prop.alumno||prop.nombre||'alumno/a';
+  const programa = prop.programa||'';
+  const precio = prop.precioFinal ? fmt(prop.precioFinal) : '';
+  const validez = new Date(prop.vencimiento).toLocaleDateString('es-ES',{day:'numeric',month:'long',year:'numeric'});
+  const comercialEmail = currentUser.email||'admisiones@im.education';
+
+  // Convert plain text body to HTML paragraphs
+  const bodyHtml = bodyText.split('\n').map(l=>
+    l.trim() ? `<p style="margin:0 0 12px 0;color:#444;font-size:15px;line-height:1.7;font-family:Arial,sans-serif;">${l.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>` : '<br>'
+  ).join('');
+
+  return `<!DOCTYPE html>
+<html lang="es">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Propuesta IM Education</title>
+</head>
+<body style="margin:0;padding:0;background:#f0f0f0;font-family:Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f0f0;padding:32px 16px;">
 <tr><td align="center">
-<table width="580" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
-  <tr><td style="background:#0D0D0D;padding:0;height:4px;"><div style="height:4px;background:#00C4A0;"></div></td></tr>
-  <tr><td style="padding:32px 40px 24px;">
-    <div style="display:flex;align-items:center;margin-bottom:24px;">
-      <div style="width:36px;height:36px;border:2px solid #fff;border-radius:6px;background:#0D0D0D;display:inline-flex;align-items:center;justify-content:center;margin-right:10px;">
-        <span style="color:#fff;font-weight:900;font-size:14px;">IM</span>
-      </div>
-      <div>
-        <div style="font-size:16px;font-weight:700;color:#0D0D0D;">Education</div>
-        <div style="font-size:10px;color:#00C4A0;text-transform:uppercase;letter-spacing:1px;">Digital Business School</div>
-      </div>
-    </div>
-    <div style="height:1px;background:#eee;margin-bottom:24px;"></div>
-    ${lines}
-    <div style="margin:24px 0;text-align:center;">
-      <a href="${url}" style="display:inline-block;padding:14px 32px;background:#00C4A0;color:#000;text-decoration:none;border-radius:6px;font-weight:700;font-size:14px;letter-spacing:0.5px;">Ver mi propuesta formativa</a>
-    </div>
-    <div style="height:1px;background:#eee;margin-bottom:20px;"></div>
-    <div style="font-size:11px;color:#999;line-height:1.6;">
-      <strong style="color:#333;">${comercialName}</strong> — IM Education<br>
-      www.im.education · BCN 931 593 373 · MAD 911 593 433<br>
-      Carrer de Can Ràbia, 3-5, Planta 4, 08017 Barcelona
+<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 20px rgba(0,0,0,0.1);">
+
+  <!-- TOP BAR -->
+  <tr><td style="background:#0D0D0D;height:5px;padding:0;"><table width="100%" cellpadding="0" cellspacing="0"><tr><td style="background:#00C4A0;height:5px;"></td></tr></table></td></tr>
+
+  <!-- HEADER -->
+  <tr><td style="background:#0D0D0D;padding:28px 40px;">
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td>
+          <table cellpadding="0" cellspacing="0">
+            <tr>
+              <td style="background:#fff;border-radius:6px;padding:6px 10px;display:inline-block;">
+                <span style="font-family:Arial,sans-serif;font-size:18px;font-weight:900;color:#0D0D0D;letter-spacing:-0.5px;">IM</span>
+              </td>
+              <td style="padding-left:10px;">
+                <div style="font-family:Arial,sans-serif;font-size:18px;font-weight:700;color:#ffffff;line-height:1.2;">Education</div>
+                <div style="font-family:Arial,sans-serif;font-size:10px;color:#00C4A0;text-transform:uppercase;letter-spacing:2px;margin-top:2px;">Digital Business School</div>
+              </td>
+            </tr>
+          </table>
+        </td>
+        <td align="right">
+          <div style="font-family:Arial,sans-serif;font-size:11px;color:#888;text-align:right;">Propuesta personalizada</div>
+          <div style="font-family:Arial,sans-serif;font-size:11px;color:#00C4A0;font-weight:600;text-align:right;margin-top:3px;">${prop.ref||''}</div>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+
+  <!-- HERO BAND -->
+  <tr><td style="background:linear-gradient(135deg,#00C4A0 0%,#009e82 100%);padding:24px 40px;">
+    <div style="font-family:Arial,sans-serif;font-size:13px;color:rgba(0,0,0,0.7);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">Propuesta formativa para</div>
+    <div style="font-family:Arial,sans-serif;font-size:24px;font-weight:900;color:#0D0D0D;">${alumno}</div>
+    ${programa?`<div style="font-family:Arial,sans-serif;font-size:13px;color:rgba(0,0,0,0.65);margin-top:6px;">${programa}</div>`:''}
+  </td></tr>
+
+  <!-- BODY -->
+  <tr><td style="padding:36px 40px 24px;">
+    ${bodyHtml}
+  </td></tr>
+
+  <!-- CTA BUTTON -->
+  <tr><td style="padding:0 40px 32px;text-align:center;">
+    <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
+      <tr><td style="background:#00C4A0;border-radius:6px;">
+        <a href="${url}" target="_blank" style="display:inline-block;padding:16px 40px;font-family:Arial,sans-serif;font-size:15px;font-weight:800;color:#000000;text-decoration:none;letter-spacing:0.3px;">Ver mi propuesta formativa</a>
+      </td></tr>
+    </table>
+    <div style="font-family:Arial,sans-serif;font-size:11px;color:#aaa;margin-top:12px;">Oferta válida hasta el ${validez}</div>
+  </td></tr>
+
+  <!-- DIVIDER -->
+  <tr><td style="padding:0 40px;"><hr style="border:none;border-top:1px solid #eee;margin:0;"></td></tr>
+
+  <!-- SIGNATURE -->
+  <tr><td style="padding:24px 40px;">
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td style="border-left:3px solid #00C4A0;padding-left:16px;">
+          <div style="font-family:Arial,sans-serif;font-size:14px;font-weight:700;color:#0D0D0D;">${comercialName}</div>
+          <div style="font-family:Arial,sans-serif;font-size:12px;color:#00C4A0;margin-top:2px;">Asesor de Admisiones · IM Education</div>
+          <div style="font-family:Arial,sans-serif;font-size:12px;color:#888;margin-top:6px;">${comercialEmail}</div>
+          <div style="font-family:Arial,sans-serif;font-size:12px;color:#888;margin-top:2px;">BCN 931 593 373 · MAD 911 593 433</div>
+        </td>
+        <td align="right" valign="top">
+          <div style="font-family:Arial,sans-serif;font-size:11px;color:#ccc;text-align:right;line-height:1.8;">
+            www.im.education<br>
+            Carrer de Can Ràbia, 3-5<br>
+            08017 Barcelona
+          </div>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+
+  <!-- STATS STRIP -->
+  <tr><td style="background:#f8f8f8;padding:16px 40px;border-top:1px solid #eee;">
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        ${[['87%','Empleabilidad'],['QS 5★','Estrellas'],['20 años','Experiencia'],['30.000+','Alumnos']].map(([v,l])=>`
+        <td style="text-align:center;padding:0 8px;">
+          <div style="font-family:Arial,sans-serif;font-size:16px;font-weight:800;color:#00C4A0;">${v}</div>
+          <div style="font-family:Arial,sans-serif;font-size:10px;color:#999;margin-top:2px;text-transform:uppercase;letter-spacing:0.5px;">${l}</div>
+        </td>`).join('')}
+      </tr>
+    </table>
+  </td></tr>
+
+  <!-- FOOTER -->
+  <tr><td style="background:#0D0D0D;padding:16px 40px;">
+    <div style="font-family:Arial,sans-serif;font-size:11px;color:#555;text-align:center;line-height:1.6;">
+      Este email ha sido enviado por IM Education a ${alumno} desde <span style="color:#00C4A0;">propuestas@im.education</span><br>
+      Si no esperabas este mensaje, puedes ignorarlo.
     </div>
   </td></tr>
-  <tr><td style="background:#0D0D0D;padding:12px 40px;text-align:center;">
-    <p style="margin:0;font-size:11px;color:#666;">Este correo ha sido enviado por IM Education. Propuesta válida hasta el ${new Date(prop.vencimiento).toLocaleDateString('es-ES')}.</p>
-  </td></tr>
-  <tr><td style="height:3px;background:#00C4A0;"></td></tr>
+
+  <!-- BOTTOM BAR -->
+  <tr><td style="background:#00C4A0;height:4px;padding:0;"></td></tr>
+
 </table>
-</td></tr></table>
-</div></div>
-<style>@media(max-width:220mm){body>div{padding:0.5rem;}}</style>
+</td></tr>
+</table>
 </body></html>`;
 }
 
