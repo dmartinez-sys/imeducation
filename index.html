@@ -1691,7 +1691,16 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
     <!-- Header -->
     <div class="p2-hdr">
       <div class="p2-logo">
-        <img src="${LOGO_IM_BLACK}" alt="IM Education">
+        <div style="display:flex;align-items:center;gap:3mm;">
+          <div style="width:12mm;height:12mm;border:1mm solid #0D0D0D;border-radius:2mm;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;">
+            <span style="font-size:5mm;font-weight:900;color:#0D0D0D;letter-spacing:-0.5px;">IM</span>
+            <div style="position:absolute;bottom:-0.8mm;left:-0.8mm;width:4mm;height:1mm;background:#fff;"></div>
+          </div>
+          <div>
+            <div style="font-size:5.5mm;font-weight:700;color:#0D0D0D;line-height:1;">Education</div>
+            <div style="font-size:2mm;color:#00C4A0;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Digital Business School</div>
+          </div>
+        </div>
       </div>
       <div class="p2-ref-info">
         Propuesta <span>${refNum}</span> · ${nombre} · ${fmtDate(today.toISOString())}
@@ -1842,40 +1851,65 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
   countAlerts();
 
   // Show preview modal instead of auto-printing
-  showProposalPreview(html2);
+  showProposalPreview(html2, newProp);
   renderHistory();
   countAlerts();
 }
 
-function showProposalPreview(html2){
+function showProposalPreview(html2, propData){
   // Remove existing modal if any
   const existing = document.getElementById('proposal-modal');
   if(existing) existing.remove();
 
   const modal = document.createElement('div');
   modal.id = 'proposal-modal';
-  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;background:rgba(0,0,0,0.85);display:flex;flex-direction:column;';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;background:#1a1a1a;display:flex;flex-direction:column;';
 
   // Top bar
   const bar = document.createElement('div');
-  bar.style.cssText = 'background:#1A1A1A;border-bottom:1px solid #2A2A2A;padding:0.7rem 1.2rem;display:flex;align-items:center;gap:1rem;flex-shrink:0;';
+  bar.style.cssText = 'background:#111;border-bottom:1px solid #2A2A2A;padding:0.65rem 1.5rem;display:flex;align-items:center;gap:0.8rem;flex-shrink:0;';
+  
+  const emailBtn = propData && propData.email ? 
+    `<button onclick="sendGmailFromPreview()" style="padding:0.42rem 1rem;background:transparent;border:1px solid #2A2A2A;border-radius:5px;color:#8B8FA8;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;cursor:pointer;font-weight:600;transition:all 0.15s;" onmouseover="this.style.borderColor='#00C4A0';this.style.color='#00C4A0'" onmouseout="this.style.borderColor='#2A2A2A';this.style.color='#8B8FA8'">✉ Enviar correo a ${propData.email}</button>` : 
+    `<button onclick="sendGmailFromPreview()" style="padding:0.42rem 1rem;background:transparent;border:1px solid #2A2A2A;border-radius:5px;color:#8B8FA8;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;cursor:pointer;font-weight:600;" >✉ Enviar correo</button>`;
+
   bar.innerHTML = `
-    <span style="font-size:0.82rem;color:#F0F0F0;font-weight:600;">Vista previa de la propuesta</span>
-    <button onclick="printProposal()" style="margin-left:auto;padding:0.45rem 1.1rem;background:#00C4A0;border:none;border-radius:5px;color:#000;font-size:0.8rem;font-weight:700;cursor:pointer;">Imprimir / Guardar PDF</button>
-    <button onclick="document.getElementById('proposal-modal').remove()" style="padding:0.45rem 1rem;background:transparent;border:1px solid #2A2A2A;border-radius:5px;color:#8B8FA8;font-size:0.8rem;cursor:pointer;">Cerrar</button>
+    <span style="font-size:0.78rem;color:#8B8FA8;font-weight:500;">Vista previa de la propuesta</span>
+    <div style="margin-left:auto;display:flex;gap:0.6rem;align-items:center;">
+      ${emailBtn}
+      <button onclick="printProposal()" style="padding:0.42rem 1.1rem;background:#00C4A0;border:none;border-radius:5px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;font-weight:700;cursor:pointer;">Imprimir / Guardar PDF</button>
+      <button onclick="document.getElementById('proposal-modal').remove()" style="padding:0.42rem 0.9rem;background:transparent;border:1px solid #2A2A2A;border-radius:5px;color:#8B8FA8;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;cursor:pointer;">Cerrar</button>
+    </div>
   `;
+
+  // Viewer area - dark background with centered document
+  const viewer = document.createElement('div');
+  viewer.style.cssText = 'flex:1;overflow-y:auto;background:#2a2a2a;display:flex;justify-content:center;padding:2rem 1rem;';
 
   const iframe = document.createElement('iframe');
   iframe.id = 'proposal-iframe';
-  iframe.style.cssText = 'flex:1;border:none;background:#fff;';
+  iframe.style.cssText = 'border:none;background:#fff;width:210mm;min-height:297mm;box-shadow:0 4px 32px rgba(0,0,0,0.5);flex-shrink:0;';
 
+  // Store prop data for email button
+  window._currentPropPreview = propData;
+
+  viewer.appendChild(iframe);
   modal.appendChild(bar);
-  modal.appendChild(iframe);
+  modal.appendChild(viewer);
   document.body.appendChild(modal);
 
   iframe.contentDocument.open();
   iframe.contentDocument.write(html2);
   iframe.contentDocument.close();
+}
+
+function sendGmailFromPreview(){
+  const prop = window._currentPropPreview;
+  if(!prop || !prop.pubUrl){
+    alert('Primero debes publicar la propuesta para poder enviarla por correo.');
+    return;
+  }
+  sendGmail(prop, prop.pubUrl);
 }
 
 function printProposal(){
@@ -2015,7 +2049,9 @@ function checkStorageWarning(){
 function openPropPDF(id){
   const html2 = getPropHtml(id);
   if(!html2){ alert('El HTML de esta propuesta no está guardado en este navegador.'); return; }
-  showProposalPreview(html2);
+  const props = getProposals();
+  const prop = props.find(p=>p.id===id);
+  showProposalPreview(html2, prop);
 }
 
 // ══════════════════════════════════════════════
