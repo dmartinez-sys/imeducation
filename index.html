@@ -507,7 +507,7 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
           <div class="field"><label>Forma de pago</label>
             <div class="rgroup" id="rg-pago">
               <div class="rbtn on" data-val="0" onclick="pick(this,'rg-pago');calcSim()">Fraccionado</div>
-              <div class="rbtn gold" data-val="10" onclick="pick(this,'rg-pago');calcSim()">Pago único — 10% adicional</div>
+              <div class="rbtn gold" data-val="5" onclick="pick(this,'rg-pago');calcSim()">Pago único — 5% adicional</div>
             </div>
           </div>
         </div>
@@ -616,7 +616,7 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
                 <label>Forma de pago</label>
                 <div class="rgroup" id="rg-ppago">
                   <div class="rbtn on" data-val="0" onclick="pick(this,'rg-ppago');updatePV()">Fraccionado</div>
-                  <div class="rbtn gold" data-val="10" onclick="pick(this,'rg-ppago');updatePV()">Pago único — 10% adicional</div>
+                  <div class="rbtn gold" data-val="5" onclick="pick(this,'rg-ppago');updatePV()">Pago único — 5% adicional</div>
                 </div>
               </div>
             </div>
@@ -1039,16 +1039,17 @@ function calcSim(){
   if(!sel){res.innerHTML='<span style="color:var(--muted)">Selecciona un programa</span>';return;}
   const p=PROGRAMAS.find(x=>x.id===parseInt(sel));
   const mod=getVal('rg-mod'), desc=parseInt(getVal('rg-desc')), pago=parseInt(getVal('rg-pago'));
-  const base=getPrice(p,mod), conDesc=Math.round(base*(1-desc/100)), final=pago?Math.round(conDesc*0.9):conDesc, ahorro=base-final;
+  const base=getPrice(p,mod), conDesc=Math.round(base*(1-desc/100)), final=pago?Math.round(conDesc*0.95):conDesc, ahorro=base-final;
   document.getElementById('sim-cta').style.display='block';
   // Financing calcs for simulator
   const simCuotasMap = {master:p.meses>=12?12:6, diploma:3, micro:3, grado:24, fp:12};
   const simCuotas = simCuotasMap[p.tipo]||12;
   const simMatricula = Math.round(final*0.25);
   const simCuotaMensual = Math.round((final-simMatricula)/simCuotas);
-  const simBcas12 = Math.round(final*1.072/12);
-  const simBcas24 = Math.round(final*1.144/24);
-  const simBcas36 = Math.round(final*1.216/36);
+  const simPagoUnicoBase = Math.round(final*0.95);
+  const simBcas12 = Math.round(simPagoUnicoBase*1.072/12);
+  const simBcas24 = Math.round(simPagoUnicoBase*1.144/24);
+  const simBcas36 = Math.round(simPagoUnicoBase*1.216/36);
   const simPagoUnico = Math.round(final*0.95);
   res.innerHTML=`<div class="res-cols">
     <div class="rc"><div class="rc-lbl">Precio base</div><div class="rc-val" style="color:var(--muted);text-decoration:line-through;font-size:1.1rem">${fmt(base)}</div><div class="rc-sub">${mod}</div></div>
@@ -1068,12 +1069,12 @@ function calcSim(){
       <div style="padding:0.7rem 1rem;border-right:1px solid var(--border);text-align:center;">
         <div style="font-size:0.6rem;color:var(--muted);margin-bottom:0.3rem;text-transform:uppercase">BCAS 12 meses</div>
         <div style="font-size:0.82rem;font-weight:700;">${fmt(simBcas12)}/mes</div>
-        <div style="font-size:0.6rem;color:var(--muted);margin-top:0.2rem">Total ${fmt(Math.round(final*1.072))} · +7,2%</div>
+        <div style="font-size:0.6rem;color:var(--muted);margin-top:0.2rem">Sin intereses para el alumno</div>
       </div>
       <div style="padding:0.7rem 1rem;text-align:center;">
         <div style="font-size:0.6rem;color:var(--muted);margin-bottom:0.3rem;text-transform:uppercase">BCAS 24 / 36 meses</div>
         <div style="font-size:0.82rem;font-weight:700;">${fmt(simBcas24)} / ${fmt(simBcas36)}/mes</div>
-        <div style="font-size:0.6rem;color:var(--muted);margin-top:0.2rem">+14,4% / +21,6% interés</div>
+        <div style="font-size:0.6rem;color:var(--muted);margin-top:0.2rem">El alumno asume los intereses</div>
       </div>
     </div>
   </div>`;
@@ -1179,7 +1180,7 @@ function updatePV(){
   }
   const p=PROGRAMAS.find(x=>x.id===parseInt(sel));
   const mod=getVal('rg-pmod'), desc=parseInt(getVal('rg-pdesc')), pago=parseInt(getVal('rg-ppago'));
-  const base=getPrice(p,mod), conDesc=Math.round(base*(1-desc/100)), final=pago?Math.round(conDesc*0.9):conDesc, ahorro=base-final;
+  const base=getPrice(p,mod), conDesc=Math.round(base*(1-desc/100)), final=pago?Math.round(conDesc*0.95):conDesc, ahorro=base-final;
   document.getElementById('pv-base').textContent=fmt(base);
   document.getElementById('pv-mod').textContent=mod;
   document.getElementById('pv-desc').textContent=desc+'%';
@@ -1204,7 +1205,7 @@ function generateProposal(){
   const sel=document.getElementById('p-prog').value;
   const p=PROGRAMAS.find(x=>x.id===parseInt(sel));
   const mod=getVal('rg-pmod'), desc=parseInt(getVal('rg-pdesc')), pago=parseInt(getVal('rg-ppago'));
-  const base=getPrice(p,mod), conDesc=Math.round(base*(1-desc/100)), final=pago?Math.round(conDesc*0.9):conDesc, ahorro=base-final;
+  const base=getPrice(p,mod), conDesc=Math.round(base*(1-desc/100)), final=pago?Math.round(conDesc*0.95):conDesc, ahorro=base-final;
   const today=new Date(), valido=new Date(today);
   valido.setDate(valido.getDate()+7);
   const t=TITULOS[p.tipo];
@@ -1263,11 +1264,12 @@ function generateProposal(){
   const resto = final - matricula;
   const cuotaMensual = Math.round(resto / cuotas);
   // BCAS with interest rates
-  const bcas12Total = Math.round(final * 1.072);
+  const pagoUnicoBase = Math.round(final * 0.95); // base BCAS = precio pago único
+  const bcas12Total = Math.round(pagoUnicoBase * 1.072);
   const bcas12Cuota = Math.round(bcas12Total / 12);
-  const bcas24Total = Math.round(final * 1.144);
+  const bcas24Total = Math.round(pagoUnicoBase * 1.144);
   const bcas24Cuota = Math.round(bcas24Total / 24);
-  const bcas36Total = Math.round(final * 1.216);
+  const bcas36Total = Math.round(pagoUnicoBase * 1.216);
   const bcas36Cuota = Math.round(bcas36Total / 36);
 
   // QR data embedded in URL format
@@ -1401,7 +1403,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
 .p2-content{padding:7mm 14mm;}
 .p2-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5mm;padding-bottom:3.5mm;border-bottom:0.4mm solid #eee;}
 .p2-logo{display:flex;align-items:center;gap:2.5mm;}
-.p2-logo img{height:12mm;width:auto;}
+.p2-logo img{height:14mm;width:auto;max-width:55mm;}
 .p2-ref-info{font-size:1.8mm;color:#8B8FA8;text-align:right;}
 .p2-ref-info span{color:#00C4A0;font-weight:600;}
 
@@ -1651,9 +1653,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
       <tbody>
         <tr><td>Pago único</td><td>Abono íntegro antes del inicio · 5% descuento adicional</td><td class="fin-hl">${fmt(Math.round(final*0.95))}</td></tr>
         <tr><td>Fraccionado IM</td><td>Matrícula 25% + ${cuotas} cuotas sin intereses</td><td>Matrícula <strong>${fmt(matricula)}</strong> + ${cuotas}× <strong>${fmt(cuotaMensual)}</strong>/mes</td></tr>
-        <tr><td>BCAS 12 meses</td><td>Financiación externa · interés total 7,2% · importe total ${fmt(bcas12Total)}</td><td><strong>${fmt(bcas12Cuota)}</strong>/mes</td></tr>
-        <tr><td>BCAS 24 meses</td><td>Financiación externa · interés total 14,4% · importe total ${fmt(bcas24Total)}</td><td><strong>${fmt(bcas24Cuota)}</strong>/mes</td></tr>
-        <tr><td>BCAS 36 meses</td><td>Financiación externa · interés total 21,6% · importe total ${fmt(bcas36Total)}</td><td><strong>${fmt(bcas36Cuota)}</strong>/mes</td></tr>
+        <tr><td>BCAS 12 meses</td><td>Financiación externa sin intereses para el alumno</td><td><strong>${fmt(bcas12Cuota)}</strong>/mes</td></tr>
+        <tr><td>BCAS 24 meses</td><td>Financiación externa · el alumno asume los intereses</td><td><strong>${fmt(bcas24Cuota)}</strong>/mes</td></tr>
+        <tr><td>BCAS 36 meses</td><td>Financiación externa · el alumno asume los intereses</td><td><strong>${fmt(bcas36Cuota)}</strong>/mes</td></tr>
       </tbody>
     </table>
 
