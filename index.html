@@ -397,6 +397,22 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 .faq-a{padding:0 0.9rem 0.65rem;font-size:0.75rem;color:var(--muted);line-height:1.6;display:none;}
 .faq-a.open{display:block;}
 
+/* ── EMAIL EDITOR MODAL ── */
+.email-editor-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9997;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.email-editor-box{background:var(--card);border:1px solid var(--border);border-radius:12px;width:100%;max-width:580px;overflow:hidden;}
+.email-editor-header{background:#111;padding:1rem 1.3rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.email-editor-header h3{font-size:0.88rem;font-weight:700;}
+.email-editor-body{padding:1.2rem;}
+.email-editor-field{margin-bottom:0.8rem;}
+.email-editor-field label{font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;display:block;margin-bottom:0.3rem;}
+.email-editor-field input,.email-editor-field textarea{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:0.55rem 0.8rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;outline:none;resize:vertical;}
+.email-editor-field input:focus,.email-editor-field textarea:focus{border-color:var(--teal);}
+.email-editor-btns{display:flex;gap:0.7rem;justify-content:flex-end;padding:0.8rem 1.2rem;border-top:1px solid var(--border);background:#111;}
+.email-send-btn{padding:0.55rem 1.4rem;background:var(--teal);border:none;border-radius:6px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;}
+.email-send-btn:hover{background:#00ddb5;}
+.email-cancel-btn{padding:0.55rem 1rem;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;cursor:pointer;}
+.email-cancel-btn:hover{border-color:var(--text);color:var(--text);}
+
 /* ── NOTES ── */
 .note-row{padding:0.4rem 1rem 0.6rem;border-bottom:1px solid var(--border);}
 .note-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:0.35rem 0.6rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.72rem;outline:none;resize:none;}
@@ -543,7 +559,7 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         </div>
       </div>
       <div style="font-size:0.62rem;color:var(--teal);margin-top:0.1rem;margin-bottom:0.5rem;" id="sb-uemail"></div>
-      <button class="sb-logout" onclick="showMotivPopupForce()" style="margin-bottom:0.4rem;border-color:rgba(0,196,160,0.3);color:var(--teal);">✨ Frase del día</button>
+      <button class="sb-logout" onclick="showMotivPopupForce()" style="margin-bottom:0.4rem;border-color:rgba(0,196,160,0.3);color:var(--teal);">Frase del día</button>
       <button class="sb-logout" onclick="doLogout()">Cerrar sesión</button>
     </div>
   </aside>
@@ -820,11 +836,15 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 <div id="profile-overlay" style="display:none" class="profile-overlay" onclick="if(event.target===this)closeProfile()">
   <div class="profile-box">
     <div class="profile-header">
-      <div class="profile-avatar-big" id="profile-avatar-big" onclick="cycleAvatarColor()">?</div>
+      <div style="position:relative;cursor:pointer;" onclick="document.getElementById('avatar-upload').click()">
+        <div class="profile-avatar-big" id="profile-avatar-big">?</div>
+        <div style="position:absolute;bottom:0;right:0;width:18px;height:18px;background:var(--teal);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.6rem;color:#000;font-weight:700;">+</div>
+      </div>
+      <input type="file" id="avatar-upload" accept="image/*" style="display:none" onchange="handleAvatarUpload(event)">
       <div class="profile-header-info">
         <div class="name" id="profile-header-name">—</div>
         <div class="role" id="profile-header-role">—</div>
-        <div style="font-size:0.65rem;color:var(--muted);margin-top:0.3rem;">Toca el avatar para cambiar color</div>
+        <div style="font-size:0.65rem;color:var(--muted);margin-top:0.3rem;">Toca el avatar para subir foto o cambiar color</div>
       </div>
     </div>
     <div class="profile-stats" id="profile-stats"></div>
@@ -843,11 +863,40 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
   </div>
 </div>
 
+<!-- EMAIL EDITOR MODAL -->
+<div id="email-editor-overlay" style="display:none" class="email-editor-overlay" onclick="if(event.target===this)closeEmailEditor()">
+  <div class="email-editor-box">
+    <div class="email-editor-header">
+      <h3>Editar y enviar correo al alumno</h3>
+      <button onclick="closeEmailEditor()" style="background:transparent;border:none;color:var(--muted);font-size:1.1rem;cursor:pointer;">✕</button>
+    </div>
+    <div class="email-editor-body">
+      <div class="email-editor-field">
+        <label>Para</label>
+        <input type="email" id="ee-to" readonly style="opacity:0.7;">
+      </div>
+      <div class="email-editor-field">
+        <label>Asunto</label>
+        <input type="text" id="ee-subject">
+      </div>
+      <div class="email-editor-field">
+        <label>Mensaje</label>
+        <textarea id="ee-body" rows="12"></textarea>
+      </div>
+      <div style="font-size:0.68rem;color:var(--muted);margin-top:0.3rem;">Se enviará desde <strong style="color:var(--teal)">propuestas@im.education</strong>. Las respuestas llegarán a tu email corporativo.</div>
+    </div>
+    <div class="email-editor-btns">
+      <button class="email-cancel-btn" onclick="closeEmailEditor()">Cancelar</button>
+      <button class="email-send-btn" onclick="sendEmailFromEditor()">Enviar correo</button>
+    </div>
+  </div>
+</div>
+
 <!-- HELP MODAL -->
 <div id="help-overlay" style="display:none" class="help-overlay" onclick="if(event.target===this)closeHelp()">
   <div class="help-box">
     <div class="help-header">
-      <h2>📚 Centro de ayuda — IM Education</h2>
+      <h2>Centro de ayuda — IM Education</h2>
       <button class="help-close" onclick="closeHelp()">✕</button>
     </div>
     <div class="help-tabs">
@@ -1992,7 +2041,7 @@ function updatePreviewBarAfterSave(prop){
   bar.innerHTML = `
     <span style="font-size:0.78rem;color:#8B8FA8;font-weight:500;">Propuesta guardada · ${prop.ref}</span>
     <div style="margin-left:auto;display:flex;gap:0.6rem;align-items:center;">
-      <button onclick="publishFromPreview()" style="padding:0.42rem 1rem;background:transparent;border:1px solid #2A2A2A;border-radius:5px;color:#8B8FA8;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;cursor:pointer;font-weight:600;" onmouseover="this.style.borderColor='#00C4A0';this.style.color='#00C4A0'" onmouseout="this.style.borderColor='#2A2A2A';this.style.color='#8B8FA8'">🔗 Publicar y compartir</button>
+      <button onclick="publishFromPreview()" style="padding:0.42rem 1rem;background:transparent;border:1px solid #2A2A2A;border-radius:5px;color:#8B8FA8;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;cursor:pointer;font-weight:600;" onmouseover="this.style.borderColor='#00C4A0';this.style.color='#00C4A0'" onmouseout="this.style.borderColor='#2A2A2A';this.style.color='#8B8FA8'">Publicar y compartir</button>
       <button onclick="printProposal()" style="padding:0.42rem 1.1rem;background:#00C4A0;border:none;border-radius:5px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;font-weight:700;cursor:pointer;">Imprimir / Guardar PDF</button>
       <button onclick="document.getElementById('proposal-modal').remove()" style="padding:0.42rem 0.9rem;background:transparent;border:1px solid #2A2A2A;border-radius:5px;color:#8B8FA8;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;cursor:pointer;">Cerrar</button>
     </div>`;
@@ -2025,16 +2074,16 @@ function showProposalPreview(html2, propData, isPending){
   if(isPending){
     // Pending mode: show Create+Publish or Discard
     bar.innerHTML = `
-      <span style="font-size:0.78rem;color:#F5C842;font-weight:600;">⚡ Vista previa — no guardada aún</span>
+      <span style="font-size:0.78rem;color:#F5C842;font-weight:600;">Vista previa — no guardada aún</span>
       <div style="margin-left:auto;display:flex;gap:0.6rem;align-items:center;">
-        <button onclick="confirmAndPublish()" style="padding:0.42rem 1.2rem;background:#00C4A0;border:none;border-radius:5px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;font-weight:800;cursor:pointer;">✓ Crear propuesta</button>
+        <button onclick="confirmAndPublish()" style="padding:0.42rem 1.2rem;background:#00C4A0;border:none;border-radius:5px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;font-weight:800;cursor:pointer;">Crear propuesta</button>
         <button onclick="printProposal()" style="padding:0.42rem 1rem;background:transparent;border:1px solid #2A2A2A;border-radius:5px;color:#8B8FA8;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;cursor:pointer;" onmouseover="this.style.borderColor='#555';this.style.color='#ccc'" onmouseout="this.style.borderColor='#2A2A2A';this.style.color='#8B8FA8'">Imprimir / Guardar PDF</button>
         <button onclick="document.getElementById('proposal-modal').remove()" style="padding:0.42rem 0.9rem;background:transparent;border:1px solid #2A2A2A;border-radius:5px;color:#8B8FA8;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;cursor:pointer;">Descartar</button>
       </div>`;
   } else {
     // Saved mode: show email + print + close
     const emailBtn = propData && propData.email ?
-      `<button onclick="sendGmailFromPreview()" style="padding:0.42rem 1rem;background:transparent;border:1px solid #2A2A2A;border-radius:5px;color:#8B8FA8;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;cursor:pointer;font-weight:600;" onmouseover="this.style.borderColor='#00C4A0';this.style.color='#00C4A0'" onmouseout="this.style.borderColor='#2A2A2A';this.style.color='#8B8FA8'">✉ Enviar correo</button>` : '';
+      `<button onclick="sendGmailFromPreview()" style="padding:0.42rem 1rem;background:transparent;border:1px solid #2A2A2A;border-radius:5px;color:#8B8FA8;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;cursor:pointer;font-weight:600;" onmouseover="this.style.borderColor='#00C4A0';this.style.color='#00C4A0'" onmouseout="this.style.borderColor='#2A2A2A';this.style.color='#8B8FA8'">Enviar correo</button>` : '';
     bar.innerHTML = `
       <span style="font-size:0.78rem;color:#8B8FA8;font-weight:500;">Vista previa de la propuesta</span>
       <div style="margin-left:auto;display:flex;gap:0.6rem;align-items:center;">
@@ -2071,7 +2120,7 @@ function sendGmailFromPreview(){
     showToast('Propuesta no publicada','Primero pulsa \'Publicar y compartir\' para generar el enlace.','warning');
     return;
   }
-  sendGmail(prop, prop.pubUrl);
+  openEmailEditor(prop, prop.pubUrl);
 }
 
 function printProposal(){
@@ -2301,7 +2350,7 @@ function renderHistory(){
         </div>
       </td></tr>`:'<tr style="display:none"><td colspan="9"><div class="share-bar" id="share-bar-${prop.id}" style="display:none;"><span class="share-url"></span></div></td></tr>'}
       <tr><td colspan="9" class="note-row">
-        <textarea class="note-input" id="note-${prop.id}" rows="1" placeholder="📝 Añadir nota privada..." onfocus="this.rows=2" onblur="this.rows=1">${prop.nota||''}</textarea>
+        <textarea class="note-input" id="note-${prop.id}" rows="1" placeholder="Añadir nota privada..." onfocus="this.rows=2" onblur="this.rows=1">${prop.nota||''}</textarea>
         <button class="note-save-btn" onclick="saveNote(${prop.id})">Guardar nota</button>
       </td></tr>`;
     }).join('')}
@@ -2691,11 +2740,11 @@ function renderStats(){
 // ══════════════════════════════════════════════
 function showToast(title, msg, type='success', duration=4000){
   const container = document.getElementById('toast-container');
-  const icons = {success:'✅', error:'❌', warning:'⚠️', info:'ℹ️'};
+  const icons = {success:'·', error:'·', warning:'·', info:'·'};
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
   toast.innerHTML = `
-    <div class="toast-icon">${icons[type]||'ℹ️'}</div>
+    <div class="toast-icon" style="font-size:0.5rem;margin-top:0.4rem;">${icons[type]||'·'}</div>
     <div class="toast-body">
       <div class="toast-title">${title}</div>
       ${msg?`<div class="toast-msg">${msg}</div>`:''}
@@ -2914,10 +2963,22 @@ function getInitials(name){
   return (parts[0][0]+(parts[1]?parts[1][0]:'')).toUpperCase();
 }
 function updateSidebarAvatar(){
-  const color = getAvatarColor(currentUser.user) || AVATAR_COLORS[0];
-  const initials = getInitials(currentUser.name||currentUser.user);
   const el = document.getElementById('sb-avatar');
-  if(el){ el.style.background=color; el.textContent=initials; }
+  if(!el) return;
+  const photo = getAvatarPhoto(currentUser.user);
+  if(photo){
+    el.style.backgroundImage=`url(${photo})`;
+    el.style.backgroundSize='cover';
+    el.style.backgroundPosition='center';
+    el.textContent='';
+    el.style.background='';
+  } else {
+    el.style.backgroundImage='';
+    const color = getAvatarColor(currentUser.user) || AVATAR_COLORS[0];
+    const initials = getInitials(currentUser.name||currentUser.user);
+    el.style.background=color;
+    el.textContent=initials;
+  }
 }
 
 // ══════════════════════════════════════════════
@@ -2970,6 +3031,30 @@ function selectAvatarColor(color, el){
   el.classList.add('selected');
   document.getElementById('profile-avatar-big').style.background = color;
   _profileColorIdx = AVATAR_COLORS.indexOf(color);
+}
+
+function handleAvatarUpload(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const dataUrl = e.target.result;
+    // Save as avatar
+    localStorage.setItem('im_avatar_photo_'+currentUser.user, dataUrl);
+    // Update displays
+    const bigEl = document.getElementById('profile-avatar-big');
+    bigEl.style.backgroundImage = `url(${dataUrl})`;
+    bigEl.style.backgroundSize = 'cover';
+    bigEl.style.backgroundPosition = 'center';
+    bigEl.textContent = '';
+    updateSidebarAvatar();
+    showToast('Foto actualizada','Tu avatar se ha actualizado correctamente.','success');
+  };
+  reader.readAsDataURL(file);
+}
+
+function getAvatarPhoto(user){
+  return localStorage.getItem('im_avatar_photo_'+user)||null;
 }
 
 function cycleAvatarColor(){
@@ -3026,23 +3111,23 @@ function closeProfile(){
 const HELP_CONTENT = {
   guia: `
     <div class="help-section">
-      <h3>📋 Catálogo</h3>
+      <h3>Catálogo</h3>
       <div class="help-step"><div class="help-num">1</div><div class="help-step-text">Navega por todos los programas. Usa los <strong>filtros</strong> por tipo y duración para encontrar el programa adecuado.</div></div>
       <div class="help-step"><div class="help-num">2</div><div class="help-step-text">Pulsa <strong>"Crear propuesta"</strong> en cualquier tarjeta para ir directamente al generador con ese programa seleccionado.</div></div>
     </div>
     <div class="help-section">
-      <h3>🧮 Simulador</h3>
+      <h3>Simulador</h3>
       <div class="help-step"><div class="help-num">1</div><div class="help-step-text">Selecciona programa, modalidad y descuentos para calcular el precio final al instante.</div></div>
       <div class="help-step"><div class="help-num">2</div><div class="help-step-text">Pulsa <strong>"Crear propuesta con estos datos"</strong> para trasladar todo al generador automáticamente.</div></div>
     </div>
     <div class="help-section">
-      <h3>📄 Propuestas</h3>
+      <h3>Propuestas</h3>
       <div class="help-step"><div class="help-num">1</div><div class="help-step-text">Rellena los datos del alumno, selecciona el programa y las condiciones.</div></div>
       <div class="help-step"><div class="help-num">2</div><div class="help-step-text">Pulsa <strong>"Ver propuesta"</strong> para previsualizar sin guardar nada todavía.</div></div>
       <div class="help-step"><div class="help-num">3</div><div class="help-step-text">Desde la vista previa pulsa <strong>"Crear propuesta"</strong> para guardarla. Luego puedes publicarla y enviarla por correo.</div></div>
     </div>
     <div class="help-section">
-      <h3>📊 Estadísticas</h3>
+      <h3>Estadísticas</h3>
       <div class="help-step"><div class="help-num">1</div><div class="help-step-text">Consulta tus KPIs, evolución mensual y tasa de conversión. El <strong>administrador</strong> ve el rendimiento de todo el equipo.</div></div>
     </div>`,
   faq: `
@@ -3054,12 +3139,12 @@ const HELP_CONTENT = {
     <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>¿Cómo actualizo el catálogo de programas?</span><span>+</span></div><div class="faq-a">Solo el administrador puede actualizarlo desde la sección Usuarios → "Subir Excel actualizado". El catálogo se actualiza para todos los usuarios.</div></div>`,
   tips: `
     <div class="help-section">
-      <h3>💡 Consejos para cerrar más</h3>
-      <div class="help-step"><div class="help-num">✓</div><div class="help-step-text"><strong>Personaliza el saludo</strong> — Usa el nombre real del alumno. La propuesta lo incluye automáticamente.</div></div>
-      <div class="help-step"><div class="help-num">✓</div><div class="help-step-text"><strong>Envía el mismo día</strong> — Las propuestas enviadas en menos de 24h tienen mayor tasa de conversión.</div></div>
-      <div class="help-step"><div class="help-num">✓</div><div class="help-step-text"><strong>Usa las notas</strong> — Anota el contexto del alumno (empresa, motivación) en las notas de la propuesta para recordarlo en el seguimiento.</div></div>
-      <div class="help-step"><div class="help-num">✓</div><div class="help-step-text"><strong>Sigue las vencidas</strong> — Una propuesta vencida no es un "no". Llama y ofrece regenerarla con mejores condiciones.</div></div>
-      <div class="help-step"><div class="help-num">✓</div><div class="help-step-text"><strong>Mira tus estadísticas</strong> — Revisa tu tasa de conversión cada semana para identificar en qué punto del proceso pierdes alumnos.</div></div>
+      <h3>Consejos para cerrar más</h3>
+      <div class="help-step"><div class="help-num">—</div><div class="help-step-text"><strong>Personaliza el saludo</strong> — Usa el nombre real del alumno. La propuesta lo incluye automáticamente.</div></div>
+      <div class="help-step"><div class="help-num">—</div><div class="help-step-text"><strong>Envía el mismo día</strong> — Las propuestas enviadas en menos de 24h tienen mayor tasa de conversión.</div></div>
+      <div class="help-step"><div class="help-num">—</div><div class="help-step-text"><strong>Usa las notas</strong> — Anota el contexto del alumno (empresa, motivación) en las notas de la propuesta para recordarlo en el seguimiento.</div></div>
+      <div class="help-step"><div class="help-num">—</div><div class="help-step-text"><strong>Sigue las vencidas</strong> — Una propuesta vencida no es un "no". Llama y ofrece regenerarla con mejores condiciones.</div></div>
+      <div class="help-step"><div class="help-num">—</div><div class="help-step-text"><strong>Mira tus estadísticas</strong> — Revisa tu tasa de conversión cada semana para identificar en qué punto del proceso pierdes alumnos.</div></div>
     </div>`
 };
 
@@ -3081,6 +3166,115 @@ function toggleFaq(el){
   document.querySelectorAll('.faq-a').forEach(x=>x.classList.remove('open'));
   document.querySelectorAll('.faq-q span:last-child').forEach(x=>x.textContent='+');
   if(!isOpen){ a.classList.add('open'); el.querySelector('span:last-child').textContent='−'; }
+}
+
+// ══════════════════════════════════════════════
+// EMAIL EDITOR
+// ══════════════════════════════════════════════
+let _emailEditorCallback = null;
+
+function openEmailEditor(prop, url){
+  const comercialName = currentUser.name||currentUser.user;
+  const comercialEmail = currentUser.email||'admisiones@im.education';
+  const subject = `Tu propuesta formativa — IM Education`;
+  const body = `Estimado/a ${prop.alumno},
+
+Es un placer compartirte tu propuesta formativa personalizada de IM Education.
+
+Puedes consultarla en el siguiente enlace:
+${url}
+
+Recuerda que esta oferta es válida hasta el ${new Date(prop.vencimiento).toLocaleDateString('es-ES')}.
+
+Quedo a tu disposición para cualquier consulta.
+
+Un cordial saludo,
+${comercialName}
+IM Education
+www.im.education
+BCN 931 593 373 · MAD 911 593 433`;
+
+  document.getElementById('ee-to').value = prop.email;
+  document.getElementById('ee-subject').value = subject;
+  document.getElementById('ee-body').value = body;
+  document.getElementById('email-editor-overlay').style.display='flex';
+
+  _emailEditorCallback = {prop, url, comercialName, comercialEmail};
+}
+
+function buildHtmlEmail(bodyText, prop, url, comercialName){
+  const lines = bodyText.split('\n').map(l=>l.trim()?`<p style="margin:0 0 8px;color:#333;font-size:14px;line-height:1.6;">${l}</p>`:'<br>').join('');
+  return `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f5f5f5;font-family:'Helvetica Neue',Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f5;padding:30px 0;">
+<tr><td align="center">
+<table width="580" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,0.08);">
+  <tr><td style="background:#0D0D0D;padding:0;height:4px;"><div style="height:4px;background:#00C4A0;"></div></td></tr>
+  <tr><td style="padding:32px 40px 24px;">
+    <div style="display:flex;align-items:center;margin-bottom:24px;">
+      <div style="width:36px;height:36px;border:2px solid #fff;border-radius:6px;background:#0D0D0D;display:inline-flex;align-items:center;justify-content:center;margin-right:10px;">
+        <span style="color:#fff;font-weight:900;font-size:14px;">IM</span>
+      </div>
+      <div>
+        <div style="font-size:16px;font-weight:700;color:#0D0D0D;">Education</div>
+        <div style="font-size:10px;color:#00C4A0;text-transform:uppercase;letter-spacing:1px;">Digital Business School</div>
+      </div>
+    </div>
+    <div style="height:1px;background:#eee;margin-bottom:24px;"></div>
+    ${lines}
+    <div style="margin:24px 0;text-align:center;">
+      <a href="${url}" style="display:inline-block;padding:14px 32px;background:#00C4A0;color:#000;text-decoration:none;border-radius:6px;font-weight:700;font-size:14px;letter-spacing:0.5px;">Ver mi propuesta formativa</a>
+    </div>
+    <div style="height:1px;background:#eee;margin-bottom:20px;"></div>
+    <div style="font-size:11px;color:#999;line-height:1.6;">
+      <strong style="color:#333;">${comercialName}</strong> — IM Education<br>
+      www.im.education · BCN 931 593 373 · MAD 911 593 433<br>
+      Carrer de Can Ràbia, 3-5, Planta 4, 08017 Barcelona
+    </div>
+  </td></tr>
+  <tr><td style="background:#0D0D0D;padding:12px 40px;text-align:center;">
+    <p style="margin:0;font-size:11px;color:#666;">Este correo ha sido enviado por IM Education. Propuesta válida hasta el ${new Date(prop.vencimiento).toLocaleDateString('es-ES')}.</p>
+  </td></tr>
+  <tr><td style="height:3px;background:#00C4A0;"></td></tr>
+</table>
+</td></tr></table>
+</body></html>`;
+}
+
+function closeEmailEditor(){
+  document.getElementById('email-editor-overlay').style.display='none';
+  _emailEditorCallback = null;
+}
+
+async function sendEmailFromEditor(){
+  const d = _emailEditorCallback;
+  if(!d) return;
+  const to = document.getElementById('ee-to').value;
+  const subject = document.getElementById('ee-subject').value;
+  const body = document.getElementById('ee-body').value;
+
+  const sendBtn = document.querySelector('.email-send-btn');
+  sendBtn.disabled=true; sendBtn.textContent='Enviando...';
+
+  try{
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method:'POST', headers:{'Content-Type':'text/plain'},
+      body: JSON.stringify({action:'sendEmail', to, subject, body,
+        alumno:d.prop.alumno, ref:d.prop.ref,
+        replyTo:d.comercialEmail,
+        comercialName:d.comercialName,
+        htmlEmail: buildHtmlEmail(body, d.prop, d.url, d.comercialName)})
+    });
+    const data = await res.json();
+    if(data.sent){
+      closeEmailEditor();
+      showToast('Correo enviado correctamente',`La propuesta ha sido enviada a ${to}.`,'success');
+    } else {
+      showToast('Error al enviar',data.error||'Error desconocido','error');
+    }
+  }catch(e){
+    showToast('Error de conexión',e.message,'error');
+  }
+  sendBtn.disabled=false; sendBtn.textContent='Enviar correo';
 }
 
 // ══════════════════════════════════════════════
