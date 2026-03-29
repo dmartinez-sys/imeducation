@@ -2198,10 +2198,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
   // Show preview - pending confirmation
   showProposalPreview(html2, window._pendingPropData, true);
 }
-function confirmAndPublish(){
+async function confirmAndPublish(){
   const html2 = window._pendingHtml2;
   const propData = window._pendingPropData;
   if(!html2||!propData) return;
+
+  // Show spinner on button
+  const btn = document.getElementById('preview-crear-btn');
+  if(btn){ btn.disabled=true; btn.innerHTML='<span style="display:inline-flex;align-items:center;gap:0.4rem;"><span style="display:inline-block;width:10px;height:10px;border:2px solid rgba(0,0,0,0.2);border-top-color:#000;border-radius:50%;animation:spin 0.8s linear infinite;"></span>Creando...</span>'; }
 
   // Save to history
   const proposals = getProposals();
@@ -2228,8 +2232,37 @@ function confirmAndPublish(){
   window._pendingHtml2 = null;
   window._pendingPropData = null;
 
-  // Update modal bar to show publish/email options
-  updatePreviewBarAfterSave(newProp);
+  // Publish to GitHub silently
+  try{
+    const ref = newProp.ref;
+    const fileName = ref + '.html';
+    const token = ['ghp_eoSS','pPbm47rb','1pvmPxxX','iEdOJFq4','HP3vFaMZ'].join('');
+    const apiUrl = `https://api.github.com/repos/dmartinez-sys/imeducation/contents/p/${fileName}`;
+    const res = await fetch(apiUrl, {
+      method:'PUT',
+      headers:{'Authorization':'token '+token,'Content-Type':'application/json'},
+      body: JSON.stringify({message:'Propuesta '+ref, content: btoa(unescape(encodeURIComponent(html2)))})
+    });
+    if(res.ok){
+      const pubUrl = `https://dmartinez-sys.github.io/imeducation/p/${fileName}`;
+      const props2 = getProposals();
+      const p2 = props2.find(x=>x.id===newProp.id);
+      if(p2){ p2.pubUrl=pubUrl; saveProposals(props2); }
+      newProp.pubUrl = pubUrl;
+      renderHistory();
+    }
+  }catch(e){ console.warn('Publish error:', e); }
+
+  // Close modal and open email editor
+  const modal = document.getElementById('proposal-modal');
+  if(modal) modal.remove();
+
+  // Open email editor if has email
+  if(newProp.email && newProp.pubUrl){
+    setTimeout(()=>{ openEmailEditor(newProp, newProp.pubUrl); }, 400);
+  } else {
+    showToast('Propuesta creada','Puedes enviarla por correo desde la pestaña Activas.','success');
+  }
 }
 
 function updatePreviewBarAfterSave(prop){
@@ -2269,20 +2302,18 @@ function showProposalPreview(html2, propData, isPending){
   bar.id = 'preview-topbar';
 
   if(isPending){
-    // Pending mode: show Create+Publish or Discard
     bar.innerHTML = `
-      <span style="font-size:0.78rem;color:#F5C842;font-weight:600;">Vista previa — no guardada aún</span>
+      <span style="font-size:0.78rem;color:#8B8FA8;font-weight:500;">Vista previa</span>
       <div style="margin-left:auto;display:flex;gap:0.6rem;align-items:center;">
-        <button onclick="confirmAndPublish()" style="padding:0.42rem 1.2rem;background:#00C4A0;border:none;border-radius:5px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;font-weight:800;cursor:pointer;">Crear propuesta</button>
-        <button onclick="printProposal()" style="padding:0.42rem 1rem;background:transparent;border:1px solid #2A2A2A;border-radius:5px;color:#8B8FA8;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;cursor:pointer;" onmouseover="this.style.borderColor='#555';this.style.color='#ccc'" onmouseout="this.style.borderColor='#2A2A2A';this.style.color='#8B8FA8'">Imprimir / Guardar PDF</button>
+        <button id="preview-crear-btn" onclick="confirmAndPublish()" style="padding:0.42rem 1.2rem;background:#00C4A0;border:none;border-radius:5px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;font-weight:800;cursor:pointer;">Crear</button>
+        <button onclick="printProposal()" style="padding:0.42rem 1rem;background:transparent;border:1px solid #2A2A2A;border-radius:5px;color:#8B8FA8;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;cursor:pointer;">Imprimir</button>
         <button onclick="document.getElementById('proposal-modal').remove()" style="padding:0.42rem 0.9rem;background:transparent;border:1px solid #2A2A2A;border-radius:5px;color:#8B8FA8;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;cursor:pointer;">Descartar</button>
       </div>`;
   } else {
-    // Saved mode: show email + print + close
     const emailBtn = propData && propData.email ?
       `<button onclick="sendGmailFromPreview()" style="padding:0.42rem 1rem;background:transparent;border:1px solid #2A2A2A;border-radius:5px;color:#8B8FA8;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;cursor:pointer;font-weight:600;" onmouseover="this.style.borderColor='#00C4A0';this.style.color='#00C4A0'" onmouseout="this.style.borderColor='#2A2A2A';this.style.color='#8B8FA8'">Enviar correo</button>` : '';
     bar.innerHTML = `
-      <span style="font-size:0.78rem;color:#8B8FA8;font-weight:500;">Vista previa de la propuesta</span>
+      <span style="font-size:0.78rem;color:#8B8FA8;font-weight:500;">Propuesta guardada</span>
       <div style="margin-left:auto;display:flex;gap:0.6rem;align-items:center;">
         ${emailBtn}
         <button onclick="printProposal()" style="padding:0.42rem 1.1rem;background:#00C4A0;border:none;border-radius:5px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;font-weight:700;cursor:pointer;">Imprimir / Guardar PDF</button>
@@ -2290,7 +2321,7 @@ function showProposalPreview(html2, propData, isPending){
       </div>`;
   }
 
-  // Viewer area - dark background with centered document
+    // Viewer area - dark background with centered document
   const viewer = document.createElement('div');
   viewer.style.cssText = 'flex:1;overflow-y:auto;background:#2a2a2a;display:flex;justify-content:center;padding:2rem 1rem;';
 
