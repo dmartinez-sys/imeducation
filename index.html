@@ -346,6 +346,19 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 .excel-last{font-size:0.68rem;color:var(--muted);margin-top:0.5rem;}
 #excel-file-input{display:none;}
 
+.motiv-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease;backdrop-filter:blur(4px);}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.motiv-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2.5rem 2rem;max-width:420px;width:90%;text-align:center;position:relative;animation:slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1);}
+@keyframes slideUp{from{opacity:0;transform:translateY(30px) scale(0.95);}to{opacity:1;transform:translateY(0) scale(1);}}
+.motiv-emoji{font-size:2.5rem;margin-bottom:1rem;display:block;}
+.motiv-greeting{font-size:0.72rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin-bottom:0.5rem;}
+.motiv-name{font-size:1.5rem;font-weight:800;margin-bottom:1.2rem;color:var(--text);}
+.motiv-quote{font-size:0.95rem;color:var(--muted);line-height:1.7;font-style:italic;margin-bottom:1.5rem;padding:0 0.5rem;}
+.motiv-quote strong{color:var(--text);font-style:normal;}
+.motiv-bar{height:2px;background:linear-gradient(90deg,var(--teal),var(--gold));border-radius:99px;margin-bottom:1.5rem;}
+.motiv-btn{padding:0.65rem 2rem;background:var(--teal);border:none;border-radius:8px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:800;cursor:pointer;letter-spacing:0.05em;transition:all 0.15s;text-transform:uppercase;}
+.motiv-btn:hover{background:#00ddb5;transform:scale(1.03);}
+.motiv-date{position:absolute;top:1rem;right:1.2rem;font-size:0.62rem;color:var(--border);font-weight:500;}
 @media(max-width:768px){
   .sidebar{width:52px;}
   .sb-logo,.nav-item span:not(.nav-icon),.nav-lbl,.sb-user,.sb-counts{display:none;}
@@ -442,6 +455,7 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
       <div class="sb-user-name" id="sb-uname">—</div>
       <div class="sb-user-role" id="sb-urole">—</div>
       <div style="font-size:0.62rem;color:var(--teal);margin-top:0.2rem;" id="sb-uemail"></div>
+      <button class="sb-logout" onclick="showMotivPopupForce()" style="margin-bottom:0.4rem;border-color:rgba(0,196,160,0.3);color:var(--teal);">✨ Frase del día</button>
       <button class="sb-logout" onclick="doLogout()">Cerrar sesión</button>
     </div>
   </aside>
@@ -545,7 +559,8 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
       </div>
       <div class="prop-tabs">
         <div class="ptab on" onclick="showPropTab('generator',this)">Nueva propuesta</div>
-        <div class="ptab" onclick="showPropTab('history',this)">Histórico</div>
+        <div class="ptab" onclick="showPropTab('history',this)">Activas</div>
+        <div class="ptab" onclick="showPropTab('archive',this)" id="tab-archive">Archivo</div>
       </div>
 
       <!-- GENERATOR -->
@@ -639,9 +654,25 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         </div>
       </div>
 
-      <!-- HISTORY -->
+      <!-- HISTORY (Activas) -->
       <div id="ptab-history" style="display:none">
         <div id="hist-content"></div>
+      </div>
+
+      <!-- ARCHIVE -->
+      <div id="ptab-archive" style="display:none">
+        <div id="archive-filters" style="display:flex;gap:0.8rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center;">
+          <select id="arch-filter-estado" onchange="renderArchive()" style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:0.45rem 0.8rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;outline:none;">
+            <option value="">Todos los estados</option>
+            <option value="ganada">Ganadas</option>
+            <option value="perdida">Perdidas</option>
+            <option value="eliminada">Eliminadas</option>
+          </select>
+          <select id="arch-filter-comercial" onchange="renderArchive()" style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:0.45rem 0.8rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;outline:none;display:none;">
+            <option value="">Todos los comerciales</option>
+          </select>
+        </div>
+        <div id="archive-content"></div>
       </div>
     </div>
 
@@ -693,6 +724,19 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 
 <!-- PRINT VIEW -->
 <div id="print-view"></div>
+
+<!-- MOTIVATIONAL POPUP -->
+<div id="motiv-overlay" style="display:none;" class="motiv-overlay" onclick="closeMotiv(event)">
+  <div class="motiv-box" onclick="event.stopPropagation()">
+    <div class="motiv-date" id="motiv-date"></div>
+    <span class="motiv-emoji" id="motiv-emoji">🚀</span>
+    <div class="motiv-greeting">Buenos días,</div>
+    <div class="motiv-name" id="motiv-name">—</div>
+    <div class="motiv-bar"></div>
+    <div class="motiv-quote" id="motiv-quote">—</div>
+    <button class="motiv-btn" onclick="closeMotiv()">¡Vamos a por ello!</button>
+  </div>
+</div>
 
 <!-- EDIT USER MODAL -->
 <div id="edit-user-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9998;align-items:center;justify-content:center;">
@@ -847,6 +891,7 @@ function doLogin(){
   if(found.email) document.getElementById('sb-uemail').textContent = found.email;
   if(found.role==='admin') document.getElementById('nav-admin').style.display='flex';
   initApp();
+  setTimeout(showMotivPopup, 800);
 }
 
 function doLogout(){
@@ -1148,7 +1193,9 @@ function showPropTab(id,el){
   el.classList.add('on');
   document.getElementById('ptab-generator').style.display=id==='generator'?'block':'none';
   document.getElementById('ptab-history').style.display=id==='history'?'block':'none';
+  document.getElementById('ptab-archive').style.display=id==='archive'?'block':'none';
   if(id==='history') renderHistory();
+  if(id==='archive') renderArchive();
 }
 
 function onPProg(){
@@ -1329,12 +1376,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
 .sb-contact-val{font-size:2.2mm;color:#e8e8e8;font-weight:500;line-height:1.5;}
 
 /* Ref & Validity */
-.sb-ref-box{position:absolute;bottom:22mm;left:5mm;right:5mm;background:#1A1A1A;border:0.3mm solid #2A2A2A;border-radius:2mm;padding:3mm;}
-.sb-ref-lbl{font-size:1.6mm;color:#8B8FA8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1mm;}
+.sb-bottom{position:absolute;bottom:5mm;left:5mm;right:5mm;}
+.sb-ref-box{background:#1A1A1A;border:0.3mm solid #2A2A2A;border-radius:2mm;padding:3mm;margin-bottom:2mm;}
+.sb-ref-lbl{font-size:1.6mm;color:#8B8FA8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1mm;font-weight:600;}
 .sb-ref-val{font-size:2.8mm;color:#00C4A0;font-weight:700;letter-spacing:0.04em;}
-.sb-validity{position:absolute;bottom:8mm;left:5mm;right:5mm;}
-.sb-v-lbl{font-size:1.6mm;color:#8B8FA8;margin-bottom:0.5mm;}
-.sb-v-date{font-size:2.5mm;color:#F5C842;font-weight:700;}
+.sb-validity{background:#1A1A1A;border:0.3mm solid #2A2A2A;border-radius:2mm;padding:3mm;}
+.sb-v-lbl{font-size:1.6mm;color:#8B8FA8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1mm;font-weight:600;}
+.sb-v-date{font-size:2.8mm;color:#F5C842;font-weight:700;}
 .sb-v-sub{font-size:1.5mm;color:#555;margin-top:0.3mm;}
 
 /* ══ PAGE 1 MAIN ══ */
@@ -1403,7 +1451,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
 .p2-content{padding:7mm 14mm;}
 .p2-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5mm;padding-bottom:3.5mm;border-bottom:0.4mm solid #eee;}
 .p2-logo{display:flex;align-items:center;gap:2.5mm;}
-.p2-logo img{height:14mm;width:auto;max-width:55mm;}
+.p2-logo img{height:16mm;width:auto;max-width:60mm;filter:brightness(0);}
 .p2-ref-info{font-size:1.8mm;color:#8B8FA8;text-align:right;}
 .p2-ref-info span{color:#00C4A0;font-weight:600;}
 
@@ -1502,17 +1550,17 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
       </div>
     </div>
 
-    <!-- Ref -->
-    <div class="sb-ref-box">
-      <div class="sb-ref-lbl">Referencia propuesta</div>
-      <div class="sb-ref-val">${refNum}</div>
-    </div>
-
-    <!-- Validity -->
-    <div class="sb-validity">
-      <div class="sb-v-lbl">Oferta válida hasta</div>
-      <div class="sb-v-date">${fmtDate(valido.toISOString())}</div>
-      <div class="sb-v-sub">7 días naturales desde la emisión</div>
+    <!-- Ref + Validity -->
+    <div class="sb-bottom">
+      <div class="sb-ref-box">
+        <div class="sb-ref-lbl">Referencia propuesta</div>
+        <div class="sb-ref-val">${refNum}</div>
+      </div>
+      <div class="sb-validity">
+        <div class="sb-v-lbl">Oferta válida hasta</div>
+        <div class="sb-v-date">${fmtDate(valido.toISOString())}</div>
+        <div class="sb-v-sub">7 días naturales desde la emisión</div>
+      </div>
     </div>
   </div>
 
@@ -1525,7 +1573,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
       <div class="p1-header">
         <div class="p1-doc-label">Propuesta Formativa Personalizada</div>
         <div class="p1-date-block">
-          <div class="p1-date">Madrid, ${fmtDate(today.toISOString())}</div>
+          <div class="p1-date">Barcelona, ${fmtDate(today.toISOString())}</div>
           <div class="p1-ref">${refNum}</div>
         </div>
       </div>
@@ -1658,6 +1706,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
         <tr><td>BCAS 36 meses</td><td>Financiación externa · el alumno asume los intereses</td><td><strong>${fmt(bcas36Cuota)}</strong>/mes</td></tr>
       </tbody>
     </table>
+    <div style="font-size:1.8mm;color:#8B8FA8;font-style:italic;margin-bottom:3.5mm;padding:0 1mm;">* Las cuotas de financiación externa (BCAS) son orientativas y pueden variar según las condiciones finales del financiador en el momento de la solicitud.</div>
 
     <!-- Admission -->
     <div class="sec-lbl">Proceso de admisión</div>
@@ -1969,9 +2018,11 @@ function renderAlertBanner(){
 
 function renderHistory(){
   const props=getProposals();
-  const visible=currentUser.role==='admin'?props:props.filter(p=>p.comercial===currentUser.user);
+  const allVisible=currentUser.role==='admin'?props:props.filter(p=>p.comercial===currentUser.user);
+  // Only show active proposals (not ganada/perdida/eliminada)
+  const visible=allVisible.filter(p=>p.estado==='activa');
   const el=document.getElementById('hist-content');
-  if(!visible.length){el.innerHTML='<div class="empty-hist"><div style="font-weight:700;margin-bottom:0.4rem">Sin propuestas generadas</div><div style="font-size:0.78rem">Genera tu primera propuesta desde la pestaña "Nueva propuesta".</div></div>';return;}
+  if(!visible.length){el.innerHTML='<div class="empty-hist"><div style="font-weight:700;margin-bottom:0.4rem">Sin propuestas activas</div><div style="font-size:0.78rem">Las propuestas ganadas, perdidas o eliminadas se encuentran en la pestaña Archivo.</div></div>';return;}
   el.innerHTML=`<div class="table-wrap"><table class="hist-table">
     <thead><tr>
       <th>Alumno</th><th>Teléfono</th><th>Programa</th><th>Comercial</th>
@@ -1996,7 +2047,7 @@ function renderHistory(){
           <button class="action-btn" onclick="openPropPDF(${prop.id})" style="border-color:var(--teal);color:var(--teal)">Ver PDF</button>
           ${getPropHtml(prop.id)?`<button class="publish-btn" id="pub-btn-${prop.id}" onclick="publishToGitHub(${prop.id})">${prop.pubUrl?'Republicar':'Publicar'}</button>`:''}
           ${canEdit?`<button class="action-btn" onclick="setPropState(${prop.id},'ganada')">Ganada</button><button class="action-btn lost" onclick="setPropState(${prop.id},'perdida')">Perdida</button>`:''}
-          <button class="action-btn del" onclick="deleteProp(${prop.id})">Eliminar</button>
+          <button class="action-btn del" onclick="deleteProp(${prop.id})">Archivar</button>
         </td>
       </tr>
       ${prop.pubUrl?`<tr><td colspan="9" style="padding:0 1rem 0.5rem;">
@@ -2015,7 +2066,10 @@ function renderHistory(){
 function setPropState(id,estado){
   const props=getProposals();
   const p=props.find(x=>x.id===id);
-  if(p) p.estado=estado;
+  if(p){
+    p.estado=estado;
+    p.fechaCierre=new Date().toISOString();
+  }
   saveProposals(props);
   renderHistory();
   renderAlertBanner();
@@ -2023,12 +2077,27 @@ function setPropState(id,estado){
 }
 
 function deleteProp(id){
-  if(!confirm('¿Eliminar esta propuesta del histórico? También se eliminará el PDF guardado.')) return;
+  if(!confirm('¿Mover esta propuesta al archivo?')) return;
+  const props=getProposals();
+  const p=props.find(x=>x.id===id);
+  if(p){
+    p.estado='eliminada';
+    p.fechaCierre=new Date().toISOString();
+  }
+  saveProposals(props);
+  checkStorageWarning();
+  renderHistory();
+  renderAlertBanner();
+  countAlerts();
+}
+
+function deletePropDefinitive(id){
+  if(!confirm('¿Eliminar definitivamente esta propuesta? Esta acción no se puede deshacer.')) return;
   const props=getProposals().filter(x=>x.id!==id);
   saveProposals(props);
   deletePropHtml(id);
   checkStorageWarning();
-  renderHistory();
+  renderArchive();
   renderAlertBanner();
   countAlerts();
 }
@@ -2366,6 +2435,132 @@ function renderStats(){
       <div style="font-size:0.72rem;color:var(--muted)">${ganadas} ganadas de ${total} propuestas generadas</div>
     </div>`}
   `;
+}
+
+// ══════════════════════════════════════════════
+// MOTIVATIONAL POPUP
+// ══════════════════════════════════════════════
+const MOTIV_DATA = [
+  {emoji:'🔥', quote:'Hoy es el día en que <strong>cierras ese trato</strong> que llevas trabajando. Confía en tu proceso.'},
+  {emoji:'🚀', quote:'Cada "no" que recibes te acerca un paso más al <strong>"sí" que cambia todo</strong>. Sigue adelante.'},
+  {emoji:'💡', quote:'Los mejores comerciales no venden programas, <strong>transforman vidas</strong>. Tú tienes ese poder.'},
+  {emoji:'🎯', quote:'Un objetivo sin fecha es solo un sueño. Hoy le <strong>pones fecha a tu siguiente cierre</strong>.'},
+  {emoji:'⚡', quote:'La energía que traes hoy es <strong>contagiosa</strong>. Tu alumno lo va a notar. Dale caña.'},
+  {emoji:'🏆', quote:'El éxito no es suerte. Es <strong>preparación + oportunidad</strong>. Tú ya estás preparado.'},
+  {emoji:'💪', quote:'Cada propuesta que envías es una <strong>semilla que siembras</strong>. Hoy riega con energía.'},
+  {emoji:'✨', quote:'Los números de hoy son el reflejo de <strong>las llamadas que hiciste ayer</strong>. Sigue el ritmo.'},
+  {emoji:'🌟', quote:'No compitas con nadie más que con <strong>la versión de ti de ayer</strong>. Supérate hoy.'},
+  {emoji:'🎉', quote:'¿Sabes qué tienen en común los mejores comerciales? <strong>No se rindieron</strong> en el momento difícil.'},
+  {emoji:'💰', quote:'Tu próximo cierre ya existe. Solo tienes que <strong>salir a encontrarlo</strong>. Está ahí fuera.'},
+  {emoji:'🧠', quote:'La diferencia entre bueno y excelente es <strong>un seguimiento más</strong>. Haz ese seguimiento.'},
+  {emoji:'🌈', quote:'Hoy puede ser el día que <strong>alguien cambie su futuro</strong> gracias a una llamada tuya.'},
+  {emoji:'🦁', quote:'Las grandes historias de éxito empezaron con alguien que simplemente <strong>decidió intentarlo</strong>.'},
+  {emoji:'⭐', quote:'No esperes el momento perfecto. <strong>Crea el momento perfecto</strong> con tu actitud de hoy.'},
+  {emoji:'🎯', quote:'Tu mejor propuesta está a punto de <strong>aterrizar en la bandeja</strong> del alumno correcto.'},
+  {emoji:'🔑', quote:'Cada conversación es una <strong>llave diferente</strong>. Hoy encuentras la que abre esa puerta.'},
+  {emoji:'💎', quote:'Los diamantes se forman bajo presión. <strong>Tú ya llevas la presión</strong>. Hoy brillas.'},
+  {emoji:'🚀', quote:'El éxito de hoy empieza con la <strong>primera llamada de la mañana</strong>. No lo postergues.'},
+  {emoji:'🌊', quote:'Lleva la energía al máximo desde el inicio. <strong>El primer cierre del día</strong> es el más importante.'},
+];
+
+function showMotivPopup(){
+  const today = new Date().toDateString();
+  const key = 'im_motiv_' + currentUser.user + '_' + today;
+  if(localStorage.getItem(key)) return; // Already shown today
+  
+  const d = new Date();
+  const dayIndex = ((d.getDate() * 13 + d.getMonth() * 7) % MOTIV_DATA.length);
+  const motiv = MOTIV_DATA[dayIndex];
+  const nombre = (currentUser.name||currentUser.user).split(' ')[0];
+  
+  document.getElementById('motiv-emoji').textContent = motiv.emoji;
+  document.getElementById('motiv-name').textContent = nombre;
+  document.getElementById('motiv-quote').innerHTML = motiv.quote;
+  document.getElementById('motiv-date').textContent = new Date().toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('motiv-overlay').style.display = 'flex';
+  
+  localStorage.setItem(key, '1');
+}
+
+function closeMotiv(e){
+  if(e && e.target !== document.getElementById('motiv-overlay')) return;
+  document.getElementById('motiv-overlay').style.display = 'none';
+}
+
+function showMotivPopupForce(){
+  const d = new Date();
+  const dayIndex = ((d.getDate() * 13 + d.getMonth() * 7) % MOTIV_DATA.length);
+  const motiv = MOTIV_DATA[dayIndex];
+  const nombre = (currentUser.name||currentUser.user).split(' ')[0];
+  document.getElementById('motiv-emoji').textContent = motiv.emoji;
+  document.getElementById('motiv-name').textContent = nombre;
+  document.getElementById('motiv-quote').innerHTML = motiv.quote;
+  document.getElementById('motiv-date').textContent = d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'});
+  document.getElementById('motiv-overlay').style.display = 'flex';
+}
+
+// ══════════════════════════════════════════════
+// ARCHIVE
+// ══════════════════════════════════════════════
+function renderArchive(){
+  const props = getProposals();
+  const isAdmin = currentUser.role==='admin';
+  const archived = (isAdmin?props:props.filter(p=>p.comercial===currentUser.user))
+    .filter(p=>p.estado==='ganada'||p.estado==='perdida'||p.estado==='eliminada');
+
+  // Populate comercial filter (admin only)
+  const comercialFilter = document.getElementById('arch-filter-comercial');
+  if(isAdmin){
+    comercialFilter.style.display='block';
+    const comerciales=[...new Set(archived.map(p=>p.comercial))];
+    const current=comercialFilter.value;
+    comercialFilter.innerHTML='<option value="">Todos los comerciales</option>'+
+      comerciales.map(c=>`<option value="${c}" ${c===current?'selected':''}>${props.find(p=>p.comercial===c)?.comercialName||c}</option>`).join('');
+  }
+
+  // Apply filters
+  const filterEstado=document.getElementById('arch-filter-estado').value;
+  const filterCom=isAdmin?document.getElementById('arch-filter-comercial').value:'';
+  let filtered=archived;
+  if(filterEstado) filtered=filtered.filter(p=>p.estado===filterEstado);
+  if(filterCom) filtered=filtered.filter(p=>p.comercial===filterCom);
+
+  const el=document.getElementById('archive-content');
+  if(!filtered.length){
+    el.innerHTML='<div class="empty-hist"><div style="font-weight:700;margin-bottom:0.4rem">Sin propuestas archivadas</div><div style="font-size:0.78rem">Aquí aparecerán las propuestas ganadas, perdidas o eliminadas.</div></div>';
+    return;
+  }
+
+  const stColors={ganada:'var(--teal)',perdida:'var(--muted)',eliminada:'var(--red)'};
+  const stLabels={ganada:'Ganada',perdida:'Perdida',eliminada:'Eliminada'};
+
+  el.innerHTML=`<div class="table-wrap"><table class="hist-table">
+    <thead><tr>
+      <th>Alumno</th><th>Programa</th><th>Comercial</th>
+      <th>Precio final</th><th>Emisión</th><th>Cierre</th><th>Estado</th><th>Acciones</th>
+    </tr></thead>
+    <tbody>
+    ${filtered.map(prop=>{
+      const prog=PROGRAMAS.find(x=>x.id===prop.progId);
+      const progName=prog?prog.nombre.split(' ').slice(0,5).join(' ')+'…':prop.programa.substring(0,40)+'…';
+      const stColor=stColors[prop.estado]||'var(--muted)';
+      const stLabel=stLabels[prop.estado]||prop.estado;
+      return `<tr>
+        <td><div style="font-weight:600;font-size:0.8rem">${prop.alumno}</div><div style="font-size:0.68rem;color:var(--muted)">${prop.email||'—'}</div></td>
+        <td style="font-size:0.75rem;max-width:180px"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px" title="${prop.programa}">${progName}</div></td>
+        <td style="font-size:0.75rem;color:var(--muted)">${prop.comercialName||prop.comercial}</td>
+        <td style="font-weight:700;color:var(--teal)">${fmt(prop.precioFinal)}</td>
+        <td style="font-size:0.72rem;color:var(--muted)">${fmtDate(prop.emision)}</td>
+        <td style="font-size:0.72rem;color:var(--muted)">${prop.fechaCierre?fmtDate(prop.fechaCierre):'—'}</td>
+        <td><span class="st-badge" style="background:${stColor}22;color:${stColor};border:1px solid ${stColor}44">${stLabel}</span></td>
+        <td>
+          ${getPropHtml(prop.id)?`<button class="action-btn" style="border-color:var(--teal);color:var(--teal)" onclick="openPropPDF(${prop.id})">Ver PDF</button>`:''}
+          ${isAdmin?`<button class="action-btn del" onclick="deletePropDefinitive(${prop.id})">Eliminar</button>`:''}
+        </td>
+      </tr>`;
+    }).join('')}
+    </tbody>
+  </table></div>`;
 }
 
 // ══════════════════════════════════════════════
