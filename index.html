@@ -424,6 +424,42 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 .email-cancel-btn{padding:0.55rem 1rem;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;cursor:pointer;}
 .email-cancel-btn:hover{border-color:var(--text);color:var(--text);}
 
+/* ── PROPOSAL ROWS (collapsible) ── */
+.prop-rows{display:flex;flex-direction:column;gap:0.5rem;}
+.prop-row{background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:all 0.2s;}
+.prop-row.expanded{border-color:rgba(0,196,160,0.3);box-shadow:0 2px 12px rgba(0,0,0,0.2);}
+.prop-row.status-soon{border-left:3px solid var(--orange);}
+.prop-row.status-expired{border-left:3px solid var(--red);}
+.prop-row.status-active{border-left:3px solid var(--teal);}
+.prop-row-header{display:flex;align-items:center;gap:0.8rem;padding:0.75rem 1rem;cursor:pointer;user-select:none;}
+.prop-row-header:hover{background:rgba(255,255,255,0.02);}
+.prop-row-status{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.prop-row-name{font-weight:700;font-size:0.85rem;min-width:140px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.prop-row-prog{font-size:0.72rem;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.prop-row-price{font-weight:800;font-size:0.95rem;color:var(--teal);min-width:80px;text-align:right;flex-shrink:0;}
+.prop-row-badge{flex-shrink:0;}
+.prop-row-days{font-size:0.65rem;color:var(--muted);min-width:70px;text-align:right;flex-shrink:0;}
+.prop-row-chevron{font-size:0.7rem;color:var(--muted);transition:transform 0.2s;flex-shrink:0;}
+.prop-row.expanded .prop-row-chevron{transform:rotate(180deg);}
+.prop-row-body{display:none;border-top:1px solid var(--border);padding:0.9rem 1rem;}
+.prop-row.expanded .prop-row-body{display:block;}
+.prop-row-details{display:grid;grid-template-columns:repeat(3,1fr);gap:0.8rem;margin-bottom:0.8rem;}
+.prd-k{font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.2rem;font-weight:600;}
+.prd-v{font-size:0.78rem;font-weight:600;}
+.prop-row-actions{display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:0.8rem;}
+.pra-btn{padding:0.32rem 0.8rem;border-radius:5px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.15s;white-space:nowrap;border:1px solid var(--border);background:transparent;color:var(--muted);}
+.pra-btn:hover{border-color:var(--teal);color:var(--teal);}
+.pra-btn.primary{background:var(--teal);border-color:var(--teal);color:#000;}
+.pra-btn.primary:hover{background:#00ddb5;}
+.pra-btn.danger:hover{border-color:var(--red);color:var(--red);}
+.pra-btn.won:hover{border-color:#00a884;color:#00a884;}
+.pra-btn.lost:hover{border-color:var(--muted);color:var(--muted);}
+.prop-row-url{display:flex;align-items:center;gap:0.5rem;padding:0.4rem 0.6rem;background:rgba(0,196,160,0.05);border:1px solid rgba(0,196,160,0.1);border-radius:5px;margin-bottom:0.6rem;}
+.prop-row-url span{font-size:0.65rem;color:var(--teal);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:monospace;}
+.prop-note-row{display:flex;gap:0.5rem;align-items:flex-start;}
+.prop-note-row textarea{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:0.4rem 0.6rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.72rem;outline:none;resize:none;}
+.prop-note-row textarea:focus{border-color:var(--teal);}
+
 /* ── PROPOSAL CARDS ── */
 .prop-cards-grid{display:flex;flex-direction:column;gap:0.8rem;}
 .prop-card-item{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color 0.15s;}
@@ -658,19 +694,10 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         </div>
         <div class="panel">
           <div class="panel-title"><span class="ptbar"></span>Descuentos</div>
-          <div class="field"><label>Descuento / Beca</label>
-            <div class="discount-selector">
-              <div class="discount-slider-wrap">
-                <input type="range" class="discount-slider" id="sdesc-slider" min="0" max="100" step="10" value="0" oninput="updateDiscountS(this.value)">
-                <div class="discount-val-badge zero" id="sdesc-badge">0%</div>
-              </div>
-              <div class="discount-presets">
-                <button class="disc-preset on" onclick="setDiscountS(0)">Sin dto.</button>
-                <button class="disc-preset" onclick="setDiscountS(10)">10%</button>
-                <button class="disc-preset" onclick="setDiscountS(25)">25%</button>
-                <button class="disc-preset" onclick="setDiscountS(35)">35%</button>
-                <button class="disc-preset" onclick="setDiscountS(50)">50%</button>
-              </div>
+          <div class="field"><label>Descuento aplicado</label>
+            <div class="discount-slider-wrap" style="margin-top:0.3rem;">
+              <input type="range" class="discount-slider" id="sdesc-slider" min="0" max="100" step="10" value="0" oninput="updateDiscountS(this.value)">
+              <div class="discount-val-badge zero" id="sdesc-badge" style="font-size:1rem;min-width:52px;padding:0.3rem 0.6rem;">0%</div>
             </div>
             <input type="hidden" id="rg-desc-val" value="0">
           </div>
@@ -775,19 +802,10 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
                 </div>
               </div>
               <div class="field">
-                <label>Descuento / Beca</label>
-                <div class="discount-selector">
-                  <div class="discount-slider-wrap">
-                    <input type="range" class="discount-slider" id="pdesc-slider" min="0" max="100" step="10" value="0" oninput="updateDiscountP(this.value)">
-                    <div class="discount-val-badge zero" id="pdesc-badge">0%</div>
-                  </div>
-                  <div class="discount-presets">
-                    <button class="disc-preset on" onclick="setDiscountP(0)">Sin dto.</button>
-                    <button class="disc-preset" onclick="setDiscountP(10)">10%</button>
-                    <button class="disc-preset" onclick="setDiscountP(25)">25%</button>
-                    <button class="disc-preset" onclick="setDiscountP(35)">35%</button>
-                    <button class="disc-preset" onclick="setDiscountP(50)">50%</button>
-                  </div>
+                <label>Descuento aplicado</label>
+                <div class="discount-slider-wrap" style="margin-top:0.3rem;">
+                  <input type="range" class="discount-slider" id="pdesc-slider" min="0" max="100" step="10" value="0" oninput="updateDiscountP(this.value)">
+                  <div class="discount-val-badge zero" id="pdesc-badge" style="font-size:1rem;min-width:52px;padding:0.3rem 0.6rem;">0%</div>
                 </div>
                 <input type="hidden" id="rg-pdesc-val" value="0">
               </div>
@@ -2407,63 +2425,75 @@ function renderAlertBanner(){
 function renderHistory(){
   const props=getProposals();
   const allVisible=currentUser.role==='admin'?props:props.filter(p=>p.comercial===currentUser.user);
-  // Only show active proposals (not ganada/perdida/eliminada)
   const visible=allVisible.filter(p=>p.estado==='activa');
   const el=document.getElementById('hist-content');
-  if(!visible.length){el.innerHTML='<div class="empty-hist"><div style="font-weight:700;margin-bottom:0.4rem">Sin propuestas activas</div><div style="font-size:0.78rem">Las propuestas ganadas, perdidas o eliminadas se encuentran en la pestaña Archivo.</div></div>';return;}
-  const stClsMap={st_active:'status-active',st_soon:'status-soon',st_expired:'status-expired'};
-  el.innerHTML=`<div class="prop-cards-grid">
-    ${visible.map(prop=>{
-      const st=propStatus(prop);
-      const prog=PROGRAMAS.find(x=>x.id===prop.progId);
-      const progName=prog?prog.nombre:(prop.programa||'').substring(0,80);
-      const stCardCls=stClsMap[st.cls.replace('-','_')]||'status-active';
-      const hasPDF=getPropHtml(prop.id);
-      const isAdmin=currentUser.role==='admin';
-      const daysLeft=Math.ceil((new Date(prop.vencimiento)-Date.now())/(1000*60*60*24));
-      const daysStr=daysLeft>0?`Vence en ${daysLeft} día${daysLeft!==1?'s':''}`:'Vencida';
-      return `<div class="prop-card-item ${stCardCls}">
-        <div class="prop-card-top">
-          <div class="prop-card-main">
-            <div class="prop-card-alumno">${prop.alumno}</div>
-            <div style="font-size:0.7rem;color:var(--muted);margin-bottom:0.4rem;">${prop.email||''} ${prop.tel?'· '+prop.tel:''}</div>
-            <div class="prop-card-prog" title="${prop.programa}">${progName}</div>
-            <div style="font-size:0.68rem;color:var(--muted);margin-top:0.25rem;">${prop.modalidad} · Dto. ${prop.descuento+prop.pagoUnico}% · ${prop.comercialName||prop.comercial}</div>
-          </div>
-          <div class="prop-card-meta">
-            <div style="text-align:right;">
-              <div class="prop-card-price">${fmt(prop.precioFinal)}</div>
-              <span class="prop-card-badge ${st.cls}" style="margin-top:0.3rem;display:inline-block;">${st.txt}</span>
-              <div style="font-size:0.62rem;color:var(--muted);margin-top:0.3rem;">${daysStr}</div>
-            </div>
-          </div>
+  if(!visible.length){
+    el.innerHTML='<div class="empty-hist"><div style="font-weight:700;margin-bottom:0.4rem">Sin propuestas activas</div><div style="font-size:0.78rem;color:var(--muted)">Las propuestas ganadas, perdidas o archivadas están en la pestaña Archivo.</div></div>';
+    return;
+  }
+  const stDot={st_active:'var(--teal)',st_soon:'var(--orange)',st_expired:'var(--red)'};
+  el.innerHTML=`<div class="prop-rows">${visible.map(prop=>{
+    const st=propStatus(prop);
+    const stKey=st.cls.replace(/-/g,'_');
+    const dotColor=stDot[stKey]||'var(--teal)';
+    const prog=PROGRAMAS.find(x=>x.id===prop.progId);
+    const progShort=(prog?prog.nombre:prop.programa).split(' ').slice(0,6).join(' ')+'…';
+    const daysLeft=Math.ceil((new Date(prop.vencimiento)-Date.now())/(1000*60*60*24));
+    const daysStr=daysLeft>0?`${daysLeft}d restantes`:'Vencida';
+    const hasPDF=!!getPropHtml(prop.id);
+    const isAdmin=currentUser.role==='admin';
+    return `<div class="prop-row status-${st.cls.replace('st-','')}" id="prow-${prop.id}">
+      <!-- HEADER -->
+      <div class="prop-row-header" onclick="togglePropRow(${prop.id})">
+        <div class="prop-row-status" style="background:${dotColor}"></div>
+        <div class="prop-row-name" title="${prop.alumno}">${prop.alumno}</div>
+        <div class="prop-row-prog" title="${prop.programa}">${progShort}</div>
+        <div class="prop-row-price">${fmt(prop.precioFinal)}</div>
+        <span class="st-badge ${st.cls} prop-row-badge">${st.txt}</span>
+        <div class="prop-row-days">${daysStr}</div>
+        <div class="prop-row-chevron">▼</div>
+      </div>
+      <!-- BODY -->
+      <div class="prop-row-body">
+        <div class="prop-row-details">
+          <div><div class="prd-k">Email</div><div class="prd-v" style="font-size:0.72rem">${prop.email||'—'}</div></div>
+          <div><div class="prd-k">Teléfono</div><div class="prd-v">${prop.tel||'—'}</div></div>
+          <div><div class="prd-k">Comercial</div><div class="prd-v">${prop.comercialName||prop.comercial}</div></div>
+          <div><div class="prd-k">Modalidad</div><div class="prd-v">${prop.modalidad}</div></div>
+          <div><div class="prd-k">Descuento</div><div class="prd-v">${prop.descuento+prop.pagoUnico}%</div></div>
+          <div><div class="prd-k">Emitida</div><div class="prd-v">${fmtDate(prop.emision)}</div></div>
         </div>
-        <div class="prop-card-bottom">
-          <div class="prop-card-info">
-            Emitida ${fmtDate(prop.emision)} · Válida hasta ${fmtDate(prop.vencimiento)}
-            ${prop.nota?`<span style="color:var(--gold);margin-left:0.5rem;" title="${prop.nota}">· Nota guardada</span>`:''}
-          </div>
-          <div class="prop-card-actions">
-            ${hasPDF?`<button class="pca-btn pca-pdf" onclick="openPropPDF(${prop.id})">Ver PDF</button>`:''}
-            ${hasPDF?`<button class="pca-btn pca-pub" id="pub-btn-${prop.id}" onclick="publishToGitHub(${prop.id})">${prop.pubUrl?'Republicar':'Publicar'}</button>`:''}
-            ${prop.pubUrl?`<button class="pca-btn pca-pdf" onclick="openEmailEditor(${JSON.stringify(prop).replace(/"/g,'&quot;')},'${prop.pubUrl}')">Enviar correo</button>`:''}
-            <button class="pca-btn pca-won" onclick="setPropState(${prop.id},'ganada')">Ganada</button>
-            <button class="pca-btn pca-lost" onclick="setPropState(${prop.id},'perdida')">Perdida</button>
-            <button class="pca-btn pca-arch" onclick="deleteProp(${prop.id})">Archivar</button>
-          </div>
+        ${prop.pubUrl?`<div class="prop-row-url">
+          <span title="${prop.pubUrl}">${prop.pubUrl.replace(/https?:\/\/[^/]+/,'…').replace(/\/p\//,'…/')}</span>
+          <button class="pra-btn" style="padding:0.2rem 0.5rem;font-size:0.62rem;" onclick="copyUrl('${prop.pubUrl}')">Copiar</button>
+        </div>`:''}
+        <div class="prop-row-actions">
+          ${hasPDF?`<button class="pra-btn primary" onclick="openPropPDF(${prop.id})">Ver PDF</button>`:''}
+          ${hasPDF?`<button class="pra-btn" id="pub-btn-${prop.id}" onclick="publishToGitHub(${prop.id})">${prop.pubUrl?'Republicar':'Publicar'}</button>`:''}
+          ${prop.pubUrl?`<button class="pra-btn" onclick="sendGmail(${JSON.stringify(prop).replace(/"/g,'&quot;')},'${prop.pubUrl}')">Enviar correo</button>`:''}
+          <button class="pra-btn won" onclick="setPropState(${prop.id},'ganada')">Ganada</button>
+          <button class="pra-btn lost" onclick="setPropState(${prop.id},'perdida')">Perdida</button>
+          <button class="pra-btn danger" onclick="deleteProp(${prop.id})">Archivar</button>
         </div>
-        ${prop.pubUrl?`<div class="prop-share-strip visible" id="share-bar-${prop.id}">
-          <span class="share-url" title="${prop.pubUrl}" style="font-size:0.68rem;">${prop.pubUrl.replace(/https?:\/\/[^/]+/,'…').replace(/\/p\//,'…/')}</span>
-          <button class="share-copy-btn" onclick="copyUrl('${prop.pubUrl}')">Copiar URL</button>
-        </div>`:`<div id="share-bar-${prop.id}" style="display:none;"></div>`}
-        <div class="prop-note-strip">
-          <textarea class="note-input" id="note-${prop.id}" rows="1" placeholder="Añadir nota privada..." oninput="document.getElementById('note-save-${prop.id}').style.display='inline'" onblur="if(!this.value)document.getElementById('note-save-${prop.id}').style.display='none'">${prop.nota||''}</textarea>
-          <button class="note-save-btn" onclick="saveNote(${prop.id})" id="note-save-${prop.id}" style="display:${prop.nota?'inline':'none'}">Guardar nota</button>
+        <div class="prop-note-row">
+          <textarea id="note-${prop.id}" rows="1" placeholder="Nota privada..." oninput="document.getElementById('note-save-${prop.id}').style.display='inline-block'">${prop.nota||''}</textarea>
+          <button class="pra-btn" id="note-save-${prop.id}" onclick="saveNote(${prop.id})" style="display:${prop.nota?'inline-block':'none'}">Guardar nota</button>
         </div>
-      </div>`;
-    }).join('')}
-  </div>`;
+      </div>
+    </div>`;
+  }).join('')}</div>`;
 }
+
+function togglePropRow(id){
+  const row = document.getElementById('prow-'+id);
+  if(!row) return;
+  const isExpanded = row.classList.contains('expanded');
+  // Close all
+  document.querySelectorAll('.prop-row.expanded').forEach(r=>r.classList.remove('expanded'));
+  // Open this one if it was closed
+  if(!isExpanded) row.classList.add('expanded');
+}
+
 
 function setPropState(id,estado){
   const props=getProposals();
@@ -3284,22 +3314,7 @@ function openEmailEditor(prop, url){
   const comercialName = currentUser.name||currentUser.user;
   const comercialEmail = currentUser.email||'admisiones@im.education';
   const subject = `Tu propuesta formativa — IM Education`;
-  const body = `Estimado/a ${prop.alumno},
-
-Es un placer compartirte tu propuesta formativa personalizada de IM Education.
-
-Puedes consultarla en el siguiente enlace:
-${url}
-
-Recuerda que esta oferta es válida hasta el ${new Date(prop.vencimiento).toLocaleDateString('es-ES')}.
-
-Quedo a tu disposición para cualquier consulta.
-
-Un cordial saludo,
-${comercialName}
-IM Education
-www.im.education
-BCN 931 593 373 · MAD 911 593 433`;
+  const body = buildEmailBody(prop, url, comercialName);
 
   document.getElementById('ee-to').value = prop.email;
   document.getElementById('ee-subject').value = subject;
