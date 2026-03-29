@@ -400,8 +400,11 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 /* ── DISCOUNT SELECTOR ── */
 .discount-selector{display:flex;flex-direction:column;gap:0.5rem;}
 .discount-slider-wrap{display:flex;align-items:center;gap:0.8rem;}
-.discount-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:99px;background:var(--border);outline:none;cursor:pointer;}
-.discount-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--teal);cursor:pointer;border:2px solid var(--card);}
+.discount-slider{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:99px;background:var(--border);outline:none;cursor:pointer;transition:background 0.2s;}
+.discount-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid var(--card);box-shadow:0 0 0 2px var(--teal);}
+.discount-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--teal);cursor:pointer;border:3px solid var(--card);}
+.discount-slider-wrap{display:flex;align-items:center;gap:0.8rem;}
+.discount-val-display{display:flex;flex-direction:column;align-items:center;flex-shrink:0;}
 .discount-val-badge{background:var(--teal);color:#000;font-size:0.78rem;font-weight:800;padding:0.25rem 0.6rem;border-radius:5px;min-width:44px;text-align:center;flex-shrink:0;}
 .discount-val-badge.zero{background:var(--border);color:var(--muted);}
 .discount-presets{display:flex;gap:0.4rem;flex-wrap:wrap;}
@@ -695,9 +698,18 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         <div class="panel">
           <div class="panel-title"><span class="ptbar"></span>Descuentos</div>
           <div class="field"><label>Descuento aplicado</label>
-            <div class="discount-slider-wrap" style="margin-top:0.3rem;">
-              <input type="range" class="discount-slider" id="sdesc-slider" min="0" max="100" step="10" value="0" oninput="updateDiscountS(this.value)">
-              <div class="discount-val-badge zero" id="sdesc-badge" style="font-size:1rem;min-width:52px;padding:0.3rem 0.6rem;">0%</div>
+            <div style="margin-top:0.5rem;">
+              <div class="discount-slider-wrap">
+                <input type="range" class="discount-slider" id="sdesc-slider" min="0" max="100" step="5" value="0" oninput="updateDiscountS(this.value)">
+                <div style="background:var(--teal);color:#000;font-size:1.1rem;font-weight:800;padding:0.3rem 0.7rem;border-radius:6px;min-width:58px;text-align:center;flex-shrink:0;" id="sdesc-badge">0%</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:0.3rem;padding:0 2px;">
+                <span style="font-size:0.58rem;color:var(--muted)">0%</span>
+                <span style="font-size:0.58rem;color:var(--muted)">25%</span>
+                <span style="font-size:0.58rem;color:var(--muted)">50%</span>
+                <span style="font-size:0.58rem;color:var(--muted)">75%</span>
+                <span style="font-size:0.58rem;color:var(--muted)">100%</span>
+              </div>
             </div>
             <input type="hidden" id="rg-desc-val" value="0">
           </div>
@@ -731,6 +743,14 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
       <div id="alert-banner" style="display:none" class="alert-banner">
         <div class="alert-dot"></div>
         <div class="alert-text" id="alert-text"></div>
+      </div>
+      <!-- Publishing banner -->
+      <div id="publishing-banner" style="display:none;background:rgba(0,196,160,0.08);border:1px solid rgba(0,196,160,0.2);border-radius:8px;padding:0.8rem 1.2rem;margin-bottom:1rem;align-items:center;gap:0.8rem;">
+        <span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(0,196,160,0.3);border-top-color:var(--teal);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;"></span>
+        <div>
+          <div style="font-size:0.82rem;font-weight:700;color:var(--teal);">Publicando propuesta...</div>
+          <div style="font-size:0.7rem;color:var(--muted);">Subiendo a GitHub Pages, puede tardar unos segundos.</div>
+        </div>
       </div>
       <!-- Storage warning for admin -->
       <div id="storage-warning" style="display:none;background:rgba(245,200,66,0.08);border:1px solid rgba(245,200,66,0.25);border-radius:8px;padding:0.8rem 1.2rem;margin-bottom:1.2rem;align-items:center;gap:0.8rem;">
@@ -803,9 +823,18 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
               </div>
               <div class="field">
                 <label>Descuento aplicado</label>
-                <div class="discount-slider-wrap" style="margin-top:0.3rem;">
-                  <input type="range" class="discount-slider" id="pdesc-slider" min="0" max="100" step="10" value="0" oninput="updateDiscountP(this.value)">
-                  <div class="discount-val-badge zero" id="pdesc-badge" style="font-size:1rem;min-width:52px;padding:0.3rem 0.6rem;">0%</div>
+                <div style="margin-top:0.5rem;">
+                  <div class="discount-slider-wrap">
+                    <input type="range" class="discount-slider" id="pdesc-slider" min="0" max="100" step="5" value="0" oninput="updateDiscountP(this.value)">
+                    <div style="background:var(--teal);color:#000;font-size:1.1rem;font-weight:800;padding:0.3rem 0.7rem;border-radius:6px;min-width:58px;text-align:center;flex-shrink:0;" id="pdesc-badge">0%</div>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;margin-top:0.3rem;padding:0 2px;">
+                    <span style="font-size:0.58rem;color:var(--muted)">0%</span>
+                    <span style="font-size:0.58rem;color:var(--muted)">25%</span>
+                    <span style="font-size:0.58rem;color:var(--muted)">50%</span>
+                    <span style="font-size:0.58rem;color:var(--muted)">75%</span>
+                    <span style="font-size:0.58rem;color:var(--muted)">100%</span>
+                  </div>
                 </div>
                 <input type="hidden" id="rg-pdesc-val" value="0">
               </div>
@@ -1326,34 +1355,27 @@ function clearCompare(){ compareList=[]; saveCompare([]); filterCatalog(); rende
 // SIMULATOR
 // ══════════════════════════════════════════════
 function updateDiscountP(val){
-  val = Math.round(val/10)*10;
+  val = Math.round(val/5)*5;
   document.getElementById('pdesc-slider').value=val;
   document.getElementById('rg-pdesc-val').value=val;
   const badge=document.getElementById('pdesc-badge');
   badge.textContent=val+'%';
-  badge.className='discount-val-badge'+(val===0?' zero':'');
-  // Update presets
-  document.querySelectorAll('.discount-presets .disc-preset').forEach(b=>{
-    b.classList.toggle('on', parseInt(b.textContent)===val||(b.textContent==='Sin dto.'&&val===0));
-  });
+  badge.style.background=val===0?'var(--border)':val>=50?'var(--gold)':'var(--teal)';
+  badge.style.color=val===0?'var(--muted)':'#000';
   updatePV();
 }
-function setDiscountP(val){
-  updateDiscountP(val);
-}
+function setDiscountP(val){ updateDiscountP(val); }
 function updateDiscountS(val){
-  val = Math.round(val/10)*10;
+  val = Math.round(val/5)*5;
   document.getElementById('sdesc-slider').value=val;
   document.getElementById('rg-desc-val').value=val;
   const badge=document.getElementById('sdesc-badge');
   badge.textContent=val+'%';
-  badge.className='discount-val-badge'+(val===0?' zero':'');
-  document.querySelectorAll('#sdesc-slider').forEach(()=>{});
+  badge.style.background=val===0?'var(--border)':val>=50?'var(--gold)':'var(--teal)';
+  badge.style.color=val===0?'var(--muted)':'#000';
   calcSim();
 }
-function setDiscountS(val){
-  updateDiscountS(val);
-}
+function setDiscountS(val){ updateDiscountS(val); }
 
 function createProposalFromSim(){
   const sel = document.getElementById('sim-prog').value;
@@ -2246,8 +2268,10 @@ async function publishToGitHub(propId){
   const btn = document.getElementById('pub-btn-'+propId);
   if(btn){ 
     btn.disabled=true; 
-    btn.innerHTML='<span style="display:inline-flex;align-items:center;gap:0.4rem;"><span style="display:inline-block;width:10px;height:10px;border:2px solid rgba(0,196,160,0.3);border-top-color:var(--teal);border-radius:50%;animation:spin 0.8s linear infinite;"></span>Publicando...</span>';
+    btn.innerHTML='<span style="display:inline-flex;align-items:center;gap:0.4rem;"><span style="display:inline-block;width:10px;height:10px;border:2px solid rgba(0,0,0,0.2);border-top-color:#000;border-radius:50%;animation:spin 0.8s linear infinite;"></span>Publicando...</span>';
   }
+  // Show global publishing banner
+  showPublishingBanner(true);
 
   const htmlContent = getPropHtml(propId);
   if(!htmlContent){
@@ -2274,10 +2298,12 @@ async function publishToGitHub(propId){
     const data = await res.json();
 
     if(data.url){
+      showPublishingBanner(false);
       prop.pubUrl = data.url;
       saveProposals(props);
       renderHistory();
       showShareBar(propId, data.url);
+      showToast('Propuesta publicada','El enlace ya está disponible para compartir.','success');
       // If called from preview, update bar and offer email
       if(window._savedProp && window._savedProp.id === propId){
         window._savedProp.pubUrl = data.url;
@@ -2301,6 +2327,11 @@ async function publishToGitHub(propId){
     showToast('Error de conexión', e.message,'error');
     if(btn){ btn.disabled=false; btn.textContent='Publicar'; }
   }
+}
+
+function showPublishingBanner(show){
+  const b = document.getElementById('publishing-banner');
+  if(b) b.style.display = show ? 'flex' : 'none';
 }
 
 function showShareBar(propId, url){
@@ -2334,25 +2365,41 @@ ${prop.comercialName}`;
 
 async function sendGmail(prop, url){
   if(!prop.email){ showToast('Sin email','Esta propuesta no tiene email del alumno registrado.','warning'); return; }
-  const subject = 'Tu propuesta formativa — IM Education';
-  const bodyText = 'Estimado/a ' + prop.alumno + ',\n\nEs un placer compartirte tu propuesta formativa personalizada de IM Education.\n\nPuedes consultarla en el siguiente enlace:\n' + url + '\n\nRecuerda que esta oferta es válida hasta el ' + new Date(prop.vencimiento).toLocaleDateString('es-ES') + '.\n\nQuedo a tu disposición para cualquier consulta.\n\nUn cordial saludo,\n' + (prop.comercialName||'Equipo de Admisiones') + '\nIM Education\nwww.im.education\nBCN 931 593 373 · MAD 911 593 433';
-  const comercialName = currentUser.name||currentUser.user;
-  const comercialEmail = currentUser.email||'admisiones@im.education';
-  const okEmail = await customConfirm('Enviar correo al alumno',`Se enviará desde propuestas@im.education como "${comercialName} — IM Education". Si el alumno responde, recibirás el email en ${comercialEmail}.`);
-  if(okEmail){
+  if(!url){ showToast('Propuesta no publicada','Primero publica la propuesta para poder enviarla.','warning'); return; }
+  
+  const personalise = await customConfirm(
+    '¿Personalizar el mensaje?',
+    'Puedes enviar el mensaje estándar directamente o editarlo antes de enviar.'
+  );
+  if(personalise){
+    openEmailEditor(prop, url);
+  } else {
+    const comercialName = currentUser.name||currentUser.user;
+    const comercialEmail = currentUser.email||'admisiones@im.education';
+    const subject = 'Tu propuesta formativa — IM Education';
+    const body = buildEmailBody(prop, url, comercialName);
+    const htmlEmail = buildHtmlEmail(body, prop, url, comercialName);
     try{
       const res = await fetch(APPS_SCRIPT_URL, {
         method:'POST', headers:{'Content-Type':'text/plain'},
-        body: JSON.stringify({action:'sendEmail', to:prop.email, subject:subject, body:bodyText, alumno:prop.alumno, ref:prop.ref, replyTo:currentUser.email||'', comercialName:currentUser.name||currentUser.user})
+        body: JSON.stringify({action:'sendEmail', to:prop.email, subject, body,
+          alumno:prop.alumno, ref:prop.ref, replyTo:comercialEmail,
+          comercialName, htmlEmail})
       });
       const data = await res.json();
-      if(data.sent) showToast('Email enviado',`Propuesta enviada correctamente a ${prop.email}.`,'success');
-      else { window.open('mailto:' + prop.email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText)); }
+      if(data.sent) showToast('Correo enviado',`Propuesta enviada a ${prop.email}.`,'success');
+      else showToast('Error al enviar',data.error||'Error desconocido','error');
     }catch(e){
-      window.open('mailto:' + prop.email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText));
+      showToast('Error de conexión',e.message,'error');
     }
   }
 }
+
+function buildEmailBody(prop, url, comercialName){
+  return 'Estimado/a ' + prop.alumno + ',\n\nEs un placer compartirte tu propuesta formativa personalizada de IM Education.\n\nPuedes consultarla en el siguiente enlace:\n' + url + '\n\nRecuerda que esta oferta es válida hasta el ' + new Date(prop.vencimiento).toLocaleDateString('es-ES') + '.\n\nQuedo a tu disposición para cualquier consulta.\n\nUn cordial saludo,\n' + comercialName + '\nIM Education\nwww.im.education\nBCN 931 593 373 · MAD 911 593 433';
+}
+
+
 
 
 // ══════════════════════════════════════════════
