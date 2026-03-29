@@ -744,14 +744,6 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         <div class="alert-dot"></div>
         <div class="alert-text" id="alert-text"></div>
       </div>
-      <!-- Publishing banner -->
-      <div id="publishing-banner" style="display:none;background:rgba(0,196,160,0.08);border:1px solid rgba(0,196,160,0.2);border-radius:8px;padding:0.8rem 1.2rem;margin-bottom:1rem;align-items:center;gap:0.8rem;">
-        <span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(0,196,160,0.3);border-top-color:var(--teal);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;"></span>
-        <div>
-          <div style="font-size:0.82rem;font-weight:700;color:var(--teal);">Publicando propuesta...</div>
-          <div style="font-size:0.7rem;color:var(--muted);">Subiendo a GitHub Pages, puede tardar unos segundos.</div>
-        </div>
-      </div>
       <!-- Storage warning for admin -->
       <div id="storage-warning" style="display:none;background:rgba(245,200,66,0.08);border:1px solid rgba(245,200,66,0.25);border-radius:8px;padding:0.8rem 1.2rem;margin-bottom:1.2rem;align-items:center;gap:0.8rem;">
         <div style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;"></div>
@@ -764,6 +756,15 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         <div class="ptab on" onclick="showPropTab('generator',this)">Nueva propuesta</div>
         <div class="ptab" onclick="showPropTab('history',this)">Activas</div>
         <div class="ptab" onclick="showPropTab('archive',this)" id="tab-archive">Archivo</div>
+      </div>
+
+      <!-- Publishing banner - always visible when publishing -->
+      <div id="publishing-banner" style="display:none;background:rgba(0,196,160,0.08);border:1px solid rgba(0,196,160,0.2);border-radius:8px;padding:0.8rem 1.2rem;margin-bottom:1rem;align-items:center;gap:0.8rem;">
+        <span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(0,196,160,0.3);border-top-color:var(--teal);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;"></span>
+        <div>
+          <div style="font-size:0.82rem;font-weight:700;color:var(--teal);">Publicando propuesta...</div>
+          <div style="font-size:0.7rem;color:var(--muted);">Subiendo a GitHub Pages, puede tardar unos segundos.</div>
+        </div>
       </div>
 
       <!-- GENERATOR -->
@@ -1323,7 +1324,7 @@ function renderCards(list){
       <div class="card-meta">
         <span class="meta-item"><strong>${p.ects}</strong> ECTS</span>
         <span class="meta-item"><strong>${p.horas||'—'}</strong> horas</span>
-        <span class="meta-item">${p.prac?'<strong>Prácticas</strong> remuneradas':'Sin prácticas'}</span>
+        <span class="meta-item">${p.prac?'Acceso / Mentoría':'Sin prácticas'}</span>
       </div>
       <div class="titulo-info">
         <div class="tit-row"><span class="tit-k">Universidad</span><span class="tit-v">${univStr}</span></div>
@@ -1466,7 +1467,7 @@ function renderCompare(){
     {l:'Universidad',f:p=>p.univ==='ABAT'?'Abat Oliba CEU':'UTAMED'},
     {l:'Duración',f:p=>`<span class="td-gold">[${p.meses} MESES]</span>`},
     {l:'ECTS',f:p=>p.ects},
-    {l:'Prácticas',f:p=>p.prac?'Remuneradas':'No'},
+    {l:'Prácticas',f:p=>p.prac?'Acceso / Mentoría':'No'},
     {l:'Título con univ.',f:p=>TITULOS[p.tipo][p.univ==='ABAT'?'abat_con':'utamed_con']},
     {l:'Título sin univ.',f:p=>TITULOS[p.tipo][p.univ==='ABAT'?'abat_sin':'utamed_sin']},
     {l:'Presencial',f:p=>`<span class="td-teal">${fmt(p.pres)}</span>`},
@@ -1959,7 +1960,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
             <div><div class="pm-k">ECTS</div><div class="pm-v">${p.ects}</div></div>
             <div><div class="pm-k">Modalidad</div><div class="pm-v">${mod.charAt(0).toUpperCase()+mod.slice(1)}</div></div>
             <div><div class="pm-k">Universidad</div><div class="pm-v">${univStr}</div></div>
-            <div><div class="pm-k">Prácticas</div><div class="pm-v">${p.prac?'Remuneradas':'No'}</div></div>
+            <div><div class="pm-k">Prácticas</div><div class="pm-v">${p.prac?'Acceso / Mentoría':'No'}</div></div>
           </div>
 
           <!-- Titulaciones -->
@@ -2086,7 +2087,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
       ${[
         'Propuesta personal e intransferible, elaborada específicamente para el candidato indicado.',
         'Los precios incluyen acceso completo al programa, materiales didácticos y titulación universitaria propia expedida por '+univStr+'.',
-        p.prac?'Las prácticas remuneradas están sujetas a la superación del programa y disponibilidad de empresa colaboradora.':'Este programa no incluye prácticas en empresa.',
+        p.prac?'Las acceso y mentoría están sujetas a la superación del programa y disponibilidad de empresa colaboradora.':'Este programa no incluye acceso ni mentoría incluidos.',
         'Propuesta válida hasta el '+fmtDate(valido.toISOString())+'. Transcurrido este plazo los precios pueden variar sin previo aviso.',
         pago?'El precio con pago único requiere abono íntegro antes del inicio del programa.':'Condiciones de fraccionamiento detalladas en contrato de matrícula.',
         'IM Education se reserva el derecho a modificar la oferta formativa según planificación académica.',
@@ -2369,7 +2370,10 @@ async function sendGmail(prop, url){
   
   const personalise = await customConfirm(
     '¿Personalizar el mensaje?',
-    'Puedes enviar el mensaje estándar directamente o editarlo antes de enviar.'
+    'Puedes enviar el mensaje estándar directamente o editarlo antes de enviar.',
+    false,
+    'Personalizar',
+    'Enviar estándar'
   );
   if(personalise){
     openEmailEditor(prop, url);
