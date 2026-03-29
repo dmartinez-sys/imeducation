@@ -286,11 +286,12 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 .publish-btn{padding:0.38rem 0.8rem;background:rgba(0,196,160,0.1);border:1px solid rgba(0,196,160,0.25);border-radius:4px;color:var(--teal);font-size:0.7rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.05em;}
 .publish-btn:hover{background:rgba(0,196,160,0.2);}
 .publish-btn:disabled{opacity:0.4;cursor:not-allowed;}
-.share-bar{display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;margin-top:0.5rem;padding:0.6rem 0.8rem;background:rgba(0,196,160,0.05);border:1px solid rgba(0,196,160,0.15);border-radius:5px;}
-.share-url{font-size:0.68rem;color:var(--teal);flex:1;word-break:break-all;font-family:monospace;}
-.share-copy-btn{padding:0.25rem 0.6rem;background:var(--teal);border:none;border-radius:3px;color:#000;font-size:0.65rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;white-space:nowrap;}
-.share-wa-btn{padding:0.25rem 0.6rem;background:#25D366;border:none;border-radius:3px;color:#fff;font-size:0.65rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;white-space:nowrap;}
-.share-gmail-btn{padding:0.25rem 0.6rem;background:#EA4335;border:none;border-radius:3px;color:#fff;font-size:0.65rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;white-space:nowrap;}
+.share-bar{display:flex;gap:0.6rem;align-items:center;margin-top:0.5rem;padding:0.55rem 0.8rem;background:rgba(0,196,160,0.05);border:1px solid rgba(0,196,160,0.15);border-radius:5px;}
+.share-url{font-size:0.7rem;color:var(--teal);flex:1;font-family:monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:280px;}
+.share-copy-btn{padding:0.28rem 0.7rem;background:var(--teal);border:none;border-radius:4px;color:#000;font-size:0.65rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:700;white-space:nowrap;flex-shrink:0;}
+.share-wa-btn{display:none;}
+.share-gmail-btn{padding:0.28rem 0.7rem;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:0.65rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;white-space:nowrap;flex-shrink:0;transition:all 0.15s;}
+.share-gmail-btn:hover{border-color:var(--teal);color:var(--teal);}
 .empty-hist{text-align:center;padding:3rem;color:var(--muted);}
 
 .stats-kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
@@ -346,6 +347,18 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 .excel-last{font-size:0.68rem;color:var(--muted);margin-top:0.5rem;}
 #excel-file-input{display:none;}
 
+/* Custom confirm modal */
+.confirm-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.65);z-index:99998;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
+.confirm-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.8rem;max-width:360px;width:90%;}
+.confirm-title{font-weight:700;font-size:0.95rem;margin-bottom:0.5rem;}
+.confirm-msg{font-size:0.8rem;color:var(--muted);margin-bottom:1.5rem;line-height:1.5;}
+.confirm-btns{display:flex;gap:0.7rem;justify-content:flex-end;}
+.confirm-cancel{padding:0.5rem 1.2rem;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;cursor:pointer;transition:all 0.15s;}
+.confirm-cancel:hover{border-color:var(--text);color:var(--text);}
+.confirm-ok{padding:0.5rem 1.2rem;background:var(--teal);border:none;border-radius:6px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;font-weight:700;cursor:pointer;transition:all 0.15s;}
+.confirm-ok:hover{background:#00ddb5;}
+.confirm-ok.danger{background:var(--red);color:#fff;}
+.confirm-ok.danger:hover{background:#ff2222;}
 .motiv-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:99999;display:flex;align-items:center;justify-content:center;animation:fadeIn 0.3s ease;backdrop-filter:blur(4px);}
 @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
 .motiv-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:2.5rem 2rem;max-width:420px;width:90%;text-align:center;position:relative;animation:slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1);}
@@ -724,6 +737,18 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 
 <!-- PRINT VIEW -->
 <div id="print-view"></div>
+
+<!-- CUSTOM CONFIRM MODAL -->
+<div id="confirm-overlay" style="display:none" class="confirm-overlay">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirm-title">Confirmar</div>
+    <div class="confirm-msg" id="confirm-msg"></div>
+    <div class="confirm-btns">
+      <button class="confirm-cancel" onclick="confirmResolve(false)">Cancelar</button>
+      <button class="confirm-ok" id="confirm-ok-btn" onclick="confirmResolve(true)">Aceptar</button>
+    </div>
+  </div>
+</div>
 
 <!-- MOTIVATIONAL POPUP -->
 <div id="motiv-overlay" style="display:none;" class="motiv-overlay" onclick="closeMotiv(event)">
@@ -1908,7 +1933,9 @@ function showShareBar(propId, url){
   const bar = document.getElementById('share-bar-'+propId);
   if(!bar) return;
   bar.style.display='flex';
-  bar.querySelector('.share-url').textContent = url;
+  const short = url.replace(/https?:\/\/[^/]+/,'…').replace(/\/p\//,'…/');
+  bar.querySelector('.share-url').textContent = short;
+  bar.querySelector('.share-url').title = url;
 }
 
 function copyUrl(url){
@@ -1935,7 +1962,8 @@ async function sendGmail(prop, url){
   if(!prop.email){ alert('Esta propuesta no tiene email del alumno.'); return; }
   const subject = 'Tu propuesta formativa — IM Education';
   const bodyText = 'Estimado/a ' + prop.alumno + ',\n\nEs un placer compartirte tu propuesta formativa personalizada de IM Education.\n\nPuedes consultarla en el siguiente enlace:\n' + url + '\n\nRecuerda que esta oferta es válida hasta el ' + new Date(prop.vencimiento).toLocaleDateString('es-ES') + '.\n\nQuedo a tu disposición para cualquier consulta.\n\nUn cordial saludo,\n' + (prop.comercialName||'Equipo de Admisiones') + '\nIM Education\nwww.im.education\nBCN 931 593 373 · MAD 911 593 433';
-  if(confirm('¿Enviar email a ' + prop.email + '?')){
+  const okEmail = await customConfirm('Enviar email','Se enviará la propuesta a ' + prop.email + ' desde propuestas@im.education.');
+  if(okEmail){
     try{
       const res = await fetch(APPS_SCRIPT_URL, {
         method:'POST', headers:{'Content-Type':'text/plain'},
@@ -2052,10 +2080,9 @@ function renderHistory(){
       </tr>
       ${prop.pubUrl?`<tr><td colspan="9" style="padding:0 1rem 0.5rem;">
         <div class="share-bar" id="share-bar-${prop.id}" style="display:flex;">
-          <span class="share-url">${prop.pubUrl}</span>
+          <span class="share-url" title="${prop.pubUrl}">${prop.pubUrl.replace(/https?:\/\/[^/]+/,'…').replace(/\/p\//,'…/')}</span>
           <button class="share-copy-btn" onclick="copyUrl('${prop.pubUrl}')">Copiar URL</button>
-          <button class="share-wa-btn" onclick="sendWhatsApp(${JSON.stringify(prop).replace(/"/g,'&quot;')},'${prop.pubUrl}')">WhatsApp</button>
-          <button class="share-gmail-btn" onclick="sendGmail(${JSON.stringify(prop).replace(/"/g,'&quot;')},'${prop.pubUrl}')">Gmail</button>
+          <button class="share-gmail-btn" onclick="sendGmail(${JSON.stringify(prop).replace(/"/g,'&quot;')},'${prop.pubUrl}')">Enviar correo</button>
         </div>
       </td></tr>`:'<tr style="display:none"><td colspan="9"><div class="share-bar" id="share-bar-${prop.id}" style="display:none;"><span class="share-url"></span></div></td></tr>'}`;
     }).join('')}
@@ -2076,8 +2103,9 @@ function setPropState(id,estado){
   countAlerts();
 }
 
-function deleteProp(id){
-  if(!confirm('¿Mover esta propuesta al archivo?')) return;
+async function deleteProp(id){
+  const ok = await customConfirm('Archivar propuesta','¿Mover esta propuesta al archivo? Podrás consultarla desde la pestaña Archivo.');
+  if(!ok) return;
   const props=getProposals();
   const p=props.find(x=>x.id===id);
   if(p){
@@ -2091,8 +2119,9 @@ function deleteProp(id){
   countAlerts();
 }
 
-function deletePropDefinitive(id){
-  if(!confirm('¿Eliminar definitivamente esta propuesta? Esta acción no se puede deshacer.')) return;
+async function deletePropDefinitive(id){
+  const ok = await customConfirm('Eliminar definitivamente','Esta acción no se puede deshacer. El PDF guardado también se eliminará.',true);
+  if(!ok) return;
   const props=getProposals().filter(x=>x.id!==id);
   saveProposals(props);
   deletePropHtml(id);
@@ -2147,8 +2176,9 @@ function addUser(){
   renderAdmin();
 }
 
-function deleteUser(user){
-  if(!confirm(`¿Eliminar el usuario "${user}"?`)) return;
+async function deleteUser(user){
+  const ok = await customConfirm('Eliminar usuario',`¿Eliminar el usuario "${user}"? Esta acción no se puede deshacer.`,true);
+  if(!ok) return;
   saveUsers(getUsers().filter(u=>u.user!==user));
   renderAdmin();
 }
@@ -2435,6 +2465,29 @@ function renderStats(){
       <div style="font-size:0.72rem;color:var(--muted)">${ganadas} ganadas de ${total} propuestas generadas</div>
     </div>`}
   `;
+}
+
+// ══════════════════════════════════════════════
+// CUSTOM CONFIRM
+// ══════════════════════════════════════════════
+let confirmCallback = null;
+
+function customConfirm(title, msg, danger=false){
+  return new Promise(resolve=>{
+    confirmCallback = resolve;
+    document.getElementById('confirm-title').textContent = title;
+    document.getElementById('confirm-msg').textContent = msg;
+    const okBtn = document.getElementById('confirm-ok-btn');
+    okBtn.className = danger ? 'confirm-ok danger' : 'confirm-ok';
+    okBtn.textContent = danger ? 'Eliminar' : 'Aceptar';
+    document.getElementById('confirm-overlay').style.display = 'flex';
+  });
+}
+
+function confirmResolve(val){
+  document.getElementById('confirm-overlay').style.display = 'none';
+  if(confirmCallback) confirmCallback(val);
+  confirmCallback = null;
 }
 
 // ══════════════════════════════════════════════
