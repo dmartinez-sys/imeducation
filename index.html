@@ -941,7 +941,6 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 <div onclick="openHelp()" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:9990;width:44px;height:44px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 16px rgba(245,200,66,0.5);transition:all 0.2s;" onmouseover="this.style.transform='scale(1.1)';this.style.boxShadow='0 4px 20px rgba(245,200,66,0.7)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 2px 16px rgba(245,200,66,0.5)'">
   <span style="font-size:1.3rem;font-weight:900;color:#000;line-height:1;font-family:'Plus Jakarta Sans',sans-serif;">?</span>
 </div>
-<div class="help-btn" onclick="openHelp()" title="Centro de ayuda">?</div>
 
 <!-- PROFILE MODAL -->
 <div id="profile-overlay" style="display:none" class="profile-overlay" onclick="if(event.target===this)closeProfile()">
@@ -1105,55 +1104,55 @@ const TITULOS = {
   fp:      {utamed_con:'FP Oficial + Certificado IM',utamed_sin:'FP Oficial + Certificado IM',abat_con:'—',abat_sin:'—',im:'AI for Marketing Mastery'},
 };
 const PROGRAMAS_DEFAULT = [
-  {id:1,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente Global en Marketing Digital, Comunicación y Emprendimiento con IA',meses:24,ects:120,horas:3000,pres:12000,vpres:9600,online:8400,prac:true},
-  {id:2,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Dirección y Gestión de Marketing Digital -DUAL',meses:12,ects:90,horas:1800,pres:9000,vpres:7800,online:6600,prac:true},
-  {id:3,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Dirección y Gestión de Negocios Digitales. -DUAL',meses:12,ects:90,horas:1800,pres:9000,vpres:7800,online:6600,prac:true},
-  {id:4,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Dirección y Gestión en Comunicación Digital -DUAL',meses:12,ects:90,horas:1800,pres:9000,vpres:7800,online:6600,prac:true},
-  {id:5,tipo:'master',univ:'ABAT',nombre:'Máster formación permanente en GLOBAL DIGITAL MARKETING - abat oliba',meses:12,ects:60,horas:500,pres:9000,vpres:7800,online:6600,prac:true},
-  {id:6,tipo:'master',univ:'ABAT',nombre:'Máster formación permanente en Marketing Digital+ Inteligencia Artificial - abat oliba',meses:6,ects:60,horas:480,pres:5400,vpres:4800,online:4200,prac:true},
-  {id:7,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Traffic Management and Lead Generation',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true},
-  {id:8,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Digital Project Management',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true},
-  {id:9,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Dirección Comunicación Digital (DIRCOM)',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true},
-  {id:10,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Ecommerce Manager',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true},
-  {id:11,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Growth Hacking y Emprendimiento Digital',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true},
-  {id:12,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Content Management y Social Media Strategy',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true},
-  {id:13,tipo:'master',univ:'UTAMED',nombre:'Master en formacion permanente en intelegencia artifcial &. automation aplicada al marketing digital',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true},
-  {id:14,tipo:'master',univ:'UTAMED',nombre:'Máster en Formación Permanente en Dirección y Gestión de Empresas Digitales (MBA)',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true},
+  {id:1,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente Global en Marketing Digital, Comunicación y Emprendimiento con IA',meses:24,ects:120,horas:3000,pres:12000,vpres:9600,online:8400,prac:true,url_pdf:'https://cdn.im.education/pdf/219/'},
+  {id:2,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Dirección y Gestión de Marketing Digital',meses:12,ects:90,horas:1800,pres:9000,vpres:7800,online:6600,prac:true,url_pdf:'https://cdn.im.education/pdf/183/'},
+  {id:3,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Dirección y Gestión de Negocios Digitales.',meses:12,ects:90,horas:1800,pres:9000,vpres:7800,online:6600,prac:true,url_pdf:'https://cdn.im.education/pdf/203/'},
+  {id:4,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Dirección y Gestión en Comunicación Digital',meses:12,ects:90,horas:1800,pres:9000,vpres:7800,online:6600,prac:true,url_pdf:'https://cdn.im.education/pdf/220/'},
+  {id:5,tipo:'master',univ:'UTAMED',nombre:'Máster formación permanente en GLOBAL DIGITAL MARKETING',meses:12,ects:60,horas:500,pres:9000,vpres:7800,online:6600,prac:true,url_pdf:'https://cdn.im.education/pdf/219/'},
+  {id:6,tipo:'master',univ:'UTAMED',nombre:'Máster formación permanente en Marketing Digital+ Inteligencia Artificial',meses:6,ects:60,horas:480,pres:5400,vpres:4800,online:4200,prac:true,url_pdf:'https://cdn.im.education/pdf/258/'},
+  {id:7,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Traffic Management and Lead Generation',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true,url_pdf:'https://cdn.im.education/pdf/197/'},
+  {id:8,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Digital Project Management',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true,url_pdf:'https://cdn.im.education/pdf/196/'},
+  {id:9,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Dirección Comunicación Digital (DIRCOM)',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true,url_pdf:'https://cdn.im.education/pdf/200/'},
+  {id:10,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Ecommerce Manager',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true,url_pdf:'https://cdn.im.education/pdf/204/'},
+  {id:11,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Growth Hacking y Emprendimiento Digital',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true,url_pdf:'https://cdn.im.education/pdf/205/'},
+  {id:12,tipo:'master',univ:'UTAMED',nombre:'Máster en formación permanente en Content Management y Social Media Strategy',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true,url_pdf:'https://cdn.im.education/pdf/199/'},
+  {id:13,tipo:'master',univ:'UTAMED',nombre:'Master en formacion permanente en intelegencia artifcial &. automation aplicada al marketing digital',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true,url_pdf:'https://cdn.im.education/pdf/229/'},
+  {id:14,tipo:'master',univ:'UTAMED',nombre:'Máster en Formación Permanente en Dirección y Gestión de Empresas Digitales (MBA)',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true,url_pdf:'https://cdn.im.education/pdf/259/'},
   {id:15,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente en Ventas Digitales, Desarrollo de Negocio e Inteligencia Artificial',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true},
-  {id:16,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente en Inteligencia Artificial Aplicada al Marketing y Automatización de Procesos',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true},
-  {id:17,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de especialización en Marketing Digital & Social Media',meses:4,ects:32,horas:800,pres:2800,vpres:2560,online:2240,prac:true},
-  {id:18,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de especialización en Trafficker & Growth Hacking',meses:4,ects:32,horas:800,pres:2800,vpres:2560,online:2240,prac:true},
-  {id:19,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de especialización en Social Media & Community Manager',meses:4,ects:32,horas:800,pres:2800,vpres:2560,online:2240,prac:true},
-  {id:20,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de especialización en Digital Project Manager',meses:4,ects:32,horas:800,pres:2800,vpres:2560,online:2240,prac:true},
+  {id:16,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente en Inteligencia Artificial Aplicada al Marketing y Automatización de Procesos',meses:6,ects:60,horas:1200,pres:5400,vpres:4800,online:4200,prac:true,url_pdf:'https://cdn.im.education/pdf/229/'},
+  {id:17,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de especialización en Marketing Digital & Social Media',meses:4,ects:32,horas:800,pres:2800,vpres:2560,online:2240,prac:true,url_pdf:'https://cdn.im.education/pdf/207/'},
+  {id:18,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de especialización en Trafficker & Growth Hacking',meses:4,ects:32,horas:800,pres:2800,vpres:2560,online:2240,prac:true,url_pdf:'https://cdn.im.education/pdf/209/'},
+  {id:19,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de especialización en Social Media & Community Manager',meses:4,ects:32,horas:800,pres:2800,vpres:2560,online:2240,prac:true,url_pdf:'https://cdn.im.education/pdf/208/'},
+  {id:20,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de especialización en Digital Project Manager',meses:4,ects:32,horas:800,pres:2800,vpres:2560,online:2240,prac:true,url_pdf:'https://cdn.im.education/pdf/206/'},
   {id:21,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de Especialización en Ventas Digitales e Inteligencia Artificial',meses:4,ects:32,horas:800,pres:2800,vpres:2560,online:2240,prac:true},
   {id:22,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de Especialización en Desarrollo de Negocio e Inteligencia Artificial',meses:4,ects:32,horas:800,pres:2800,vpres:2560,online:2240,prac:true},
-  {id:23,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de Especialización en Inteligencia Artificial Aplicada al Marketing',meses:4,ects:32,horas:800,pres:2800,vpres:2560,online:2240,prac:true},
-  {id:24,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de Especialización en Automatización de Procesos e Inteligencia Artificial',meses:4,ects:32,horas:800,pres:2800,vpres:2560,online:2240,prac:true},
-  {id:25,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de Especialización en Inteligencia de Cliente, Marca e Inteligencia Artificial',meses:4,ects:32,horas:800,pres:2800,vpres:2560,online:2240,prac:true},
-  {id:26,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Email Marketing, Afiliación y CRM',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:27,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Google Ads',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:28,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Google Analytics',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:29,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en en Marketing Digital & Inbound Marketing',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:30,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Mobile Marketing y Digital Trends',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:31,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Posicionamiento en Buscadores (SEO)',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:32,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Tecnología Web y RGPD',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:33,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Usabilidad y Experiencia de Usuario- UX',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:34,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Estrategias de Marketing en Contenidos',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:35,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en E-Commerce',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:36,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Blogger Profesional',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:37,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Organización de Eventos Digitales',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:38,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Growth Hacking',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:39,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Lean Start Up',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:40,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Video Marketing y Youtube',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:41,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Social Media Strategist Y Community Manager',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:42,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en en Social Ads',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:43,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Brand Management',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:44,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Dirección de proyectos digitales',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:45,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial  en Reputación online en la empresa (ORM)',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:46,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Decisiones estratégicas digitales',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false},
-  {id:47,tipo:'grado',univ:'UTAMED',nombre:'Grado Universitario Marketing Digital + AI for Marketing Mastery',meses:48,ects:240,horas:6000,pres:0,vpres:0,online:3000,prac:true},
-  {id:48,tipo:'fp',univ:'UTAMED',nombre:'Grado Superior en Marketing Digital y Publicidad + AI for Marketing Mastery',meses:24,ects:120,horas:3000,pres:0,vpres:0,online:3000,prac:true},
-  {id:49,tipo:'fp',univ:'UTAMED',nombre:'Grado Superior en Comercio Internacional + AI for Marketing Mastery',meses:24,ects:120,horas:3000,pres:0,vpres:0,online:3000,prac:true},
+  {id:23,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de Especialización en Inteligencia Artificial Aplicada al Marketing',meses:4,ects:32,horas:800,pres:2800,vpres:2560,online:2240,prac:true,url_pdf:'https://cdn.im.education/pdf/231/'},
+  {id:24,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de Especialización en Automatización de Procesos e Inteligencia Artificial',meses:4,ects:32,horas:800,pres:2800,vpres:2560,online:2240,prac:true,url_pdf:'https://cdn.im.education/pdf/231/'},
+  {id:25,tipo:'diploma',univ:'UTAMED',nombre:'Diploma de Especialización en Inteligencia de Cliente, Marca e Inteligencia Artificial',meses:4,ects:32,horas:800,pres:2800,vpres:2560,online:2240,prac:true,url_pdf:'https://cdn.im.education/pdf/172/'},
+  {id:26,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Email Marketing, Afiliación y CRM',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/176/'},
+  {id:27,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Google Ads',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/179/'},
+  {id:28,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Google Analytics',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/180/'},
+  {id:29,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en en Marketing Digital & Inbound Marketing',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/183/'},
+  {id:30,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Mobile Marketing y Digital Trends',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/184/'},
+  {id:31,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Posicionamiento en Buscadores (SEO)',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/187/'},
+  {id:32,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Tecnología Web y RGPD',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/190/'},
+  {id:33,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Usabilidad y Experiencia de Usuario- UX',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/191/'},
+  {id:34,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Estrategias de Marketing en Contenidos',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/177/'},
+  {id:35,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en E-Commerce',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/175/'},
+  {id:36,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Blogger Profesional',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/171/'},
+  {id:37,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Organización de Eventos Digitales',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/185/'},
+  {id:38,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Growth Hacking',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/181/'},
+  {id:39,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Lean Start Up',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/182/'},
+  {id:40,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Video Marketing y Youtube',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/192/'},
+  {id:41,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Social Media Strategist Y Community Manager',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/189/'},
+  {id:42,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en en Social Ads',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/188/'},
+  {id:43,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Brand Management',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/172/'},
+  {id:44,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Dirección de proyectos digitales',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/174/'},
+  {id:45,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial  en Reputación online en la empresa (ORM)',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/186/'},
+  {id:46,tipo:'micro',univ:'UTAMED',nombre:'Diploma de Micro-credencial en Decisiones estratégicas digitales',meses:3,ects:8,horas:200,pres:1350,vpres:1050,online:750,prac:false,url_pdf:'https://cdn.im.education/pdf/178/'},
+  {id:47,tipo:'grado',univ:'UTAMED',nombre:'Grado Universitario Marketing Digital + AI for Marketing Mastery ( Primer año)',meses:48,ects:240,horas:6000,pres:0,vpres:0,online:3000,prac:true},
+  {id:48,tipo:'fp',univ:'UTAMED',nombre:'Grado Superior en Marketing Digital y Publicidad + AI for Marketing Mastery ( Primer año)',meses:24,ects:120,horas:3000,pres:0,vpres:0,online:3000,prac:true},
+  {id:49,tipo:'fp',univ:'UTAMED',nombre:'Grado Superior en Comercio Internacional + AI for Marketing Mastery ( Primer año)',meses:24,ects:120,horas:3000,pres:0,vpres:0,online:3000,prac:true},
 ];
 
 // Dynamic catalog — gets populated from localStorage or PROGRAMAS_DEFAULT on init
@@ -1986,6 +1985,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
         ${[['87%','Empleabilidad'],['QS ★★★★★','5 Estrellas'],['20 años','Experiencia'],['30.000+','Alumnos']].map(([v,l])=>`
         <div class="stat-item"><div class="stat-val">${v}</div><div class="stat-lbl">${l}</div></div>`).join('')}
       </div>
+      ${p.url_pdf?`
+      <div style="margin-top:3mm;text-align:center;">
+        <a href="${p.url_pdf}" target="_blank" style="display:inline-flex;align-items:center;gap:2mm;padding:2.5mm 5mm;background:rgba(0,196,160,0.08);border:0.4mm solid rgba(0,196,160,0.3);border-radius:2mm;text-decoration:none;color:#00C4A0;font-size:2.8mm;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:0.03em;">
+          <svg width="4mm" height="4mm" viewBox="0 0 16 16" fill="none" stroke="#00C4A0" stroke-width="1.5"><path d="M4 2h6l4 4v8H4V2z"/><path d="M10 2v4h4"/><path d="M6 9h4M6 12h4"/></svg>
+          Ver programa completo
+        </a>
+      </div>`:''}
 
     </div>
   </div>
@@ -2377,21 +2383,8 @@ function sendGmailById(propId){
 async function sendGmail(prop, url){
   if(!prop.email){ showToast('Sin email','Esta propuesta no tiene email del alumno registrado.','warning'); return; }
   if(!url){ showToast('Propuesta no publicada','Primero publica la propuesta para poder enviarla.','warning'); return; }
-  
-  const sendDirect = await customConfirm(
-    'Enviar correo al alumno',
-    'Pulsa "Enviar" para mandar el mensaje estándar, o "Personalizar" para editarlo antes.',
-    false,
-    'Enviar',
-    'Personalizar'
-  );
-  if(!sendDirect){
-    // "Personalizar" was clicked (cancel = false)
-    openEmailEditor(prop, url);
-    return;
-  }
-  // "Enviar" was clicked - send standard
-  {
+  openEmailEditor(prop, url);
+  if(false){
     const comercialName = currentUser.name||currentUser.user;
     const comercialEmail = currentUser.email||'admisiones@im.education';
     const subject = 'Tu propuesta formativa — IM Education';
@@ -2712,10 +2705,11 @@ function handleExcelUpload(event){
         const vpres = parseFloat(r[8])||0;
         const online= parseFloat(r[9])||0;
         const prac  = String(r[10]||'').toLowerCase().includes('s');
+        const url_pdf = (r[11]&&typeof r[11]==='string'&&r[11].startsWith('http'))?r[11].trim():'';
 
         if(pres===0&&online===0) continue;
 
-        parsed.push({id:id++, tipo, univ, nombre, meses, ects, horas, pres, vpres, online, prac});
+        parsed.push({id:id++, tipo, univ, nombre, meses, ects, horas, pres, vpres, online, prac, url_pdf});
       }
 
       if(parsed.length===0){
