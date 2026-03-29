@@ -125,7 +125,8 @@ body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans
 .field input:focus{border-color:var(--teal);}
 .rgroup{display:flex;flex-direction:column;gap:0.3rem;}
 .rbtn{padding:0.48rem 0.72rem;border:1px solid var(--border);border-radius:5px;cursor:pointer;font-size:0.8rem;color:var(--muted);transition:all 0.15s;font-weight:500;}
-.rbtn:hover{border-color:var(--hover);color:var(--text);background:var(--hover);}
+.rbtn:hover:not(.disabled){border-color:var(--hover);color:var(--text);background:var(--hover);}
+.rbtn.disabled{opacity:0.25 !important;cursor:not-allowed !important;pointer-events:none !important;}
 .rbtn.on{border-color:var(--teal);color:var(--teal);background:rgba(0,196,160,0.05);}
 .rbtn.gold.on{border-color:var(--gold);color:var(--gold);background:rgba(245,200,66,0.05);}
 .result-box{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:1.2rem;grid-column:1/-1;}
@@ -1419,6 +1420,7 @@ function calcSim(){
   const mod=getVal('rg-mod'), desc=parseInt(getVal('rg-desc')), pago=parseInt(getVal('rg-pago'));
   const base=getPrice(p,mod), conDesc=Math.round(base*(1-desc/100)), final=pago?Math.round(conDesc*0.95):conDesc, ahorro=base-final;
   document.getElementById('sim-cta').style.display='block';
+  setTimeout(()=>{ document.getElementById('sim-result').scrollIntoView({behavior:'smooth',block:'nearest'}); },100);
   // Financing calcs for simulator
   const simCuotasMap = {master:p.meses>=12?12:6, diploma:3, micro:3, grado:24, fp:12};
   const simCuotas = simCuotasMap[p.tipo]||12;
@@ -1544,6 +1546,39 @@ function onPProg(){
   document.getElementById('pt-sin').textContent=t[sk];
   document.getElementById('pt-im').textContent=t.im;
   tb.style.display='block';
+
+  // ── Filter modalidad buttons based on program availability ──
+  const modAvail=[
+    {val:'presencial', ok: p.pres>0},
+    {val:'videopresencial', ok: p.vpres>0},
+    {val:'online', ok: p.online>0},
+  ];
+  const available = modAvail.filter(m=>m.ok);
+  document.querySelectorAll('#rg-pmod .rbtn').forEach(btn=>{
+    const m = modAvail.find(x=>x.val===btn.dataset.val);
+    if(m && m.ok){
+      btn.classList.remove('disabled');
+      btn.style.cssText='';
+      btn.onclick=function(){pick(this,'rg-pmod');updatePV();};
+    } else {
+      btn.classList.remove('on');
+      btn.classList.add('disabled');
+      btn.style.cssText='opacity:0.25;cursor:not-allowed;pointer-events:none;';
+      btn.onclick=null;
+    }
+  });
+  // If current selection unavailable or only one option, auto-select
+  const currentOn = document.querySelector('#rg-pmod .rbtn.on');
+  const currentOk = currentOn && modAvail.find(m=>m.val===currentOn.dataset.val&&m.ok);
+  if(!currentOk && available.length>0){
+    const firstBtn=document.querySelector(`#rg-pmod .rbtn[data-val="${available[0].val}"]`);
+    if(firstBtn) pick(firstBtn,'rg-pmod');
+  }
+  if(available.length===1){
+    const onlyBtn=document.querySelector(`#rg-pmod .rbtn[data-val="${available[0].val}"]`);
+    if(onlyBtn) pick(onlyBtn,'rg-pmod');
+  }
+
   updatePV();
 }
 
@@ -1577,6 +1612,8 @@ function updatePV(){
 }
 
 function generateProposal(){
+  const genBtn = document.getElementById('gen-btn');
+  if(genBtn){ genBtn.disabled=true; genBtn.textContent='Generando...'; }
   const nombre=document.getElementById('p-nombre').value.trim();
   const email=document.getElementById('p-email').value.trim();
   const tel=document.getElementById('p-tel').value.trim();
@@ -1595,7 +1632,21 @@ function generateProposal(){
   const univLogo=p.univ==='ABAT'?LOGO_ABAT:p.univ==='TECH'?LOGO_TECH:LOGO_UTAMED;
 
   // ── Calcular titulaciones ──
-  const nomCorto = p.nombre.replace(/máster (de formación permanente en |en formación permanente en |formación permanente en )/i,'').replace(/diploma de especialización en /i,'').replace(/diploma de micro-credencial en /i,'').replace(/microcredencial en /i,'').trim();
+  // Clean program name removing tipo prefix to avoid duplication
+  let nomCorto = p.nombre
+    .replace(/máster de formación permanente en /i,'')
+    .replace(/máster en formación permanente en /i,'')
+    .replace(/máster formación permanente en /i,'')
+    .replace(/master en formacion permanente en /i,'')
+    .replace(/diploma de especialización en /i,'')
+    .replace(/diploma de micro-credencial en /i,'')
+    .replace(/diploma de micro-credencial  en /i,'')
+    .replace(/microcredencial en /i,'')
+    .replace(/grado universitario /i,'')
+    .replace(/grado superior en /i,'')
+    .trim();
+  // Remove ABAT suffix
+  nomCorto = nomCorto.replace(/ ?-? ?abat oliba$/i,'').replace(/ ?-? ?abat oliba ceu$/i,'').trim();
 
   let tit1 = null; // Título universitario
   let tit2 = null; // Título IM
@@ -2127,6 +2178,9 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
 <style>@media(max-width:220mm){body>div{padding:0.5rem;}}</style>
 </body></html>`;
 
+  // Re-enable button
+  const genBtn2 = document.getElementById('gen-btn');
+  if(genBtn2){ genBtn2.disabled=false; genBtn2.textContent='Ver propuesta'; }
   // Store for later confirmation
   window._pendingHtml2 = html2;
   window._pendingPropData = {
@@ -2314,20 +2368,16 @@ async function publishToGitHub(propId){
       renderHistory();
       showShareBar(propId, data.url);
       showToast('Propuesta publicada','El enlace ya está disponible para compartir.','success');
-      // If called from preview, update bar and offer email
-      if(window._savedProp && window._savedProp.id === propId){
-        window._savedProp.pubUrl = data.url;
-        // Offer to send email
-        if(prop.email){
-          const modal = document.getElementById('proposal-modal');
-          if(modal){
-            const cn = currentUser.name||currentUser.user;
-              const ce = currentUser.email||'admisiones@im.education';
-              customConfirm('¿Enviar por correo?',`Se enviará a ${prop.email} desde propuestas@im.education como "${cn}". Respuestas llegarán a ${ce}.`).then(ok=>{
-              if(ok) sendGmail(prop, data.url);
-            });
-          }
-        }
+      // Ask if they want to send email
+      if(prop.email){
+        setTimeout(async ()=>{
+          const ok = await customConfirm(
+            '¿Enviar por correo?',
+            `¿Quieres enviar la propuesta a ${prop.email} ahora?`,
+            false, 'Sí, enviar', 'No, ahora no'
+          );
+          if(ok) sendGmail(prop, data.url);
+        }, 600);
       }
     } else {
       showToast('Error al publicar', data.error||'Error desconocido','error');
@@ -2504,7 +2554,7 @@ function renderHistory(){
       <!-- HEADER -->
       <div class="prop-row-header" onclick="togglePropRow(${prop.id})">
         <div class="prop-row-status" style="background:${dotColor}"></div>
-        <div class="prop-row-name" title="${prop.alumno||prop.nombre||'Sin nombre'}">${prop.alumno||prop.nombre||'Sin nombre'}</div>
+        <div class="prop-row-name" title="${prop.alumno||'Sin nombre'}">${prop.alumno||'—'}</div>
         <div class="prop-row-prog" title="${prop.programa}">${progShort}</div>
         <div class="prop-row-price">${prop.precioFinal?fmt(prop.precioFinal):'—'}</div>
         <span class="st-badge ${st.cls} prop-row-badge">${st.txt}</span>
@@ -2564,10 +2614,12 @@ function setPropState(id,estado){
   renderHistory();
   renderAlertBanner();
   countAlerts();
+  const labels={ganada:'Propuesta marcada como Ganada',perdida:'Propuesta marcada como Perdida'};
+  if(labels[estado]) showToast(labels[estado],'Movida al Archivo.','success');
 }
 
 async function deleteProp(id){
-  const ok = await customConfirm('Archivar propuesta','¿Mover esta propuesta al archivo? Podrás consultarla desde la pestaña Archivo.');
+  const ok = await customConfirm('Archivar propuesta','¿Mover esta propuesta al archivo? Podrás consultarla desde la pestaña Archivo.',false,'Archivar','Cancelar');
   if(!ok) return;
   const props=getProposals();
   const p=props.find(x=>x.id===id);
@@ -2723,6 +2775,9 @@ function handleExcelUpload(event){
       PROGRAMAS.length=0;
       parsed.forEach(p=>PROGRAMAS.push(p));
       refreshApp();
+      // Re-populate all selects
+      filterCatalog();
+      updatePV();
 
       status.className='excel-status ok';
       status.textContent=`Catálogo actualizado correctamente — ${parsed.length} programas cargados.`;
