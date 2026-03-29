@@ -3448,4 +3448,19 @@ function initApp(){
     PROGRAMAS.filter(p=>p.tipo===tipo).forEach(p=>{
       const o=document.createElement('option');
       o.value=p.id;
-      o.textContent=p.nombre.length>65?p.nombre.slice(
+      o.textContent=p.nombre.length>65?p.nombre.slice(0,65)+'…':p.nombre;
+      g.appendChild(o);
+    });
+    propSel.appendChild(g);
+  });
+
+  filterCatalog();
+  updatePV();
+  countAlerts();
+
+  // Check expiry every minute
+  setInterval(countAlerts, 60000);
+}
+</script>
+</body>
+</html>
