@@ -347,6 +347,76 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 .excel-last{font-size:0.68rem;color:var(--muted);margin-top:0.5rem;}
 #excel-file-input{display:none;}
 
+/* ── AVATAR ── */
+.sb-avatar{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:800;color:#fff;cursor:pointer;flex-shrink:0;transition:transform 0.15s;border:2px solid transparent;}
+.sb-avatar:hover{transform:scale(1.08);border-color:var(--teal);}
+.sb-user-row{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.4rem;cursor:pointer;}
+.sb-user-row:hover .sb-user-name{color:var(--teal);}
+
+/* ── PROFILE MODAL ── */
+.profile-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9997;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.profile-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:0;width:100%;max-width:500px;overflow:hidden;}
+.profile-header{background:#111;padding:1.5rem;display:flex;align-items:center;gap:1rem;border-bottom:1px solid var(--border);}
+.profile-avatar-big{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;color:#fff;flex-shrink:0;cursor:pointer;position:relative;transition:all 0.15s;}
+.profile-avatar-big:hover::after{content:'📷';position:absolute;bottom:-2px;right:-2px;font-size:1rem;}
+.profile-header-info .name{font-size:1rem;font-weight:700;}
+.profile-header-info .role{font-size:0.68rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.06em;margin-top:0.2rem;}
+.profile-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-bottom:1px solid var(--border);}
+.pstat{padding:0.8rem;text-align:center;border-right:1px solid var(--border);}
+.pstat:last-child{border:none;}
+.pstat-val{font-size:1.2rem;font-weight:800;color:var(--teal);}
+.pstat-lbl{font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-top:0.2rem;}
+.profile-body{padding:1.2rem;}
+.profile-color-picker{display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap;}
+.color-dot{width:24px;height:24px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all 0.15s;}
+.color-dot:hover,.color-dot.selected{border-color:#fff;transform:scale(1.15);}
+.profile-save-btn{width:100%;padding:0.65rem;background:var(--teal);border:none;border-radius:6px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:800;cursor:pointer;margin-top:0.5rem;}
+.profile-save-btn:hover{background:#00ddb5;}
+
+/* ── HELP CENTER ── */
+.help-btn{position:fixed;bottom:1.5rem;left:1.5rem;width:40px;height:40px;background:var(--card);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;font-weight:700;color:var(--muted);z-index:9990;transition:all 0.15s;box-shadow:0 2px 12px rgba(0,0,0,0.3);}
+.help-btn:hover{border-color:var(--teal);color:var(--teal);transform:scale(1.08);}
+.help-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9996;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.help-box{background:var(--card);border:1px solid var(--border);border-radius:16px;width:100%;max-width:620px;max-height:80vh;overflow:hidden;display:flex;flex-direction:column;}
+.help-header{background:#111;padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.help-header h2{font-size:0.95rem;font-weight:700;}
+.help-close{background:transparent;border:none;color:var(--muted);font-size:1.2rem;cursor:pointer;}
+.help-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);flex-shrink:0;}
+.help-tab{padding:0.6rem 1.2rem;font-size:0.75rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;}
+.help-tab.on{color:var(--teal);border-bottom-color:var(--teal);}
+.help-content{padding:1.2rem 1.5rem;overflow-y:auto;flex:1;}
+.help-section{margin-bottom:1.5rem;}
+.help-section h3{font-size:0.78rem;font-weight:700;color:var(--teal);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;}
+.help-step{display:flex;gap:0.8rem;margin-bottom:0.7rem;align-items:flex-start;}
+.help-num{width:20px;height:20px;border-radius:50%;background:var(--teal);color:#000;font-size:0.65rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:0.1rem;}
+.help-step-text{font-size:0.78rem;color:var(--muted);line-height:1.5;}
+.help-step-text strong{color:var(--text);}
+.faq-item{margin-bottom:0.8rem;border:1px solid var(--border);border-radius:6px;overflow:hidden;}
+.faq-q{padding:0.65rem 0.9rem;font-size:0.78rem;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;}
+.faq-q:hover{background:var(--hover);}
+.faq-a{padding:0 0.9rem 0.65rem;font-size:0.75rem;color:var(--muted);line-height:1.6;display:none;}
+.faq-a.open{display:block;}
+
+/* ── NOTES ── */
+.note-row{padding:0.4rem 1rem 0.6rem;border-bottom:1px solid var(--border);}
+.note-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:0.35rem 0.6rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.72rem;outline:none;resize:none;}
+.note-input:focus{border-color:var(--teal);}
+.note-save-btn{margin-top:0.3rem;padding:0.22rem 0.7rem;background:transparent;border:1px solid var(--border);border-radius:3px;color:var(--muted);font-size:0.62rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;transition:all 0.15s;}
+.note-save-btn:hover{border-color:var(--teal);color:var(--teal);}
+
+/* Toast notifications */
+.toast-container{position:fixed;bottom:1.5rem;right:1.5rem;z-index:99997;display:flex;flex-direction:column;gap:0.5rem;pointer-events:none;}
+.toast{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:0.8rem 1.1rem;min-width:260px;max-width:380px;display:flex;align-items:flex-start;gap:0.7rem;pointer-events:all;animation:toastIn 0.3s cubic-bezier(0.34,1.56,0.64,1);box-shadow:0 4px 20px rgba(0,0,0,0.4);}
+@keyframes toastIn{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+@keyframes toastOut{from{opacity:1;transform:translateX(0);}to{opacity:0;transform:translateX(30px);}}
+.toast-icon{font-size:1.1rem;flex-shrink:0;margin-top:0.1rem;}
+.toast-body{}
+.toast-title{font-size:0.8rem;font-weight:700;margin-bottom:0.2rem;}
+.toast-msg{font-size:0.72rem;color:var(--muted);line-height:1.4;}
+.toast.success .toast-title{color:var(--teal);}
+.toast.error .toast-title{color:var(--red);}
+.toast.warning .toast-title{color:var(--gold);}
+.toast.info .toast-title{color:#8B8FA8;}
 /* Custom confirm modal */
 .confirm-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.65);z-index:99998;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(3px);}
 .confirm-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.8rem;max-width:360px;width:90%;}
@@ -465,9 +535,14 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
       <div class="cnt-row"><span><span class="cnt-dot" style="background:#fb923c"></span>FP Oficial</span><span style="font-weight:700" id="cnt-fp">0</span></div>
     </div>
     <div class="sb-user">
-      <div class="sb-user-name" id="sb-uname">—</div>
-      <div class="sb-user-role" id="sb-urole">—</div>
-      <div style="font-size:0.62rem;color:var(--teal);margin-top:0.2rem;" id="sb-uemail"></div>
+      <div class="sb-user-row" onclick="openProfile()">
+        <div class="sb-avatar" id="sb-avatar">?</div>
+        <div>
+          <div class="sb-user-name" id="sb-uname">—</div>
+          <div class="sb-user-role" id="sb-urole">—</div>
+        </div>
+      </div>
+      <div style="font-size:0.62rem;color:var(--teal);margin-top:0.1rem;margin-bottom:0.5rem;" id="sb-uemail"></div>
       <button class="sb-logout" onclick="showMotivPopupForce()" style="margin-bottom:0.4rem;border-color:rgba(0,196,160,0.3);color:var(--teal);">✨ Frase del día</button>
       <button class="sb-logout" onclick="doLogout()">Cerrar sesión</button>
     </div>
@@ -738,6 +813,55 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 <!-- PRINT VIEW -->
 <div id="print-view"></div>
 
+<!-- HELP BUTTON -->
+<div class="help-btn" onclick="openHelp()" title="Centro de ayuda">?</div>
+
+<!-- PROFILE MODAL -->
+<div id="profile-overlay" style="display:none" class="profile-overlay" onclick="if(event.target===this)closeProfile()">
+  <div class="profile-box">
+    <div class="profile-header">
+      <div class="profile-avatar-big" id="profile-avatar-big" onclick="cycleAvatarColor()">?</div>
+      <div class="profile-header-info">
+        <div class="name" id="profile-header-name">—</div>
+        <div class="role" id="profile-header-role">—</div>
+        <div style="font-size:0.65rem;color:var(--muted);margin-top:0.3rem;">Toca el avatar para cambiar color</div>
+      </div>
+    </div>
+    <div class="profile-stats" id="profile-stats"></div>
+    <div class="profile-body">
+      <div style="font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;font-weight:600;">Color del avatar</div>
+      <div class="profile-color-picker" id="profile-colors"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;margin-top:0.8rem;">
+        <div class="field"><label>Nombre</label><input type="text" id="profile-name" placeholder="Tu nombre"></div>
+        <div class="field"><label>Email</label><input type="email" id="profile-email" placeholder="tu@im.education"></div>
+        <div class="field"><label>Nueva contraseña</label><input type="password" id="profile-pass" placeholder="Dejar vacío para no cambiar"></div>
+        <div class="field"><label>Confirmar contraseña</label><input type="password" id="profile-pass2" placeholder="Repite la contraseña"></div>
+      </div>
+      <div id="profile-err" style="font-size:0.72rem;color:var(--red);margin-top:0.5rem;display:none;"></div>
+      <button class="profile-save-btn" onclick="saveProfile()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- HELP MODAL -->
+<div id="help-overlay" style="display:none" class="help-overlay" onclick="if(event.target===this)closeHelp()">
+  <div class="help-box">
+    <div class="help-header">
+      <h2>📚 Centro de ayuda — IM Education</h2>
+      <button class="help-close" onclick="closeHelp()">✕</button>
+    </div>
+    <div class="help-tabs">
+      <div class="help-tab on" onclick="showHelpTab('guia',this)">Guía rápida</div>
+      <div class="help-tab" onclick="showHelpTab('faq',this)">FAQ</div>
+      <div class="help-tab" onclick="showHelpTab('tips',this)">Consejos pro</div>
+    </div>
+    <div class="help-content" id="help-content"></div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toast-container"></div>
+
 <!-- CUSTOM CONFIRM MODAL -->
 <div id="confirm-overlay" style="display:none" class="confirm-overlay">
   <div class="confirm-box">
@@ -916,6 +1040,7 @@ function doLogin(){
   if(found.email) document.getElementById('sb-uemail').textContent = found.email;
   if(found.role==='admin') document.getElementById('nav-admin').style.display='flex';
   initApp();
+  updateSidebarAvatar();
   setTimeout(showMotivPopup, 800);
 }
 
@@ -1059,7 +1184,7 @@ function toggleCompare(id){
   const p=PROGRAMAS.find(x=>x.id===id);
   const i=compareList.findIndex(c=>c.id===id);
   if(i>-1) compareList.splice(i,1);
-  else{ if(compareList.length>=4){alert('Máximo 4 programas.');return;} compareList.push(p); }
+  else{ if(compareList.length>=4){showToast('Límite alcanzado','Solo puedes comparar hasta 4 programas a la vez.','warning');return;} compareList.push(p); }
   saveCompare(compareList);
   filterCatalog();
 }
@@ -1943,7 +2068,7 @@ function showProposalPreview(html2, propData, isPending){
 function sendGmailFromPreview(){
   const prop = window._currentPropPreview;
   if(!prop || !prop.pubUrl){
-    alert('Primero debes publicar la propuesta para poder enviarla por correo.');
+    showToast('Propuesta no publicada','Primero pulsa \'Publicar y compartir\' para generar el enlace.','warning');
     return;
   }
   sendGmail(prop, prop.pubUrl);
@@ -1963,7 +2088,7 @@ async function publishToGitHub(propId){
 
   const htmlContent = getPropHtml(propId);
   if(!htmlContent){
-    alert('No se encontró el HTML de esta propuesta. Genera la propuesta de nuevo.');
+    showToast('PDF no disponible','Esta propuesta fue generada en otro navegador o dispositivo.','warning');
     if(btn){ btn.disabled=false; btn.textContent='Publicar'; }
     return;
   }
@@ -1997,18 +2122,20 @@ async function publishToGitHub(propId){
         if(prop.email){
           const modal = document.getElementById('proposal-modal');
           if(modal){
-            customConfirm('¿Enviar por correo?', `¿Quieres enviar la propuesta a ${prop.email} ahora?`).then(ok=>{
+            const cn = currentUser.name||currentUser.user;
+              const ce = currentUser.email||'admisiones@im.education';
+              customConfirm('¿Enviar por correo?',`Se enviará a ${prop.email} desde propuestas@im.education como "${cn}". Respuestas llegarán a ${ce}.`).then(ok=>{
               if(ok) sendGmail(prop, data.url);
             });
           }
         }
       }
     } else {
-      alert('Error al publicar: ' + (data.error||'Error desconocido'));
+      showToast('Error al publicar', data.error||'Error desconocido','error');
       if(btn){ btn.disabled=false; btn.textContent='Publicar'; }
     }
   }catch(e){
-    alert('Error de conexión con el servidor: ' + e.message);
+    showToast('Error de conexión', e.message,'error');
     if(btn){ btn.disabled=false; btn.textContent='Publicar'; }
   }
 }
@@ -2024,7 +2151,7 @@ function showShareBar(propId, url){
 
 function copyUrl(url){
   navigator.clipboard.writeText(url).then(()=>{
-    alert('URL copiada al portapapeles');
+    showToast('URL copiada','Ya puedes pegarla donde necesites.','success');
   }).catch(()=>{
     prompt('Copia esta URL:', url);
   });
@@ -2043,10 +2170,12 @@ ${prop.comercialName}`;
 }
 
 async function sendGmail(prop, url){
-  if(!prop.email){ alert('Esta propuesta no tiene email del alumno.'); return; }
+  if(!prop.email){ showToast('Sin email','Esta propuesta no tiene email del alumno registrado.','warning'); return; }
   const subject = 'Tu propuesta formativa — IM Education';
   const bodyText = 'Estimado/a ' + prop.alumno + ',\n\nEs un placer compartirte tu propuesta formativa personalizada de IM Education.\n\nPuedes consultarla en el siguiente enlace:\n' + url + '\n\nRecuerda que esta oferta es válida hasta el ' + new Date(prop.vencimiento).toLocaleDateString('es-ES') + '.\n\nQuedo a tu disposición para cualquier consulta.\n\nUn cordial saludo,\n' + (prop.comercialName||'Equipo de Admisiones') + '\nIM Education\nwww.im.education\nBCN 931 593 373 · MAD 911 593 433';
-  const okEmail = await customConfirm('Enviar email','Se enviará la propuesta a ' + prop.email + ' desde propuestas@im.education.');
+  const comercialName = currentUser.name||currentUser.user;
+  const comercialEmail = currentUser.email||'admisiones@im.education';
+  const okEmail = await customConfirm('Enviar correo al alumno',`Se enviará desde propuestas@im.education como "${comercialName} — IM Education". Si el alumno responde, recibirás el email en ${comercialEmail}.`);
   if(okEmail){
     try{
       const res = await fetch(APPS_SCRIPT_URL, {
@@ -2054,7 +2183,7 @@ async function sendGmail(prop, url){
         body: JSON.stringify({action:'sendEmail', to:prop.email, subject:subject, body:bodyText, alumno:prop.alumno, ref:prop.ref, replyTo:currentUser.email||'', comercialName:currentUser.name||currentUser.user})
       });
       const data = await res.json();
-      if(data.sent) alert('Email enviado correctamente a ' + prop.email);
+      if(data.sent) showToast('Email enviado',`Propuesta enviada correctamente a ${prop.email}.`,'success');
       else { window.open('mailto:' + prop.email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText)); }
     }catch(e){
       window.open('mailto:' + prop.email + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(bodyText));
@@ -2098,7 +2227,7 @@ function checkStorageWarning(){
 
 function openPropPDF(id){
   const html2 = getPropHtml(id);
-  if(!html2){ alert('El HTML de esta propuesta no está guardado en este navegador.'); return; }
+  if(!html2){ showToast('PDF no disponible','Esta propuesta no está guardada en este navegador.','warning'); return; }
   const props = getProposals();
   const prop = props.find(p=>p.id===id);
   showProposalPreview(html2, prop);
@@ -2170,7 +2299,11 @@ function renderHistory(){
           <button class="share-copy-btn" onclick="copyUrl('${prop.pubUrl}')">Copiar URL</button>
           <button class="share-gmail-btn" onclick="sendGmail(${JSON.stringify(prop).replace(/"/g,'&quot;')},'${prop.pubUrl}')">Enviar correo</button>
         </div>
-      </td></tr>`:'<tr style="display:none"><td colspan="9"><div class="share-bar" id="share-bar-${prop.id}" style="display:none;"><span class="share-url"></span></div></td></tr>'}`;
+      </td></tr>`:'<tr style="display:none"><td colspan="9"><div class="share-bar" id="share-bar-${prop.id}" style="display:none;"><span class="share-url"></span></div></td></tr>'}
+      <tr><td colspan="9" class="note-row">
+        <textarea class="note-input" id="note-${prop.id}" rows="1" placeholder="📝 Añadir nota privada..." onfocus="this.rows=2" onblur="this.rows=1">${prop.nota||''}</textarea>
+        <button class="note-save-btn" onclick="saveNote(${prop.id})">Guardar nota</button>
+      </td></tr>`;
     }).join('')}
     </tbody>
   </table></div>`;
@@ -2554,6 +2687,27 @@ function renderStats(){
 }
 
 // ══════════════════════════════════════════════
+// TOAST NOTIFICATIONS
+// ══════════════════════════════════════════════
+function showToast(title, msg, type='success', duration=4000){
+  const container = document.getElementById('toast-container');
+  const icons = {success:'✅', error:'❌', warning:'⚠️', info:'ℹ️'};
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.innerHTML = `
+    <div class="toast-icon">${icons[type]||'ℹ️'}</div>
+    <div class="toast-body">
+      <div class="toast-title">${title}</div>
+      ${msg?`<div class="toast-msg">${msg}</div>`:''}
+    </div>`;
+  container.appendChild(toast);
+  setTimeout(()=>{
+    toast.style.animation='toastOut 0.3s ease forwards';
+    setTimeout(()=>toast.remove(), 300);
+  }, duration);
+}
+
+// ══════════════════════════════════════════════
 // CUSTOM CONFIRM
 // ══════════════════════════════════════════════
 let confirmCallback = null;
@@ -2742,6 +2896,203 @@ function saveEditUser(){
   saveUsers(users);
   closeEditUser();
   renderAdmin();
+}
+
+// ══════════════════════════════════════════════
+// AVATAR COLORS
+// ══════════════════════════════════════════════
+const AVATAR_COLORS = ['#00C4A0','#F5C842','#6366f1','#ec4899','#f97316','#14b8a6','#8b5cf6','#ef4444','#0ea5e9','#84cc16'];
+
+function getAvatarColor(user){
+  try{ return JSON.parse(localStorage.getItem('im_avatar_'+user)||'null'); }catch(e){ return null; }
+}
+function setAvatarColor(user, color){
+  localStorage.setItem('im_avatar_'+user, JSON.stringify(color));
+}
+function getInitials(name){
+  const parts = (name||'?').split(' ');
+  return (parts[0][0]+(parts[1]?parts[1][0]:'')).toUpperCase();
+}
+function updateSidebarAvatar(){
+  const color = getAvatarColor(currentUser.user) || AVATAR_COLORS[0];
+  const initials = getInitials(currentUser.name||currentUser.user);
+  const el = document.getElementById('sb-avatar');
+  if(el){ el.style.background=color; el.textContent=initials; }
+}
+
+// ══════════════════════════════════════════════
+// PROFILE MODAL
+// ══════════════════════════════════════════════
+let _profileColorIdx = 0;
+
+function openProfile(){
+  const users = getUsers();
+  const u = users.find(x=>x.user===currentUser.user);
+  const props = getProposals().filter(p=>p.comercial===currentUser.user);
+  const ganadas = props.filter(p=>p.estado==='ganada').length;
+  const conv = props.length>0?Math.round((ganadas/props.length)*100):0;
+
+  // Stats
+  document.getElementById('profile-stats').innerHTML = `
+    <div class="pstat"><div class="pstat-val">${props.length}</div><div class="pstat-lbl">Propuestas</div></div>
+    <div class="pstat"><div class="pstat-val">${ganadas}</div><div class="pstat-lbl">Ganadas</div></div>
+    <div class="pstat"><div class="pstat-val">${conv}%</div><div class="pstat-lbl">Conversión</div></div>`;
+
+  // Avatar
+  const color = getAvatarColor(currentUser.user)||AVATAR_COLORS[0];
+  const initials = getInitials(u.name||u.user);
+  const bigAvatar = document.getElementById('profile-avatar-big');
+  bigAvatar.style.background = color;
+  bigAvatar.textContent = initials;
+  _profileColorIdx = AVATAR_COLORS.indexOf(color);
+
+  // Header
+  document.getElementById('profile-header-name').textContent = u.name||u.user;
+  document.getElementById('profile-header-role').textContent = u.role==='admin'?'Administrador':'Comercial';
+
+  // Color picker
+  document.getElementById('profile-colors').innerHTML = AVATAR_COLORS.map((c,i)=>
+    `<div class="color-dot ${c===color?'selected':''}" style="background:${c}" onclick="selectAvatarColor('${c}',this)"></div>`
+  ).join('');
+
+  // Fields
+  document.getElementById('profile-name').value = u.name||'';
+  document.getElementById('profile-email').value = u.email||'';
+  document.getElementById('profile-pass').value = '';
+  document.getElementById('profile-pass2').value = '';
+  document.getElementById('profile-err').style.display='none';
+
+  document.getElementById('profile-overlay').style.display='flex';
+}
+
+function selectAvatarColor(color, el){
+  document.querySelectorAll('.color-dot').forEach(d=>d.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('profile-avatar-big').style.background = color;
+  _profileColorIdx = AVATAR_COLORS.indexOf(color);
+}
+
+function cycleAvatarColor(){
+  _profileColorIdx = (_profileColorIdx+1)%AVATAR_COLORS.length;
+  const color = AVATAR_COLORS[_profileColorIdx];
+  document.getElementById('profile-avatar-big').style.background = color;
+  document.querySelectorAll('.color-dot').forEach((d,i)=>{
+    d.classList.toggle('selected', i===_profileColorIdx);
+  });
+}
+
+function saveProfile(){
+  const name = document.getElementById('profile-name').value.trim();
+  const email = document.getElementById('profile-email').value.trim();
+  const pass = document.getElementById('profile-pass').value;
+  const pass2 = document.getElementById('profile-pass2').value;
+  const err = document.getElementById('profile-err');
+
+  if(!name){ err.textContent='El nombre es obligatorio.'; err.style.display='block'; return; }
+  if(pass && pass!==pass2){ err.textContent='Las contraseñas no coinciden.'; err.style.display='block'; return; }
+
+  const users = getUsers();
+  const idx = users.findIndex(u=>u.user===currentUser.user);
+  if(idx===-1) return;
+  users[idx].name = name;
+  users[idx].email = email;
+  if(pass) users[idx].pass = pass;
+  saveUsers(users);
+
+  // Save avatar color
+  const color = AVATAR_COLORS[_profileColorIdx] || AVATAR_COLORS[0];
+  setAvatarColor(currentUser.user, color);
+
+  // Update currentUser
+  currentUser.name = name;
+  currentUser.email = email;
+
+  // Update sidebar
+  document.getElementById('sb-uname').textContent = name;
+  if(email) document.getElementById('sb-uemail').textContent = email;
+  updateSidebarAvatar();
+
+  closeProfile();
+  showToast('Perfil actualizado','Tus datos se han guardado correctamente.','success');
+}
+
+function closeProfile(){
+  document.getElementById('profile-overlay').style.display='none';
+}
+
+// ══════════════════════════════════════════════
+// HELP CENTER
+// ══════════════════════════════════════════════
+const HELP_CONTENT = {
+  guia: `
+    <div class="help-section">
+      <h3>📋 Catálogo</h3>
+      <div class="help-step"><div class="help-num">1</div><div class="help-step-text">Navega por todos los programas. Usa los <strong>filtros</strong> por tipo y duración para encontrar el programa adecuado.</div></div>
+      <div class="help-step"><div class="help-num">2</div><div class="help-step-text">Pulsa <strong>"Crear propuesta"</strong> en cualquier tarjeta para ir directamente al generador con ese programa seleccionado.</div></div>
+    </div>
+    <div class="help-section">
+      <h3>🧮 Simulador</h3>
+      <div class="help-step"><div class="help-num">1</div><div class="help-step-text">Selecciona programa, modalidad y descuentos para calcular el precio final al instante.</div></div>
+      <div class="help-step"><div class="help-num">2</div><div class="help-step-text">Pulsa <strong>"Crear propuesta con estos datos"</strong> para trasladar todo al generador automáticamente.</div></div>
+    </div>
+    <div class="help-section">
+      <h3>📄 Propuestas</h3>
+      <div class="help-step"><div class="help-num">1</div><div class="help-step-text">Rellena los datos del alumno, selecciona el programa y las condiciones.</div></div>
+      <div class="help-step"><div class="help-num">2</div><div class="help-step-text">Pulsa <strong>"Ver propuesta"</strong> para previsualizar sin guardar nada todavía.</div></div>
+      <div class="help-step"><div class="help-num">3</div><div class="help-step-text">Desde la vista previa pulsa <strong>"Crear propuesta"</strong> para guardarla. Luego puedes publicarla y enviarla por correo.</div></div>
+    </div>
+    <div class="help-section">
+      <h3>📊 Estadísticas</h3>
+      <div class="help-step"><div class="help-num">1</div><div class="help-step-text">Consulta tus KPIs, evolución mensual y tasa de conversión. El <strong>administrador</strong> ve el rendimiento de todo el equipo.</div></div>
+    </div>`,
+  faq: `
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>¿Qué pasa si cierro el navegador?</span><span>+</span></div><div class="faq-a">Los datos se guardan automáticamente en tu navegador. Si cambias de dispositivo o borras el caché, perderás el historial local. Las propuestas publicadas en GitHub siempre estarán disponibles.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>¿Pueden los comerciales ver las propuestas de otros?</span><span>+</span></div><div class="faq-a">No. Cada comercial solo ve sus propias propuestas en Activas, Archivo y Estadísticas. Solo el administrador tiene visibilidad total.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>¿Cómo envío una propuesta al alumno?</span><span>+</span></div><div class="faq-a">Genera la propuesta, en la vista previa crea y luego publica. Una vez publicada aparece el botón "Enviar correo" que manda el enlace directamente al alumno.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>¿Qué significa "Próxima a vencer"?</span><span>+</span></div><div class="faq-a">Las propuestas tienen validez de 7 días. Cuando quedan 2 días o menos aparecen en naranja como "Próxima a vencer". Pasados los 7 días aparecen como "Vencida".</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>¿Puedo recuperar una propuesta archivada?</span><span>+</span></div><div class="faq-a">Las propuestas archivadas se pueden consultar en la pestaña "Archivo" y ver su PDF. Solo el administrador puede eliminarlas definitivamente.</div></div>
+    <div class="faq-item"><div class="faq-q" onclick="toggleFaq(this)"><span>¿Cómo actualizo el catálogo de programas?</span><span>+</span></div><div class="faq-a">Solo el administrador puede actualizarlo desde la sección Usuarios → "Subir Excel actualizado". El catálogo se actualiza para todos los usuarios.</div></div>`,
+  tips: `
+    <div class="help-section">
+      <h3>💡 Consejos para cerrar más</h3>
+      <div class="help-step"><div class="help-num">✓</div><div class="help-step-text"><strong>Personaliza el saludo</strong> — Usa el nombre real del alumno. La propuesta lo incluye automáticamente.</div></div>
+      <div class="help-step"><div class="help-num">✓</div><div class="help-step-text"><strong>Envía el mismo día</strong> — Las propuestas enviadas en menos de 24h tienen mayor tasa de conversión.</div></div>
+      <div class="help-step"><div class="help-num">✓</div><div class="help-step-text"><strong>Usa las notas</strong> — Anota el contexto del alumno (empresa, motivación) en las notas de la propuesta para recordarlo en el seguimiento.</div></div>
+      <div class="help-step"><div class="help-num">✓</div><div class="help-step-text"><strong>Sigue las vencidas</strong> — Una propuesta vencida no es un "no". Llama y ofrece regenerarla con mejores condiciones.</div></div>
+      <div class="help-step"><div class="help-num">✓</div><div class="help-step-text"><strong>Mira tus estadísticas</strong> — Revisa tu tasa de conversión cada semana para identificar en qué punto del proceso pierdes alumnos.</div></div>
+    </div>`
+};
+
+function openHelp(){
+  document.getElementById('help-content').innerHTML = HELP_CONTENT.guia;
+  document.getElementById('help-overlay').style.display='flex';
+}
+function closeHelp(){
+  document.getElementById('help-overlay').style.display='none';
+}
+function showHelpTab(id, el){
+  document.querySelectorAll('.help-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('help-content').innerHTML = HELP_CONTENT[id]||'';
+}
+function toggleFaq(el){
+  const a = el.nextElementSibling;
+  const isOpen = a.classList.contains('open');
+  document.querySelectorAll('.faq-a').forEach(x=>x.classList.remove('open'));
+  document.querySelectorAll('.faq-q span:last-child').forEach(x=>x.textContent='+');
+  if(!isOpen){ a.classList.add('open'); el.querySelector('span:last-child').textContent='−'; }
+}
+
+// ══════════════════════════════════════════════
+// NOTES IN PROPOSALS
+// ══════════════════════════════════════════════
+function saveNote(propId){
+  const textarea = document.getElementById('note-'+propId);
+  if(!textarea) return;
+  const props = getProposals();
+  const p = props.find(x=>x.id===propId);
+  if(p){ p.nota = textarea.value; saveProposals(props); }
+  showToast('Nota guardada','','success',2000);
 }
 
 // ══════════════════════════════════════════════
