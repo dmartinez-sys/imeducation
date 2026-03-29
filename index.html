@@ -937,7 +937,10 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 <!-- PRINT VIEW -->
 <div id="print-view"></div>
 
-<!-- HELP BUTTON -->
+<!-- HELP BUTTON - fixed bottom left -->
+<div onclick="openHelp()" style="position:fixed;bottom:1.5rem;right:1.5rem;z-index:9990;width:44px;height:44px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 2px 16px rgba(245,200,66,0.5);transition:all 0.2s;" onmouseover="this.style.transform='scale(1.1)';this.style.boxShadow='0 4px 20px rgba(245,200,66,0.7)'" onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 2px 16px rgba(245,200,66,0.5)'">
+  <span style="font-size:1.3rem;font-weight:900;color:#000;line-height:1;font-family:'Plus Jakarta Sans',sans-serif;">?</span>
+</div>
 <div class="help-btn" onclick="openHelp()" title="Centro de ayuda">?</div>
 
 <!-- PROFILE MODAL -->
@@ -1025,7 +1028,7 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
     <div class="confirm-title" id="confirm-title">Confirmar</div>
     <div class="confirm-msg" id="confirm-msg"></div>
     <div class="confirm-btns">
-      <button class="confirm-cancel" onclick="confirmResolve(false)">Cancelar</button>
+      <button class="confirm-cancel" id="confirm-cancel-btn" onclick="confirmResolve(false)">Cancelar</button>
       <button class="confirm-ok" id="confirm-ok-btn" onclick="confirmResolve(true)">Aceptar</button>
     </div>
   </div>
@@ -2364,20 +2367,31 @@ ${prop.comercialName}`;
   window.open('https://wa.me/?text='+encodeURIComponent(msg));
 }
 
+function sendGmailById(propId){
+  const props = getProposals();
+  const prop = props.find(p=>p.id===propId);
+  if(!prop){ showToast('Error','Propuesta no encontrada.','error'); return; }
+  sendGmail(prop, prop.pubUrl);
+}
+
 async function sendGmail(prop, url){
   if(!prop.email){ showToast('Sin email','Esta propuesta no tiene email del alumno registrado.','warning'); return; }
   if(!url){ showToast('Propuesta no publicada','Primero publica la propuesta para poder enviarla.','warning'); return; }
   
-  const personalise = await customConfirm(
-    '¿Personalizar el mensaje?',
-    'Puedes enviar el mensaje estándar directamente o editarlo antes de enviar.',
+  const sendDirect = await customConfirm(
+    'Enviar correo al alumno',
+    'Pulsa "Enviar" para mandar el mensaje estándar, o "Personalizar" para editarlo antes.',
     false,
-    'Personalizar',
-    'Enviar estándar'
+    'Enviar',
+    'Personalizar'
   );
-  if(personalise){
+  if(!sendDirect){
+    // "Personalizar" was clicked (cancel = false)
     openEmailEditor(prop, url);
-  } else {
+    return;
+  }
+  // "Enviar" was clicked - send standard
+  {
     const comercialName = currentUser.name||currentUser.user;
     const comercialEmail = currentUser.email||'admisiones@im.education';
     const subject = 'Tu propuesta formativa — IM Education';
@@ -2497,9 +2511,9 @@ function renderHistory(){
       <!-- HEADER -->
       <div class="prop-row-header" onclick="togglePropRow(${prop.id})">
         <div class="prop-row-status" style="background:${dotColor}"></div>
-        <div class="prop-row-name" title="${prop.alumno}">${prop.alumno}</div>
+        <div class="prop-row-name" title="${prop.alumno||prop.nombre||'Sin nombre'}">${prop.alumno||prop.nombre||'Sin nombre'}</div>
         <div class="prop-row-prog" title="${prop.programa}">${progShort}</div>
-        <div class="prop-row-price">${fmt(prop.precioFinal)}</div>
+        <div class="prop-row-price">${prop.precioFinal?fmt(prop.precioFinal):'—'}</div>
         <span class="st-badge ${st.cls} prop-row-badge">${st.txt}</span>
         <div class="prop-row-days">${daysStr}</div>
         <div class="prop-row-chevron">▼</div>
@@ -2521,7 +2535,7 @@ function renderHistory(){
         <div class="prop-row-actions">
           ${hasPDF?`<button class="pra-btn primary" onclick="openPropPDF(${prop.id})">Ver PDF</button>`:''}
           ${hasPDF?`<button class="pra-btn" id="pub-btn-${prop.id}" onclick="publishToGitHub(${prop.id})">${prop.pubUrl?'Republicar':'Publicar'}</button>`:''}
-          ${prop.pubUrl?`<button class="pra-btn" onclick="sendGmail(${JSON.stringify(prop).replace(/"/g,'&quot;')},'${prop.pubUrl}')">Enviar correo</button>`:''}
+          ${prop.pubUrl?`<button class="pra-btn" onclick="sendGmailById(${prop.id})">Enviar correo</button>`:''}
           <button class="pra-btn won" onclick="setPropState(${prop.id},'ganada')">Ganada</button>
           <button class="pra-btn lost" onclick="setPropState(${prop.id},'perdida')">Perdida</button>
           <button class="pra-btn danger" onclick="deleteProp(${prop.id})">Archivar</button>
