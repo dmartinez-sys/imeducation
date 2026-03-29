@@ -397,6 +397,17 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 .faq-a{padding:0 0.9rem 0.65rem;font-size:0.75rem;color:var(--muted);line-height:1.6;display:none;}
 .faq-a.open{display:block;}
 
+/* ── DISCOUNT SELECTOR ── */
+.discount-selector{display:flex;flex-direction:column;gap:0.5rem;}
+.discount-slider-wrap{display:flex;align-items:center;gap:0.8rem;}
+.discount-slider{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:99px;background:var(--border);outline:none;cursor:pointer;}
+.discount-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--teal);cursor:pointer;border:2px solid var(--card);}
+.discount-val-badge{background:var(--teal);color:#000;font-size:0.78rem;font-weight:800;padding:0.25rem 0.6rem;border-radius:5px;min-width:44px;text-align:center;flex-shrink:0;}
+.discount-val-badge.zero{background:var(--border);color:var(--muted);}
+.discount-presets{display:flex;gap:0.4rem;flex-wrap:wrap;}
+.disc-preset{padding:0.2rem 0.55rem;background:transparent;border:1px solid var(--border);border-radius:4px;color:var(--muted);font-size:0.68rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;transition:all 0.15s;}
+.disc-preset:hover,.disc-preset.on{border-color:var(--teal);color:var(--teal);background:rgba(0,196,160,0.05);}
+
 /* ── EMAIL EDITOR MODAL ── */
 .email-editor-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:9997;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 .email-editor-box{background:var(--card);border:1px solid var(--border);border-radius:12px;width:100%;max-width:580px;overflow:hidden;}
@@ -412,6 +423,38 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 .email-send-btn:hover{background:#00ddb5;}
 .email-cancel-btn{padding:0.55rem 1rem;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;cursor:pointer;}
 .email-cancel-btn:hover{border-color:var(--text);color:var(--text);}
+
+/* ── PROPOSAL CARDS ── */
+.prop-cards-grid{display:flex;flex-direction:column;gap:0.8rem;}
+.prop-card-item{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color 0.15s;}
+.prop-card-item:hover{border-color:var(--hover);}
+.prop-card-item.status-active{border-left:3px solid var(--teal);}
+.prop-card-item.status-soon{border-left:3px solid var(--orange);}
+.prop-card-item.status-expired{border-left:3px solid var(--red);}
+.prop-card-top{display:flex;align-items:flex-start;gap:1rem;padding:0.9rem 1rem;border-bottom:1px solid var(--border);}
+.prop-card-main{flex:1;min-width:0;}
+.prop-card-alumno{font-weight:700;font-size:0.88rem;margin-bottom:0.2rem;}
+.prop-card-prog{font-size:0.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:400px;}
+.prop-card-meta{display:flex;align-items:center;gap:1rem;flex-shrink:0;}
+.prop-card-price{font-size:1.1rem;font-weight:800;color:var(--teal);}
+.prop-card-badge{display:inline-block;font-size:0.6rem;font-weight:700;padding:0.2rem 0.6rem;border-radius:99px;text-transform:uppercase;letter-spacing:0.05em;white-space:nowrap;}
+.prop-card-bottom{display:flex;align-items:center;gap:0.8rem;padding:0.55rem 1rem;background:rgba(0,0,0,0.15);flex-wrap:wrap;}
+.prop-card-info{font-size:0.68rem;color:var(--muted);flex:1;}
+.prop-card-actions{display:flex;gap:0.4rem;align-items:center;flex-wrap:wrap;}
+.pca-btn{padding:0.3rem 0.7rem;border-radius:4px;font-size:0.68rem;font-weight:600;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;transition:all 0.15s;white-space:nowrap;}
+.pca-pdf{background:transparent;border:1px solid var(--teal);color:var(--teal);}
+.pca-pdf:hover{background:rgba(0,196,160,0.1);}
+.pca-pub{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.pca-pub:hover{border-color:var(--teal);color:var(--teal);}
+.pca-won{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.pca-won:hover{border-color:var(--teal);color:var(--teal);}
+.pca-lost{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.pca-lost:hover{border-color:var(--muted);color:var(--muted);}
+.pca-arch{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.pca-arch:hover{border-color:var(--red);color:var(--red);}
+.prop-share-strip{padding:0.4rem 1rem;background:rgba(0,196,160,0.05);border-top:1px solid rgba(0,196,160,0.1);display:none;align-items:center;gap:0.6rem;}
+.prop-share-strip.visible{display:flex;}
+.prop-note-strip{padding:0.4rem 1rem;border-top:1px solid var(--border);}
 
 /* ── NOTES ── */
 .note-row{padding:0.4rem 1rem 0.6rem;border-bottom:1px solid var(--border);}
@@ -458,6 +501,7 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 .motiv-btn{padding:0.65rem 2rem;background:var(--teal);border:none;border-radius:8px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:800;cursor:pointer;letter-spacing:0.05em;transition:all 0.15s;text-transform:uppercase;}
 .motiv-btn:hover{background:#00ddb5;transform:scale(1.03);}
 .motiv-date{position:absolute;top:1rem;right:1.2rem;font-size:0.62rem;color:var(--border);font-weight:500;}
+@keyframes spin{to{transform:rotate(360deg);}}
 @media(max-width:768px){
   .sidebar{width:52px;}
   .sb-logo,.nav-item span:not(.nav-icon),.nav-lbl,.sb-user,.sb-counts{display:none;}
@@ -614,13 +658,21 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         </div>
         <div class="panel">
           <div class="panel-title"><span class="ptbar"></span>Descuentos</div>
-          <div class="field"><label>Promoción / Beca</label>
-            <div class="rgroup" id="rg-desc">
-              <div class="rbtn on" data-val="0" onclick="pick(this,'rg-desc');calcSim()">Sin descuento</div>
-              <div class="rbtn" data-val="25" onclick="pick(this,'rg-desc');calcSim()">Promoción 25%</div>
-              <div class="rbtn" data-val="35" onclick="pick(this,'rg-desc');calcSim()">Beca 35%</div>
-              <div class="rbtn" data-val="10" onclick="pick(this,'rg-desc');calcSim()">Empresa / FUNDAE 10%</div>
+          <div class="field"><label>Descuento / Beca</label>
+            <div class="discount-selector">
+              <div class="discount-slider-wrap">
+                <input type="range" class="discount-slider" id="sdesc-slider" min="0" max="100" step="10" value="0" oninput="updateDiscountS(this.value)">
+                <div class="discount-val-badge zero" id="sdesc-badge">0%</div>
+              </div>
+              <div class="discount-presets">
+                <button class="disc-preset on" onclick="setDiscountS(0)">Sin dto.</button>
+                <button class="disc-preset" onclick="setDiscountS(10)">10%</button>
+                <button class="disc-preset" onclick="setDiscountS(25)">25%</button>
+                <button class="disc-preset" onclick="setDiscountS(35)">35%</button>
+                <button class="disc-preset" onclick="setDiscountS(50)">50%</button>
+              </div>
             </div>
+            <input type="hidden" id="rg-desc-val" value="0">
           </div>
           <div class="field"><label>Forma de pago</label>
             <div class="rgroup" id="rg-pago">
@@ -724,12 +776,20 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
               </div>
               <div class="field">
                 <label>Descuento / Beca</label>
-                <div class="rgroup" id="rg-pdesc">
-                  <div class="rbtn on" data-val="0" onclick="pick(this,'rg-pdesc');updatePV()">Sin descuento</div>
-                  <div class="rbtn" data-val="25" onclick="pick(this,'rg-pdesc');updatePV()">Promoción 25%</div>
-                  <div class="rbtn" data-val="35" onclick="pick(this,'rg-pdesc');updatePV()">Beca 35%</div>
-                  <div class="rbtn" data-val="10" onclick="pick(this,'rg-pdesc');updatePV()">Empresa / FUNDAE 10%</div>
+                <div class="discount-selector">
+                  <div class="discount-slider-wrap">
+                    <input type="range" class="discount-slider" id="pdesc-slider" min="0" max="100" step="10" value="0" oninput="updateDiscountP(this.value)">
+                    <div class="discount-val-badge zero" id="pdesc-badge">0%</div>
+                  </div>
+                  <div class="discount-presets">
+                    <button class="disc-preset on" onclick="setDiscountP(0)">Sin dto.</button>
+                    <button class="disc-preset" onclick="setDiscountP(10)">10%</button>
+                    <button class="disc-preset" onclick="setDiscountP(25)">25%</button>
+                    <button class="disc-preset" onclick="setDiscountP(35)">35%</button>
+                    <button class="disc-preset" onclick="setDiscountP(50)">50%</button>
+                  </div>
                 </div>
+                <input type="hidden" id="rg-pdesc-val" value="0">
               </div>
               <div class="field">
                 <label>Forma de pago</label>
@@ -883,7 +943,7 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         <label>Mensaje</label>
         <textarea id="ee-body" rows="12"></textarea>
       </div>
-      <div style="font-size:0.68rem;color:var(--muted);margin-top:0.3rem;">Se enviará desde <strong style="color:var(--teal)">propuestas@im.education</strong>. Las respuestas llegarán a tu email corporativo.</div>
+      <div style="font-size:0.68rem;color:var(--muted);margin-top:0.3rem;">Se enviará desde <strong style="color:var(--teal)"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="5e2e2c312e2b3b2d2a3f2d1e3733703b3a2b3d3f2a373130">[email&#160;protected]</a></strong>. Las respuestas llegarán a tu email corporativo.</div>
     </div>
     <div class="email-editor-btns">
       <button class="email-cancel-btn" onclick="closeEmailEditor()">Cancelar</button>
@@ -965,7 +1025,7 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 
 const LOGO_UTAMED = "data:image/png;base64,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Mxs3I/INhsFXUWe43m1VtBRSxOjkuEFCCJpGxnR0/fUB2J0R6qU1+fuz7lDE4MBvwu9I2vinuVuqMfH/ACZCwblkdPK3bJD+AA3uCex9N3hDaxZuWcTp8RrMmqzXU9NTXSW0sgdEHVFTUskMfRExriXkkEgeugSQF6YNydZcpv8ANjz7Tf8AH7zHB7SyhvdD7NLNDvXmMGyHAE9++x8OxVG0UNXQWmy5qaKprrRjuf3aa5w08RkfHHJKWNmDB3cGHv27je/irFuPNOHV9Rcb9j1oF6o7DaJ6ua+vp3RR00mtMpWF7A4vkcWggEaB7+h1Lh+Q2mGL8nYzkfIt8wW3e1/SdmB86SSNohlLS0SCNwcSSxz2hwIGifet7muUWTDsbqsgyCsbSUFMB1O0S5zidNa1o7ucT2AC5bsdsz3jyiwbkTJLZa4LdR175rtWw1b3VMsVxe3zHTsLQ0dBc3Xc6cB+VXV4lbfcJ8Vx+9UNsmukOO5JR3iupYW9UklND19fS3+MR1A6+RS4TlDbaYfyvYchyOHHZ7TkOPXOqidNRQ3u3mlNYxutmIkkO7HevXW+3Yr0wXlbFsytuQ1lp9sZJj8skddTTsY2YBgcetoDiC13S4A7Hdp3pQDIsrsvLHI+A0uCSVFyZZLobpcrgKSWKKkiazRic57WnreSB0j4d1AbdZbnZOLJOUMZgMtXRVN3oL3SM/55b5KmUF3b+NET1g/AHfYaV4Q2vzFuVMeyK543b6KjukcuRW2W5UhmijDWRRu0RJp5074AbHzW2yHNrVZMxtGLVdPWvrbrTVNTA+JjTG1sDOp4cS4EEg9tA/PS5twLKLBh934gvWSXGO30DcSqozM9jnAOdJ2GmglTvKcksmW8zce3zHbgyvt01ovbY52Nc0OLYg13ZwB7EEeilw1TacYvzHiOScYXTkC2Nr3UFqZK+spHxsFVH5Y3ot6y3Zboj62jv1BBAxbpzRaaa80VooMRzC91lXaYLsI7ZQxTGOCX8Hr3KCCPQ+o7juVzsbPdsa8N1BndhifPQ3yxT2jI6YE60ZJGU1UPmw6YT/JIA95W/mvVosnJ9jqLxntdhkUmAW1jKqlhbI6Z29+WQ6N41oE+g9PVa/jnw26oxm6uvdjpbo613G1GoaSaS4RCOoi0SNPaCQD236nsQtitHgNyoLvh1suFsvct8pJIQGXCVga+p6SWl5Aa0Akg+gC3i4320IiKAvgABJAAJOz819RAREQfmRjJGOjkY17HDRa4bBCRRxwxiOKNkbG+jWjQH5l+kQEREBERAREQEREHxrWtc5zWgFx24gev5V9REBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREH//2Q==";
 const LOGO_ABAT = "data:image/png;base64,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";
@@ -1111,7 +1171,11 @@ const TL = {master:'Máster F.P.',diploma:'Diploma Esp.',micro:'Microcredencial'
 const TB = {master:'badge-master',diploma:'badge-diploma',micro:'badge-micro',grado:'badge-grado',fp:'badge-fp'};
 const TLong = {master:'Máster de Formación Permanente',diploma:'Diploma de Especialización',micro:'Microcredencial',grado:'Grado Universitario',fp:'FP Oficial'};
 const getPrice = (p,m) => m==='presencial'?p.pres:m==='videopresencial'?p.vpres:p.online;
-const getVal = id => document.querySelector('#'+id+' .rbtn.on')?.dataset.val||'0';
+const getVal = id => {
+  if(id==='rg-pdesc') return document.getElementById('rg-pdesc-val')?.value||'0';
+  if(id==='rg-desc') return document.getElementById('rg-desc-val')?.value||'0';
+  return document.querySelector('#'+id+' .rbtn.on')?.dataset.val||'0';
+};
 
 function pick(el,gid){
   document.querySelectorAll('#'+gid+' .rbtn').forEach(r=>r.classList.remove('on'));
@@ -1243,6 +1307,36 @@ function clearCompare(){ compareList=[]; saveCompare([]); filterCatalog(); rende
 // ══════════════════════════════════════════════
 // SIMULATOR
 // ══════════════════════════════════════════════
+function updateDiscountP(val){
+  val = Math.round(val/10)*10;
+  document.getElementById('pdesc-slider').value=val;
+  document.getElementById('rg-pdesc-val').value=val;
+  const badge=document.getElementById('pdesc-badge');
+  badge.textContent=val+'%';
+  badge.className='discount-val-badge'+(val===0?' zero':'');
+  // Update presets
+  document.querySelectorAll('.discount-presets .disc-preset').forEach(b=>{
+    b.classList.toggle('on', parseInt(b.textContent)===val||(b.textContent==='Sin dto.'&&val===0));
+  });
+  updatePV();
+}
+function setDiscountP(val){
+  updateDiscountP(val);
+}
+function updateDiscountS(val){
+  val = Math.round(val/10)*10;
+  document.getElementById('sdesc-slider').value=val;
+  document.getElementById('rg-desc-val').value=val;
+  const badge=document.getElementById('sdesc-badge');
+  badge.textContent=val+'%';
+  badge.className='discount-val-badge'+(val===0?' zero':'');
+  document.querySelectorAll('#sdesc-slider').forEach(()=>{});
+  calcSim();
+}
+function setDiscountS(val){
+  updateDiscountS(val);
+}
+
 function createProposalFromSim(){
   const sel = document.getElementById('sim-prog').value;
   if(!sel) return;
@@ -1264,10 +1358,7 @@ function createProposalFromSim(){
       if(r.dataset.val===mod) r.classList.add('on');
     });
     // Set descuento
-    document.querySelectorAll('#rg-pdesc .rbtn').forEach(r=>{
-      r.classList.remove('on');
-      if(r.dataset.val===String(desc)) r.classList.add('on');
-    });
+    setDiscountP(desc);
     // Set pago
     document.querySelectorAll('#rg-ppago .rbtn').forEach(r=>{
       r.classList.remove('on');
@@ -1982,6 +2073,8 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
   </div>
 </div>
 
+</div></div>
+<style>@media(max-width:220mm){body>div{padding:0.5rem;}}</style>
 </body></html>`;
 
   // Store for later confirmation
@@ -2133,7 +2226,10 @@ function printProposal(){
 // ══════════════════════════════════════════════
 async function publishToGitHub(propId){
   const btn = document.getElementById('pub-btn-'+propId);
-  if(btn){ btn.disabled=true; btn.textContent='Publicando...'; }
+  if(btn){ 
+    btn.disabled=true; 
+    btn.innerHTML='<span style="display:inline-flex;align-items:center;gap:0.4rem;"><span style="display:inline-block;width:10px;height:10px;border:2px solid rgba(0,196,160,0.3);border-top-color:var(--teal);border-radius:50%;animation:spin 0.8s linear infinite;"></span>Publicando...</span>';
+  }
 
   const htmlContent = getPropHtml(propId);
   if(!htmlContent){
@@ -2315,47 +2411,58 @@ function renderHistory(){
   const visible=allVisible.filter(p=>p.estado==='activa');
   const el=document.getElementById('hist-content');
   if(!visible.length){el.innerHTML='<div class="empty-hist"><div style="font-weight:700;margin-bottom:0.4rem">Sin propuestas activas</div><div style="font-size:0.78rem">Las propuestas ganadas, perdidas o eliminadas se encuentran en la pestaña Archivo.</div></div>';return;}
-  el.innerHTML=`<div class="table-wrap"><table class="hist-table">
-    <thead><tr>
-      <th>Alumno</th><th>Teléfono</th><th>Programa</th><th>Comercial</th>
-      <th>Precio final</th><th>Emisión</th><th>Vencimiento</th><th>Estado</th><th>Acciones</th>
-    </tr></thead>
-    <tbody>
+  const stClsMap={st_active:'status-active',st_soon:'status-soon',st_expired:'status-expired'};
+  el.innerHTML=`<div class="prop-cards-grid">
     ${visible.map(prop=>{
       const st=propStatus(prop);
       const prog=PROGRAMAS.find(x=>x.id===prop.progId);
-      const progName=prog?prog.nombre.split(' ').slice(0,5).join(' ')+'…':prop.programa.substring(0,40)+'…';
-      const canEdit=prop.estado==='activa';
-      return `<tr>
-        <td><div style="font-weight:600;font-size:0.8rem">${prop.alumno}</div><div style="font-size:0.68rem;color:var(--muted)">${prop.email||'—'}</div></td>
-        <td style="color:var(--muted);font-size:0.75rem">${prop.tel||'—'}</td>
-        <td style="font-size:0.75rem;max-width:180px"><div style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px" title="${prop.programa}">${progName}</div><div style="font-size:0.65rem;color:var(--muted)">${prop.modalidad} · ${prop.descuento+prop.pagoUnico}% dto.</div></td>
-        <td style="font-size:0.75rem;color:var(--muted)">${prop.comercialName||prop.comercial}</td>
-        <td style="font-weight:700;color:var(--teal)">${fmt(prop.precioFinal)}</td>
-        <td style="font-size:0.72rem;color:var(--muted)">${fmtDate(prop.emision)}</td>
-        <td style="font-size:0.72rem;color:var(--muted)">${fmtDate(prop.vencimiento)}</td>
-        <td><span class="st-badge ${st.cls}">${st.txt}</span></td>
-        <td>
-          <button class="action-btn" onclick="openPropPDF(${prop.id})" style="border-color:var(--teal);color:var(--teal)">Ver PDF</button>
-          ${getPropHtml(prop.id)?`<button class="publish-btn" id="pub-btn-${prop.id}" onclick="publishToGitHub(${prop.id})">${prop.pubUrl?'Republicar':'Publicar'}</button>`:''}
-          ${canEdit?`<button class="action-btn" onclick="setPropState(${prop.id},'ganada')">Ganada</button><button class="action-btn lost" onclick="setPropState(${prop.id},'perdida')">Perdida</button>`:''}
-          <button class="action-btn del" onclick="deleteProp(${prop.id})">Archivar</button>
-        </td>
-      </tr>
-      ${prop.pubUrl?`<tr><td colspan="9" style="padding:0 1rem 0.5rem;">
-        <div class="share-bar" id="share-bar-${prop.id}" style="display:flex;">
-          <span class="share-url" title="${prop.pubUrl}">${prop.pubUrl.replace(/https?:\/\/[^/]+/,'…').replace(/\/p\//,'…/')}</span>
-          <button class="share-copy-btn" onclick="copyUrl('${prop.pubUrl}')">Copiar URL</button>
-          <button class="share-gmail-btn" onclick="sendGmail(${JSON.stringify(prop).replace(/"/g,'&quot;')},'${prop.pubUrl}')">Enviar correo</button>
+      const progName=prog?prog.nombre:(prop.programa||'').substring(0,80);
+      const stCardCls=stClsMap[st.cls.replace('-','_')]||'status-active';
+      const hasPDF=getPropHtml(prop.id);
+      const isAdmin=currentUser.role==='admin';
+      const daysLeft=Math.ceil((new Date(prop.vencimiento)-Date.now())/(1000*60*60*24));
+      const daysStr=daysLeft>0?`Vence en ${daysLeft} día${daysLeft!==1?'s':''}`:'Vencida';
+      return `<div class="prop-card-item ${stCardCls}">
+        <div class="prop-card-top">
+          <div class="prop-card-main">
+            <div class="prop-card-alumno">${prop.alumno}</div>
+            <div style="font-size:0.7rem;color:var(--muted);margin-bottom:0.4rem;">${prop.email||''} ${prop.tel?'· '+prop.tel:''}</div>
+            <div class="prop-card-prog" title="${prop.programa}">${progName}</div>
+            <div style="font-size:0.68rem;color:var(--muted);margin-top:0.25rem;">${prop.modalidad} · Dto. ${prop.descuento+prop.pagoUnico}% · ${prop.comercialName||prop.comercial}</div>
+          </div>
+          <div class="prop-card-meta">
+            <div style="text-align:right;">
+              <div class="prop-card-price">${fmt(prop.precioFinal)}</div>
+              <span class="prop-card-badge ${st.cls}" style="margin-top:0.3rem;display:inline-block;">${st.txt}</span>
+              <div style="font-size:0.62rem;color:var(--muted);margin-top:0.3rem;">${daysStr}</div>
+            </div>
+          </div>
         </div>
-      </td></tr>`:'<tr style="display:none"><td colspan="9"><div class="share-bar" id="share-bar-${prop.id}" style="display:none;"><span class="share-url"></span></div></td></tr>'}
-      <tr><td colspan="9" class="note-row">
-        <textarea class="note-input" id="note-${prop.id}" rows="1" placeholder="Añadir nota privada..." onfocus="this.rows=2" onblur="this.rows=1">${prop.nota||''}</textarea>
-        <button class="note-save-btn" onclick="saveNote(${prop.id})">Guardar nota</button>
-      </td></tr>`;
+        <div class="prop-card-bottom">
+          <div class="prop-card-info">
+            Emitida ${fmtDate(prop.emision)} · Válida hasta ${fmtDate(prop.vencimiento)}
+            ${prop.nota?`<span style="color:var(--gold);margin-left:0.5rem;" title="${prop.nota}">· Nota guardada</span>`:''}
+          </div>
+          <div class="prop-card-actions">
+            ${hasPDF?`<button class="pca-btn pca-pdf" onclick="openPropPDF(${prop.id})">Ver PDF</button>`:''}
+            ${hasPDF?`<button class="pca-btn pca-pub" id="pub-btn-${prop.id}" onclick="publishToGitHub(${prop.id})">${prop.pubUrl?'Republicar':'Publicar'}</button>`:''}
+            ${prop.pubUrl?`<button class="pca-btn pca-pdf" onclick="openEmailEditor(${JSON.stringify(prop).replace(/"/g,'&quot;')},'${prop.pubUrl}')">Enviar correo</button>`:''}
+            <button class="pca-btn pca-won" onclick="setPropState(${prop.id},'ganada')">Ganada</button>
+            <button class="pca-btn pca-lost" onclick="setPropState(${prop.id},'perdida')">Perdida</button>
+            <button class="pca-btn pca-arch" onclick="deleteProp(${prop.id})">Archivar</button>
+          </div>
+        </div>
+        ${prop.pubUrl?`<div class="prop-share-strip visible" id="share-bar-${prop.id}">
+          <span class="share-url" title="${prop.pubUrl}" style="font-size:0.68rem;">${prop.pubUrl.replace(/https?:\/\/[^/]+/,'…').replace(/\/p\//,'…/')}</span>
+          <button class="share-copy-btn" onclick="copyUrl('${prop.pubUrl}')">Copiar URL</button>
+        </div>`:`<div id="share-bar-${prop.id}" style="display:none;"></div>`}
+        <div class="prop-note-strip">
+          <textarea class="note-input" id="note-${prop.id}" rows="1" placeholder="Añadir nota privada..." oninput="document.getElementById('note-save-${prop.id}').style.display='inline'" onblur="if(!this.value)document.getElementById('note-save-${prop.id}').style.display='none'">${prop.nota||''}</textarea>
+          <button class="note-save-btn" onclick="saveNote(${prop.id})" id="note-save-${prop.id}" style="display:${prop.nota?'inline':'none'}">Guardar nota</button>
+        </div>
+      </div>`;
     }).join('')}
-    </tbody>
-  </table></div>`;
+  </div>`;
 }
 
 function setPropState(id,estado){
@@ -3237,6 +3344,8 @@ function buildHtmlEmail(bodyText, prop, url, comercialName){
   <tr><td style="height:3px;background:#00C4A0;"></td></tr>
 </table>
 </td></tr></table>
+</div></div>
+<style>@media(max-width:220mm){body>div{padding:0.5rem;}}</style>
 </body></html>`;
 }
 
@@ -3339,19 +3448,4 @@ function initApp(){
     PROGRAMAS.filter(p=>p.tipo===tipo).forEach(p=>{
       const o=document.createElement('option');
       o.value=p.id;
-      o.textContent=p.nombre.length>65?p.nombre.slice(0,65)+'…':p.nombre;
-      g.appendChild(o);
-    });
-    propSel.appendChild(g);
-  });
-
-  filterCatalog();
-  updatePV();
-  countAlerts();
-
-  // Check expiry every minute
-  setInterval(countAlerts, 60000);
-}
-</script>
-</body>
-</html>
+      o.textContent=p.nombre.length>65?p.nombre.slice(
