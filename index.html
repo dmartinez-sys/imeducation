@@ -2368,16 +2368,9 @@ async function publishToGitHub(propId){
       renderHistory();
       showShareBar(propId, data.url);
       showToast('Propuesta publicada','El enlace ya está disponible para compartir.','success');
-      // Ask if they want to send email
+      // Open email editor directly after publishing
       if(prop.email){
-        setTimeout(async ()=>{
-          const ok = await customConfirm(
-            '¿Enviar por correo?',
-            `¿Quieres enviar la propuesta a ${prop.email} ahora?`,
-            false, 'Sí, enviar', 'No, ahora no'
-          );
-          if(ok) sendGmail(prop, data.url);
-        }, 600);
+        setTimeout(()=>{ openEmailEditor(prop, data.url); }, 600);
       }
     } else {
       showToast('Error al publicar', data.error||'Error desconocido','error');
@@ -2457,7 +2450,10 @@ async function sendGmail(prop, url){
 }
 
 function buildEmailBody(prop, url, comercialName){
-  return 'Estimado/a ' + prop.alumno + ',\n\nEs un placer compartirte tu propuesta formativa personalizada de IM Education.\n\nPuedes consultarla en el siguiente enlace:\n' + url + '\n\nRecuerda que esta oferta es válida hasta el ' + new Date(prop.vencimiento).toLocaleDateString('es-ES') + '.\n\nQuedo a tu disposición para cualquier consulta.\n\nUn cordial saludo,\n' + comercialName + '\nIM Education\nwww.im.education\nBCN 931 593 373 · MAD 911 593 433';
+  const alumno = prop.alumno || prop.nombre || 'alumno/a';
+  const nombre = alumno.split(' ')[0];
+  const validez = prop.vencimiento ? new Date(prop.vencimiento).toLocaleDateString('es-ES') : '—';
+  return 'Estimado/a ' + nombre + ',\n\nEs un placer compartirte tu propuesta formativa personalizada de IM Education.\n\nPuedes consultarla en el siguiente enlace:\n' + url + '\n\nRecuerda que esta oferta es válida hasta el ' + validez + '.\n\nQuedo a tu disposición para cualquier consulta.\n\nUn cordial saludo,\n' + comercialName + '\nIM Education\nwww.im.education\nBCN 931 593 373 · MAD 911 593 433';
 }
 
 
@@ -3427,14 +3423,17 @@ let _emailEditorCallback = null;
 function openEmailEditor(prop, url){
   const comercialName = currentUser.name||currentUser.user;
   const comercialEmail = currentUser.email||'admisiones@im.education';
-  const subject = `Tu propuesta formativa — IM Education`;
+  const subject = 'Tu propuesta formativa — IM Education';
   const body = buildEmailBody(prop, url, comercialName);
+  const toEmail = prop.email || prop.alumnoEmail || '';
 
-  document.getElementById('ee-to').value = prop.email;
+  document.getElementById('ee-to').value = toEmail;
   document.getElementById('ee-subject').value = subject;
   document.getElementById('ee-body').value = body;
   document.getElementById('email-editor-overlay').style.display='flex';
 
+  // Ensure alumno name is available
+  if(!prop.alumno && prop.nombre) prop.alumno = prop.nombre;
   _emailEditorCallback = {prop, url, comercialName, comercialEmail};
 }
 
