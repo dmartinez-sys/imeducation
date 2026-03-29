@@ -3555,8 +3555,7 @@ let _emailEditorCallback = null;
 function openEmailEditor(prop, url){
   const comercialName = currentUser.name||currentUser.user;
   const comercialEmail = currentUser.email||'admisiones@im.education';
-  const subject = 'Tu propuesta formativa — IM Education';
-  const body = buildEmailBody(prop, url, comercialName);
+  const {subject, body} = applyEmailTemplate(prop, url, comercialName);
   const toEmail = prop.email || prop.alumnoEmail || '';
 
   document.getElementById('ee-to').value = toEmail;
