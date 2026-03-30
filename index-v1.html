@@ -675,6 +675,7 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         <option value="2">2 meses</option>
       </select>
       <div class="res-count" id="rc"></div>
+      <button id="sync-btn" onclick="syncFromServer()" title="Sincronizar datos del servidor" style="display:none;padding:0.38rem 0.75rem;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--muted);font-size:0.72rem;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;cursor:pointer;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.04em;" onmouseover="this.style.borderColor='var(--teal)';this.style.color='var(--teal)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">⟳ Sync</button>
     </div>
 
     <!-- CATALOG -->
@@ -931,9 +932,8 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         <button class="add-btn" onclick="addUser()" style="margin-top:0.8rem;">Añadir usuario</button>
         <div id="add-err" style="font-size:0.72rem;color:var(--red);margin-top:0.5rem;display:none;"></div>
       </div>
-    </div>
 
-    <!-- EMAIL TEMPLATE SECTION -->
+      <!-- EMAIL TEMPLATE SECTION -->
     <div style="margin-top:2rem;">
       <div style="font-size:0.62rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;">
         <span style="display:inline-block;width:3px;height:12px;background:var(--teal);border-radius:2px"></span>
@@ -964,7 +964,8 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
           <span id="tpl-saved-msg" style="font-size:0.72rem;color:var(--teal);display:none;">Guardada correctamente</span>
         </div>
       </div>
-    </div>
+
+    </div><!-- /#page-admin -->
 
   </div>
 </div>
@@ -1053,6 +1054,12 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
   </div>
 </div>
 
+<!-- LOADING OVERLAY -->
+<div id="loading-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:var(--bg);z-index:99999;flex-direction:column;align-items:center;justify-content:center;gap:1.2rem;">
+  <div style="width:36px;height:36px;border:3px solid rgba(0,196,160,0.2);border-top-color:var(--teal);border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+  <div style="font-size:0.82rem;color:var(--muted);font-weight:500;" id="loading-msg">Conectando con el servidor...</div>
+</div>
+
 <!-- TOAST CONTAINER -->
 <div class="toast-container" id="toast-container"></div>
 
@@ -1128,6 +1135,42 @@ const GH_BRANCH = 'main';
 const GH_BASE_URL = `https://${GH_USER}.github.io/${GH_REPO}`;
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwOCGLsoaCvb2AA42-pqGthYkEiOupkkgvI5Wv5EIxcA2kO3J0TrSwL__fOX4mN6HcF/exec';
 
+// ── SUPABASE CONFIG ──────────────────────────────────────────
+const SB_URL = 'https://qqggbjlhweeqbazwwfie.supabase.co';
+const SB_KEY = 'sb_publishable_SnMziqvvxd4HHyV3Q7tGZw_Odiu4oIJ';
+
+async function sbFetch(path, opts={}){
+  const res = await fetch(SB_URL+'/rest/v1/'+path, {
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer '+SB_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': opts.prefer||'',
+      ...opts.headers
+    },
+    ...opts
+  });
+  if(!res.ok){
+    const err = await res.text();
+    throw new Error('Supabase error '+res.status+': '+err);
+  }
+  const txt = await res.text();
+  return txt ? JSON.parse(txt) : null;
+}
+
+async function sbGet(table, query=''){
+  return sbFetch(table+'?'+query, {method:'GET', prefer:'return=representation'});
+}
+async function sbPost(table, body){
+  return sbFetch(table, {method:'POST', body:JSON.stringify(body), prefer:'return=representation'});
+}
+async function sbPatch(table, query, body){
+  return sbFetch(table+'?'+query, {method:'PATCH', body:JSON.stringify(body), prefer:'return=representation'});
+}
+async function sbDelete(table, query){
+  return sbFetch(table+'?'+query, {method:'DELETE'});
+}
+
 // ══════════════════════════════════════════════
 // DATA
 // ══════════════════════════════════════════════
@@ -1196,22 +1239,165 @@ const PROGRAMAS = [];
 // ══════════════════════════════════════════════
 // STORAGE (localStorage — persists between sessions)
 // ══════════════════════════════════════════════
-function getUsers(){
-  try{
-    const u = JSON.parse(localStorage.getItem('im_users')||'null');
-    if(u) return u;
-  }catch(e){}
-  // Default users
-  const defaults = [
-    {user:'admin',pass:'admin2026',role:'admin',name:'Administrador',email:'admin@im.education'},
-    {user:'comercial1',pass:'im2026',role:'comercial',name:'Comercial 1',email:'comercial1@im.education'},
-  ];
-  localStorage.setItem('im_users', JSON.stringify(defaults));
-  return defaults;
+// ── SUPABASE DATA LAYER ─────────────────────────────────────
+// In-memory cache (synced from Supabase on load)
+let _usersCache = null;
+let _proposalsCache = [];
+let _catalogCache = null;
+let _configCache = null;
+
+// ── USERS ──
+function getUsers(){ return _usersCache || []; }
+function saveUsers(u){
+  _usersCache = u;
+  // Sync to Supabase happens via addUser/editUser/deleteUser
 }
-function saveUsers(u){ localStorage.setItem('im_users', JSON.stringify(u)); }
-function getProposals(){ try{ return JSON.parse(localStorage.getItem('im_proposals')||'[]'); }catch(e){ return []; } }
-function saveProposals(p){ localStorage.setItem('im_proposals', JSON.stringify(p)); }
+
+async function loadUsersFromDB(){
+  try{
+    const rows = await sbGet('usuarios', 'order=created_at.asc');
+    _usersCache = (rows||[]).map(r=>({
+      user: r.user_key, pass: r.pass, role: r.role,
+      name: r.name, email: r.email||'',
+      avatarColor: r.avatar_color, avatarImg: r.avatar_img,
+      _id: r.id
+    }));
+  }catch(e){
+    console.warn('loadUsers fallback localStorage:', e);
+    try{
+      const u = JSON.parse(localStorage.getItem('im_users')||'null');
+      _usersCache = u || [{user:'admin',pass:'admin2026',role:'admin',name:'Administrador',email:'admin@im.education'}];
+    }catch(e2){ _usersCache = []; }
+  }
+}
+
+async function sbAddUser(data){
+  try{
+    await sbPost('usuarios', {
+      user_key: data.user, pass: data.pass, role: data.role,
+      name: data.name, email: data.email||''
+    });
+    await loadUsersFromDB();
+  }catch(e){ throw e; }
+}
+
+async function sbUpdateUser(userKey, data){
+  try{
+    const body = {};
+    if(data.name) body.name = data.name;
+    if(data.email !== undefined) body.email = data.email;
+    if(data.pass) body.pass = data.pass;
+    if(data.role) body.role = data.role;
+    if(data.avatarColor) body.avatar_color = data.avatarColor;
+    if(data.avatarImg !== undefined) body.avatar_img = data.avatarImg;
+    await sbPatch('usuarios', 'user_key=eq.'+encodeURIComponent(userKey), body);
+    await loadUsersFromDB();
+  }catch(e){ throw e; }
+}
+
+async function sbDeleteUser(userKey){
+  try{
+    await sbDelete('usuarios', 'user_key=eq.'+encodeURIComponent(userKey));
+    await loadUsersFromDB();
+  }catch(e){ throw e; }
+}
+
+// ── PROPOSALS ──
+function getProposals(){ return _proposalsCache || []; }
+function saveProposals(p){
+  _proposalsCache = p;
+  // Full replace not used with Supabase — individual ops used instead
+}
+
+async function loadProposalsFromDB(){
+  try{
+    const rows = await sbGet('propuestas', 'order=created_at.desc&limit=500');
+    _proposalsCache = (rows||[]).map(r=>({
+      id: r.id,
+      alumno: r.alumno, email: r.email, tel: r.tel,
+      programa: r.programa, progId: r.prog_id, tipo: r.tipo,
+      modalidad: r.modalidad, descuento: r.descuento||0, pagoUnico: r.pago_unico||0,
+      precioBase: r.precio_base, precioFinal: r.precio_final,
+      tieneEstudios: r.tiene_estudios, universidadAlumno: r.universidad_alumno,
+      emision: r.emision, vencimiento: r.vencimiento,
+      ref: r.ref, estado: r.estado, fechaCierre: r.fecha_cierre,
+      comercial: r.comercial, comercialName: r.comercial_name, comercialEmail: r.comercial_email,
+      pubUrl: r.pub_url, nota: r.nota
+    }));
+  }catch(e){
+    console.warn('loadProposals fallback localStorage:', e);
+    try{ _proposalsCache = JSON.parse(localStorage.getItem('im_proposals')||'[]'); }
+    catch(e2){ _proposalsCache = []; }
+  }
+}
+
+async function sbSaveProp(prop){
+  try{
+    const body = {
+      id: prop.id,
+      alumno: prop.alumno, email: prop.email||'', tel: prop.tel||'',
+      programa: prop.programa, prog_id: prop.progId, tipo: prop.tipo,
+      modalidad: prop.modalidad, descuento: prop.descuento||0, pago_unico: prop.pagoUnico||0,
+      precio_base: prop.precioBase, precio_final: prop.precioFinal,
+      tiene_estudios: prop.tieneEstudios, universidad_alumno: prop.universidadAlumno||'',
+      emision: prop.emision, vencimiento: prop.vencimiento,
+      ref: prop.ref, estado: prop.estado||'activa',
+      comercial: prop.comercial, comercial_name: prop.comercialName, comercial_email: prop.comercialEmail||'',
+      pub_url: prop.pubUrl||null, nota: prop.nota||null
+    };
+    await sbPost('propuestas', body);
+    if(!_proposalsCache.find(p=>p.id===prop.id)) _proposalsCache.unshift(prop);
+  }catch(e){ console.warn('sbSaveProp error:', e); }
+}
+
+async function sbUpdateProp(id, fields){
+  try{
+    const body = {};
+    if(fields.estado !== undefined) body.estado = fields.estado;
+    if(fields.fecha_cierre !== undefined) body.fecha_cierre = fields.fecha_cierre;
+    if(fields.pub_url !== undefined) body.pub_url = fields.pub_url;
+    if(fields.nota !== undefined) body.nota = fields.nota;
+    if(fields.html_content !== undefined) body.html_content = fields.html_content;
+    await sbPatch('propuestas', 'id=eq.'+id, body);
+    // Update local cache
+    const p = _proposalsCache.find(x=>x.id===id);
+    if(p){
+      if(fields.estado !== undefined) p.estado = fields.estado;
+      if(fields.fecha_cierre !== undefined) p.fechaCierre = fields.fecha_cierre;
+      if(fields.pub_url !== undefined) p.pubUrl = fields.pub_url;
+      if(fields.nota !== undefined) p.nota = fields.nota;
+    }
+  }catch(e){ console.warn('sbUpdateProp error:', e); }
+}
+
+async function sbDeleteProp(id){
+  try{
+    await sbDelete('propuestas', 'id=eq.'+id);
+    _proposalsCache = _proposalsCache.filter(p=>p.id!==id);
+  }catch(e){ console.warn('sbDeleteProp error:', e); }
+}
+
+// ── CONFIG ──
+async function loadConfigFromDB(){
+  try{
+    const rows = await sbGet('config', '');
+    _configCache = {};
+    (rows||[]).forEach(r=>{ _configCache[r.key] = r.value; });
+  }catch(e){
+    console.warn('loadConfig fallback:', e);
+    _configCache = {};
+  }
+}
+
+async function sbSetConfig(key, value){
+  try{
+    await sbFetch('config?key=eq.'+encodeURIComponent(key), {
+      method:'PATCH', body:JSON.stringify({value, updated_at: new Date().toISOString()}),
+      prefer:'return=representation'
+    });
+    if(_configCache) _configCache[key] = value;
+  }catch(e){ console.warn('sbSetConfig error:', e); }
+}
 function getCompare(){ try{ return JSON.parse(localStorage.getItem('im_compare')||'[]'); }catch(e){ return []; } }
 function saveCompare(c){ localStorage.setItem('im_compare', JSON.stringify(c)); }
 
@@ -1220,31 +1406,87 @@ function saveCompare(c){ localStorage.setItem('im_compare', JSON.stringify(c)); 
 // ══════════════════════════════════════════════
 let currentUser = null;
 
-function doLogin(){
+async function doLogin(){
   const u = document.getElementById('l-user').value.trim();
   const p = document.getElementById('l-pass').value;
-  const users = getUsers();
-  const found = users.find(x=>x.user===u && x.pass===p);
-  if(!found){ document.getElementById('login-err').style.display='block'; return; }
-  currentUser = found;
-  document.getElementById('login-screen').style.display='none';
-  document.getElementById('app').style.display='flex';
-  document.getElementById('sb-uname').textContent = found.name||found.user;
-  document.getElementById('sb-urole').textContent = found.role==='admin'?'Administrador':'Comercial';
-  if(found.email) document.getElementById('sb-uemail').textContent = found.email;
-  if(found.role==='admin') document.getElementById('nav-admin').style.display='flex';
-  initApp();
-  updateSidebarAvatar();
-  setTimeout(showMotivPopup, 800);
+  const btn = document.querySelector('.login-btn');
+  btn.textContent = 'Conectando...'; btn.disabled = true;
+  try{
+    // Load users from Supabase
+    await loadUsersFromDB();
+    const users = getUsers();
+    const found = users.find(x=>x.user===u && x.pass===p);
+    if(!found){
+      document.getElementById('login-err').style.display='block';
+      btn.textContent='Entrar'; btn.disabled=false;
+      return;
+    }
+    currentUser = found;
+    // Load all data in parallel
+    await Promise.all([
+      loadProposalsFromDB(),
+      loadConfigFromDB()
+    ]);
+    document.getElementById('login-screen').style.display='none';
+    document.getElementById('app').style.display='flex';
+    document.getElementById('sb-uname').textContent = found.name||found.user;
+    document.getElementById('sb-urole').textContent = found.role==='admin'?'Administrador':'Comercial';
+    if(found.email) document.getElementById('sb-uemail').textContent = found.email;
+    if(found.role==='admin') document.getElementById('nav-admin').style.display='flex';
+    initApp();
+    updateSidebarAvatar();
+    const syncBtn=document.getElementById('sync-btn'); if(syncBtn) syncBtn.style.display='inline-block';
+    setTimeout(showMotivPopup, 800);
+  }catch(e){
+    showToast('Error de conexión','No se pudo conectar con el servidor. '+e.message,'error');
+    btn.textContent='Entrar'; btn.disabled=false;
+  }
 }
 
 function doLogout(){
   currentUser=null;
+  _proposalsCache=[];
+  _usersCache=null;
+  _configCache=null;
   document.getElementById('app').style.display='none';
   document.getElementById('login-screen').style.display='flex';
   document.getElementById('l-user').value='';
   document.getElementById('l-pass').value='';
   document.getElementById('login-err').style.display='none';
+  const syncBtn=document.getElementById('sync-btn');
+  if(syncBtn) syncBtn.style.display='none';
+}
+
+async function syncFromServer(){
+  const btn = document.getElementById('sync-btn');
+  const orig = btn.textContent;
+  btn.textContent='Sincronizando...'; btn.disabled=true;
+  try{
+    await Promise.all([
+      loadProposalsFromDB(),
+      loadUsersFromDB(),
+      loadConfigFromDB(),
+      loadCatalogFromDB()
+    ]);
+    const saved = getCatalog();
+    PROGRAMAS.length=0;
+    saved.forEach(p=>PROGRAMAS.push(p));
+    refreshApp();
+    filterCatalog();
+    renderHistory();
+    renderAlertBanner();
+    countAlerts();
+    const activePage = document.querySelector('.page.active');
+    if(activePage){
+      if(activePage.id==='page-stats') renderStats();
+      if(activePage.id==='page-admin') renderAdmin();
+      if(activePage.id==='page-summary') renderSummary();
+    }
+    showToast('Datos sincronizados','Todos los datos están actualizados desde el servidor.','success');
+  }catch(e){
+    showToast('Error de sincronización',e.message,'error');
+  }
+  btn.textContent=orig; btn.disabled=false;
 }
 
 // ══════════════════════════════════════════════
@@ -1308,18 +1550,22 @@ function showPage(id,el){
   const show=id==='catalog';
   ['sw','ft','fm','rc'].forEach(x=>{const el=document.getElementById(x);if(el)el.style.display=show?'':'none';});
   if(id==='summary') renderSummary();
-  if(id==='proposals'){renderAlertBanner();renderHistory();checkStorageWarning();}
+  if(id==='proposals'){
+    loadProposalsFromDB().then(()=>{
+      renderAlertBanner(); renderHistory(); checkStorageWarning();
+    }).catch(()=>{ renderAlertBanner(); renderHistory(); checkStorageWarning(); });
+  }
   if(id==='admin'){
-    renderAdmin();
-    setTimeout(()=>{
+    renderAdmin().catch(e=>console.warn('renderAdmin error:',e));
+    loadConfigFromDB().then(()=>{
       const tpl = getEmailTemplate();
       const subEl = document.getElementById('tpl-subject');
       const bodyEl = document.getElementById('tpl-body');
       if(subEl) subEl.value = tpl.subject;
       if(bodyEl) bodyEl.value = tpl.body;
-    }, 50);
+    });
   }
-  if(id==='stats') renderStats();
+  if(id==='stats') loadProposalsFromDB().then(renderStats).catch(renderStats);
 }
 
 // ══════════════════════════════════════════════
@@ -1784,15 +2030,27 @@ function generateProposal(){
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Propuesta IM Education — ${nombre} — ${refNum}</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 @page{size:A4;margin:0;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;width:210mm;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#2a2a2a;color:#1a1a2e;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+@media screen {
+  body{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:1.5rem 0.5rem;}
+  .page{width:210mm;max-width:100%;box-shadow:0 4px 32px rgba(0,0,0,0.5);margin-bottom:1rem;transform-origin:top center;}
+}
+@media(max-width:230mm){
+  .page{width:100%;transform:none;}
+}
+@media print{
+  body{background:#fff;padding:0;display:block;}
+  .page{width:210mm;box-shadow:none;margin:0;}
+}
 
 /* ══ PAGE LAYOUT ══ */
-.page{width:210mm;min-height:297mm;position:relative;overflow:hidden;page-break-after:always;}
+.page{width:210mm;min-height:297mm;position:relative;overflow:hidden;page-break-after:always;background:#fff;color:#1a1a2e;}
 .page:last-child{page-break-after:auto;}
 
 /* ══ PAGE 1 SIDEBAR ══ */
@@ -2234,12 +2492,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
       </div>
     </div>
     <div class="p2-bottombar"></div>
+    <div style="text-align:center;font-size:1.4mm;color:#aaa;font-style:italic;margin-top:2mm;letter-spacing:0.02em;line-height:1.6;padding:0 4mm;">BORRADOR NO VINCULANTE · Sujeto a revisión y validación final por el Departamento de Admisiones y, en su caso, por la universidad colaboradora · La admisión definitiva y la formalización de la matrícula quedan condicionadas al cumplimiento de los requisitos académicos y administrativos aplicables · Prevalece la documentación definitiva de admisión y matrícula.</div>
 
   </div>
 </div>
 
 </div></div>
-<style>@media(max-width:220mm){body>div{padding:0.5rem;}}</style>
 </body></html>`;
 
   // Re-enable button
@@ -2272,16 +2530,17 @@ async function confirmAndPublish(){
   if(btn){ btn.disabled=true; btn.innerHTML='<span style="display:inline-flex;align-items:center;gap:0.4rem;"><span style="display:inline-block;width:10px;height:10px;border:2px solid rgba(0,0,0,0.2);border-top-color:#000;border-radius:50%;animation:spin 0.8s linear infinite;"></span>Creando...</span>'; }
 
   // Save to history
-  const proposals = getProposals();
   const newProp = {
     id: Date.now(),
     ...propData,
     estado: 'activa',
   };
-  proposals.unshift(newProp);
-  saveProposals(proposals);
 
-  // Save HTML
+  // Save to Supabase
+  await sbSaveProp(newProp);
+  // Save HTML to Supabase
+  try{ await sbUpdateProp(newProp.id, {html_content: html2}); }catch(e){}
+  // Also keep local HTML cache for PDF preview
   try{
     const stored = JSON.parse(localStorage.getItem('im_prop_html')||'{}');
     stored[newProp.id] = html2;
@@ -2309,10 +2568,8 @@ async function confirmAndPublish(){
     });
     if(res.ok){
       const pubUrl = `https://dmartinez-sys.github.io/imeducation/p/${fileName}`;
-      const props2 = getProposals();
-      const p2 = props2.find(x=>x.id===newProp.id);
-      if(p2){ p2.pubUrl=pubUrl; saveProposals(props2); }
       newProp.pubUrl = pubUrl;
+      await sbUpdateProp(newProp.id, {pub_url: pubUrl});
       renderHistory();
     }
   }catch(e){ console.warn('Publish error:', e); }
@@ -2459,7 +2716,7 @@ async function publishToGitHub(propId){
     if(data.url){
       showPublishingBanner(false);
       prop.pubUrl = data.url;
-      saveProposals(props);
+      await sbUpdateProp(prop.id, {pub_url: data.url});
       renderHistory();
       showShareBar(propId, data.url);
       showToast('Propuesta publicada','El enlace ya está disponible para compartir.','success');
@@ -2572,18 +2829,9 @@ function deletePropHtml(id){
 }
 
 function checkStorageWarning(){
-  if(!currentUser||currentUser.role!=='admin') return;
-  const props = getProposals();
-  if(props.length>=80){
-    const banner = document.getElementById('storage-warning');
-    if(banner){
-      banner.style.display='flex';
-      document.getElementById('storage-count').textContent=props.length;
-    }
-  } else {
-    const banner = document.getElementById('storage-warning');
-    if(banner) banner.style.display='none';
-  }
+  // With Supabase backend, no storage warning needed
+  const banner = document.getElementById('storage-warning');
+  if(banner) banner.style.display='none';
 }
 
 function openPropPDF(id){
@@ -2699,17 +2947,13 @@ function togglePropRow(id){
 }
 
 
-function setPropState(id,estado){
-  const props=getProposals();
-  const p=props.find(x=>x.id===id);
-  if(p){
-    p.estado=estado;
-    p.fechaCierre=new Date().toISOString();
-  }
-  saveProposals(props);
+async function setPropState(id,estado){
+  const fechaCierre = new Date().toISOString();
+  await sbUpdateProp(id, {estado, fecha_cierre: fechaCierre});
   renderHistory();
   renderAlertBanner();
   countAlerts();
+  if(document.getElementById('page-stats').classList.contains('active')) renderStats();
   const labels={ganada:'Propuesta marcada como Ganada',perdida:'Propuesta marcada como Perdida'};
   if(labels[estado]) showToast(labels[estado],'Movida al Archivo.','success');
 }
@@ -2717,13 +2961,7 @@ function setPropState(id,estado){
 async function deleteProp(id){
   const ok = await customConfirm('Archivar propuesta','¿Mover esta propuesta al archivo? Podrás consultarla desde la pestaña Archivo.',false,'Archivar','Cancelar');
   if(!ok) return;
-  const props=getProposals();
-  const p=props.find(x=>x.id===id);
-  if(p){
-    p.estado='eliminada';
-    p.fechaCierre=new Date().toISOString();
-  }
-  saveProposals(props);
+  await sbUpdateProp(id, {estado:'eliminada', fecha_cierre: new Date().toISOString()});
   checkStorageWarning();
   renderHistory();
   renderAlertBanner();
@@ -2733,13 +2971,13 @@ async function deleteProp(id){
 async function deletePropDefinitive(id){
   const ok = await customConfirm('Eliminar definitivamente','Esta acción no se puede deshacer. El PDF guardado también se eliminará.',true);
   if(!ok) return;
-  const props=getProposals().filter(x=>x.id!==id);
-  saveProposals(props);
+  await sbDeleteProp(id);
   deletePropHtml(id);
   checkStorageWarning();
   renderArchive();
   renderAlertBanner();
   countAlerts();
+  if(document.getElementById('page-stats').classList.contains('active')) renderStats();
 }
 
 // ══════════════════════════════════════════════
@@ -2748,10 +2986,13 @@ async function deletePropDefinitive(id){
 // ══════════════════════════════════════════════
 // EMAIL TEMPLATE
 // ══════════════════════════════════════════════
-const DEFAULT_EMAIL_SUBJECT = 'Tu propuesta formativa — IM Education';
-const DEFAULT_EMAIL_BODY = "Estimado/a {{nombre}},\n\nEs un placer compartirte tu propuesta formativa personalizada de IM Education.\n\nHemos preparado esta propuesta a medida para ti, con el programa {{programa}} que mejor se adapta a tu perfil y objetivos profesionales.\n\nPuedes consultar tu propuesta en el siguiente enlace:\n{{url}}\n\nRecuerda que esta oferta es válida hasta el {{fecha_validez}}.\n\nQuedo a tu disposición para cualquier consulta.\n\nUn cordial saludo,\n{{comercial}}\nIM Education\nwww.im.education\nBCN 931 593 373 · MAD 911 593 433";
+const DEFAULT_EMAIL_SUBJECT = 'Propuesta académica para {{nombre}} – {{programa}}';
+const DEFAULT_EMAIL_BODY = "Hola {{nombre}},\nTal y como hemos comentado, te envío la propuesta académica del programa {{programa}} para que puedas revisarla con calma.\n\nResumen de la propuesta:\n* Programa: {{programa}}\n* Validez de la propuesta: hasta el {{fecha_validez}}\n\nEste programa está pensado para ayudarte a adquirir una formación actualizada, práctica y orientada a tu desarrollo profesional, con un enfoque adaptado a las necesidades reales del mercado.\n\nTe recomiendo revisar la información cuanto antes, ya que la propuesta económica y las condiciones indicadas estarán vigentes hasta la fecha señalada.\n\nSi te surge cualquier duda o quieres que revisemos juntos la opción que mejor encaja contigo, estaré encantado de ayudarte.\n\nUn saludo,\n{{comercial}}";
 
 function getEmailTemplate(){
+  if(_configCache && _configCache['email_subject']){
+    return {subject: _configCache['email_subject'], body: _configCache['email_body']||DEFAULT_EMAIL_BODY};
+  }
   try{
     const t = JSON.parse(localStorage.getItem('im_email_template')||'null');
     if(t) return t;
@@ -2759,11 +3000,12 @@ function getEmailTemplate(){
   return {subject: DEFAULT_EMAIL_SUBJECT, body: DEFAULT_EMAIL_BODY};
 }
 
-function saveEmailTemplate(){
+async function saveEmailTemplate(){
   const subject = document.getElementById('tpl-subject').value.trim();
   const body = document.getElementById('tpl-body').value;
   if(!subject){ showToast('El asunto no puede estar vacío','','warning'); return; }
-  localStorage.setItem('im_email_template', JSON.stringify({subject, body}));
+  await sbSetConfig('email_subject', subject);
+  await sbSetConfig('email_body', body);
   const msg = document.getElementById('tpl-saved-msg');
   if(msg){ msg.style.display='inline'; setTimeout(()=>msg.style.display='none', 3000); }
   showToast('Plantilla guardada','Todos los comerciales usarán esta plantilla.','success');
@@ -2796,7 +3038,8 @@ function applyEmailTemplate(prop, url, comercialName){
   return {subject, body};
 }
 
-function renderAdmin(){
+async function renderAdmin(){
+  await loadUsersFromDB();
   const users=getUsers();
   document.getElementById('users-list').innerHTML=users.map(u=>`
     <div class="user-row">
@@ -2818,7 +3061,7 @@ function renderAdmin(){
   else if(el) el.textContent='Usando catálogo por defecto (no se ha subido ningún Excel).';
 }
 
-function addUser(){
+async function addUser(){
   const name=document.getElementById('nu-name').value.trim();
   const user=document.getElementById('nu-user').value.trim();
   const email=document.getElementById('nu-email').value.trim();
@@ -2828,27 +3071,36 @@ function addUser(){
   if(!name||!user||!pass){err.textContent='Completa nombre, usuario y contraseña.';err.style.display='block';return;}
   const users=getUsers();
   if(users.find(u=>u.user===user)){err.textContent='Ese usuario ya existe.';err.style.display='block';return;}
-  users.push({user,pass,role,name,email});
-  saveUsers(users);
-  err.style.display='none';
-  document.getElementById('nu-name').value='';
-  document.getElementById('nu-user').value='';
-  document.getElementById('nu-email').value='';
-  document.getElementById('nu-pass').value='';
-  renderAdmin();
+  try{
+    await sbAddUser({user,pass,role,name,email});
+    err.style.display='none';
+    document.getElementById('nu-name').value='';
+    document.getElementById('nu-user').value='';
+    document.getElementById('nu-email').value='';
+    document.getElementById('nu-pass').value='';
+    renderAdmin();
+    showToast('Usuario creado','El usuario ya puede acceder a la plataforma.','success');
+  }catch(e){
+    err.textContent='Error al crear usuario: '+e.message;
+    err.style.display='block';
+  }
 }
 
 async function deleteUser(user){
   const ok = await customConfirm('Eliminar usuario',`¿Eliminar el usuario "${user}"? Esta acción no se puede deshacer.`,true);
   if(!ok) return;
-  saveUsers(getUsers().filter(u=>u.user!==user));
-  renderAdmin();
+  try{
+    await sbDeleteUser(user);
+    renderAdmin();
+    showToast('Usuario eliminado','','success');
+  }catch(e){ showToast('Error',e.message,'error'); }
 }
 
 // ══════════════════════════════════════════════
 // EXCEL UPLOAD / DOWNLOAD
 // ══════════════════════════════════════════════
 function getCatalog(){
+  if(_catalogCache && _catalogCache.length>0) return _catalogCache;
   try{
     const c=JSON.parse(localStorage.getItem('im_catalog')||'null');
     if(c&&c.length>0) return c;
@@ -2857,8 +3109,42 @@ function getCatalog(){
 }
 
 function saveCatalog(data){
+  _catalogCache = data;
   localStorage.setItem('im_catalog', JSON.stringify(data));
   localStorage.setItem('im_catalog_date', new Date().toISOString());
+  // Also push to Supabase async (fire and forget)
+  sbSaveCatalog(data).catch(e=>console.warn('sbSaveCatalog error:',e));
+}
+
+async function sbSaveCatalog(data){
+  // Delete all and reinsert
+  await sbDelete('catalogo', 'id=gt.0');
+  // Insert in chunks of 50
+  for(let i=0; i<data.length; i+=50){
+    const chunk = data.slice(i,i+50).map(p=>({
+      tipo:p.tipo, univ:p.univ, nombre:p.nombre, meses:p.meses,
+      ects:p.ects, horas:p.horas||0, pres:p.pres, vpres:p.vpres,
+      online:p.online, prac:p.prac, url_pdf:p.url_pdf||null
+    }));
+    await sbPost('catalogo', chunk);
+  }
+}
+
+async function loadCatalogFromDB(){
+  try{
+    const rows = await sbGet('catalogo', 'order=id.asc&limit=1000');
+    if(rows && rows.length>0){
+      _catalogCache = rows.map((r,i)=>({
+        id: i+1, tipo:r.tipo, univ:r.univ, nombre:r.nombre,
+        meses:r.meses, ects:r.ects, horas:r.horas||0,
+        pres:r.pres, vpres:r.vpres, online:r.online,
+        prac:r.prac, url_pdf:r.url_pdf||''
+      }));
+      localStorage.setItem('im_catalog', JSON.stringify(_catalogCache));
+      return true;
+    }
+  }catch(e){ console.warn('loadCatalog fallback:', e); }
+  return false;
 }
 
 function handleExcelUpload(event){
@@ -3325,7 +3611,7 @@ function closeEditUser(){
   document.getElementById('edit-user-modal').style.display='none';
 }
 
-function saveEditUser(){
+async function saveEditUser(){
   const key = document.getElementById('edit-user-key').value;
   const name = document.getElementById('edit-name').value.trim();
   const email = document.getElementById('edit-email').value.trim();
@@ -3333,16 +3619,14 @@ function saveEditUser(){
   const role = document.getElementById('edit-role').value;
   const err = document.getElementById('edit-err');
   if(!name){ err.textContent='El nombre es obligatorio.'; err.style.display='block'; return; }
-  const users = getUsers();
-  const idx = users.findIndex(u=>u.user===key);
-  if(idx===-1) return;
-  users[idx].name = name;
-  users[idx].email = email;
-  users[idx].role = role;
-  if(pass) users[idx].pass = pass;
-  saveUsers(users);
-  closeEditUser();
-  renderAdmin();
+  try{
+    const data = {name, email, role};
+    if(pass) data.pass = pass;
+    await sbUpdateUser(key, data);
+    closeEditUser();
+    renderAdmin();
+    showToast('Usuario actualizado','','success');
+  }catch(e){ err.textContent='Error: '+e.message; err.style.display='block'; }
 }
 
 // ══════════════════════════════════════════════
@@ -3464,7 +3748,7 @@ function cycleAvatarColor(){
   });
 }
 
-function saveProfile(){
+async function saveProfile(){
   const name = document.getElementById('profile-name').value.trim();
   const email = document.getElementById('profile-email').value.trim();
   const pass = document.getElementById('profile-pass').value;
@@ -3474,29 +3758,23 @@ function saveProfile(){
   if(!name){ err.textContent='El nombre es obligatorio.'; err.style.display='block'; return; }
   if(pass && pass!==pass2){ err.textContent='Las contraseñas no coinciden.'; err.style.display='block'; return; }
 
-  const users = getUsers();
-  const idx = users.findIndex(u=>u.user===currentUser.user);
-  if(idx===-1) return;
-  users[idx].name = name;
-  users[idx].email = email;
-  if(pass) users[idx].pass = pass;
-  saveUsers(users);
+  try{
+    const color = AVATAR_COLORS[_profileColorIdx] || AVATAR_COLORS[0];
+    const data = {name, email, avatarColor: color};
+    if(pass) data.pass = pass;
+    await sbUpdateUser(currentUser.user, data);
 
-  // Save avatar color
-  const color = AVATAR_COLORS[_profileColorIdx] || AVATAR_COLORS[0];
-  setAvatarColor(currentUser.user, color);
+    currentUser.name = name;
+    currentUser.email = email;
+    currentUser.avatarColor = color;
+    setAvatarColor(currentUser.user, color);
 
-  // Update currentUser
-  currentUser.name = name;
-  currentUser.email = email;
-
-  // Update sidebar
-  document.getElementById('sb-uname').textContent = name;
-  if(email) document.getElementById('sb-uemail').textContent = email;
-  updateSidebarAvatar();
-
-  closeProfile();
-  showToast('Perfil actualizado','Tus datos se han guardado correctamente.','success');
+    document.getElementById('sb-uname').textContent = name;
+    if(email) document.getElementById('sb-uemail').textContent = email;
+    updateSidebarAvatar();
+    closeProfile();
+    showToast('Perfil actualizado','Tus datos se han guardado correctamente.','success');
+  }catch(e){ err.textContent='Error: '+e.message; err.style.display='block'; }
 }
 
 function closeProfile(){
@@ -3753,20 +4031,19 @@ async function sendEmailFromEditor(){
 // ══════════════════════════════════════════════
 // NOTES IN PROPOSALS
 // ══════════════════════════════════════════════
-function saveNote(propId){
+async function saveNote(propId){
   const textarea = document.getElementById('note-'+propId);
   if(!textarea) return;
-  const props = getProposals();
-  const p = props.find(x=>x.id===propId);
-  if(p){ p.nota = textarea.value; saveProposals(props); }
+  await sbUpdateProp(propId, {nota: textarea.value});
   showToast('Nota guardada','','success',2000);
 }
 
 // ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
-function initApp(){
-  // Load catalog from storage or use defaults
+async function initApp(){
+  // Try to load catalog from Supabase, fallback to localStorage
+  const fromDB = await loadCatalogFromDB();
   const saved = getCatalog();
   PROGRAMAS.length=0;
   saved.forEach(p=>PROGRAMAS.push(p));
