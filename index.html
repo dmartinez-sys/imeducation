@@ -2586,9 +2586,11 @@ async function confirmAndPublish(){
   const modal = document.getElementById('proposal-modal');
   if(modal) modal.remove();
 
-  // Email editor will open automatically after PDF is generated in Drive
-  if(!newProp.email){
-    showToast('Propuesta creada','El PDF se está generando en Drive.','success');
+  // Open email editor with GitHub Pages URL
+  if(newProp.email && newProp.pubUrl){
+    setTimeout(()=>{ openEmailEditor(newProp, newProp.pubUrl); }, 400);
+  } else {
+    showToast('Propuesta creada','Puedes enviarla por correo desde la pestaña Activas.','success');
   }
 }
 
@@ -2607,26 +2609,16 @@ async function generateDrivePDF(prop, htmlContent){
     });
     const data = await res.json();
     if(data.pdfUrl){
-      // Drive PDF URL es el enlace principal que se envía al alumno
-      prop.pubUrl = data.pdfUrl;
-      await sbUpdateProp(prop.id, {pub_url: data.pdfUrl});
-      const p = _proposalsCache.find(x=>x.id===prop.id);
-      if(p){ p.pubUrl = data.pdfUrl; p.drivePdfUrl = data.pdfUrl; }
-      // Store in localStorage for quick access
+      // Guardar referencia Drive en local (solo para uso interno)
       try{
         const pdfs = JSON.parse(localStorage.getItem('im_drive_pdfs')||'{}');
         pdfs[prop.id] = data.pdfUrl;
         localStorage.setItem('im_drive_pdfs', JSON.stringify(pdfs));
       }catch(e){}
-      showToast('PDF listo en Drive','El enlace del PDF ya está disponible para enviar al alumno.','success', 6000);
+      showToast('Copia guardada en Drive','La propuesta también está disponible en tu carpeta IM Propuestas.','info', 5000);
       renderHistory();
-      // Abrir email editor con el enlace del PDF de Drive
-      if(prop.email){
-        setTimeout(()=>{ openEmailEditor(prop, data.pdfUrl); }, 600);
-      }
     } else {
       console.warn('generateDrivePDF error:', data.error);
-      showToast('PDF no generado', data.error||'Error desconocido', 'warning');
     }
   }catch(e){
     console.warn('generateDrivePDF fetch error:', e);
