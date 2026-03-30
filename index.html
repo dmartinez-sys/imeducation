@@ -1784,12 +1784,24 @@ function generateProposal(){
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Propuesta IM Education — ${nombre} — ${refNum}</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 @page{size:A4;margin:0;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;width:210mm;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#2a2a2a;color:#1a1a2e;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+@media screen {
+  body{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:1.5rem 0.5rem;}
+  .page{width:210mm;max-width:100%;box-shadow:0 4px 32px rgba(0,0,0,0.5);margin-bottom:1rem;transform-origin:top center;}
+}
+@media(max-width:230mm){
+  .page{width:100%;transform:none;}
+}
+@media print{
+  body{background:#fff;padding:0;display:block;}
+  .page{width:210mm;box-shadow:none;margin:0;}
+}
 
 /* ══ PAGE LAYOUT ══ */
 .page{width:210mm;min-height:297mm;position:relative;overflow:hidden;page-break-after:always;}
@@ -1951,14 +1963,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
 
 @media print{body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}}
 </style></head>
-<body style="margin:0;padding:0;background:#2a2a2a;">
-<style>
-  @media screen {
-    body{background:#2a2a2a;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem;min-height:100vh;box-sizing:border-box;}
-    .page{margin-bottom:1rem;box-shadow:0 4px 32px rgba(0,0,0,0.5);}
-  }
-  @media print{body{background:#fff;padding:0;display:block;}}
-</style>
+<body>
 
 <!-- ══ PAGE 1 ══ -->
 <div class="page">
