@@ -2711,6 +2711,7 @@ function setPropState(id,estado){
   renderHistory();
   renderAlertBanner();
   countAlerts();
+  if(document.getElementById('page-stats').classList.contains('active')) renderStats();
   const labels={ganada:'Propuesta marcada como Ganada',perdida:'Propuesta marcada como Perdida'};
   if(labels[estado]) showToast(labels[estado],'Movida al Archivo.','success');
 }
@@ -2741,6 +2742,7 @@ async function deletePropDefinitive(id){
   renderArchive();
   renderAlertBanner();
   countAlerts();
+  if(document.getElementById('page-stats').classList.contains('active')) renderStats();
 }
 
 // ══════════════════════════════════════════════
