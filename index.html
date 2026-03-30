@@ -2638,6 +2638,7 @@ function renderHistory(){
     const progShort=(prog?prog.nombre:prop.programa).split(' ').slice(0,6).join(' ')+'…';
     const daysLeft=Math.ceil((new Date(prop.vencimiento)-Date.now())/(1000*60*60*24));
     const daysStr=daysLeft>0?`${daysLeft}d restantes`:'Vencida';
+    const daysColor=daysLeft<=0?'var(--red)':daysLeft<=2?'var(--red)':daysLeft<=4?'var(--orange)':'var(--teal)';
     const hasPDF=!!getPropHtml(prop.id);
     const isAdmin=currentUser.role==='admin';
     return `<div class="prop-row status-${st.cls.replace('st-','')}" id="prow-${prop.id}">
@@ -2645,10 +2646,15 @@ function renderHistory(){
       <div class="prop-row-header" onclick="togglePropRow(${prop.id})">
         <div class="prop-row-status" style="background:${dotColor}"></div>
         <div class="prop-row-name" title="${prop.alumno||'Sin nombre'}">${prop.alumno||'—'}</div>
-        <div class="prop-row-prog" title="${prop.programa}">${progShort}</div>
+        <div style="flex:1;min-width:0;overflow:hidden;">
+          <div class="prop-row-prog" title="${prop.programa}">${progShort}</div>
+          <div style="font-size:0.62rem;color:var(--muted);margin-top:0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+            ${fmtDate(prop.emision)} · ${prop.comercialName||prop.comercial}
+          </div>
+        </div>
         <div class="prop-row-price">${prop.precioFinal?fmt(prop.precioFinal):'—'}</div>
         <span class="st-badge ${st.cls} prop-row-badge">${st.txt}</span>
-        <div class="prop-row-days">${daysStr}</div>
+        <div class="prop-row-days" style="color:${daysColor};font-weight:${daysLeft<=4?'700':'400'}">${daysStr}</div>
         <div class="prop-row-chevron">▼</div>
       </div>
       <!-- BODY -->
