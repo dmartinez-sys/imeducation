@@ -931,9 +931,8 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         <button class="add-btn" onclick="addUser()" style="margin-top:0.8rem;">Añadir usuario</button>
         <div id="add-err" style="font-size:0.72rem;color:var(--red);margin-top:0.5rem;display:none;"></div>
       </div>
-    </div>
 
-    <!-- EMAIL TEMPLATE SECTION -->
+      <!-- EMAIL TEMPLATE SECTION -->
     <div style="margin-top:2rem;">
       <div style="font-size:0.62rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;">
         <span style="display:inline-block;width:3px;height:12px;background:var(--teal);border-radius:2px"></span>
@@ -964,7 +963,8 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
           <span id="tpl-saved-msg" style="font-size:0.72rem;color:var(--teal);display:none;">Guardada correctamente</span>
         </div>
       </div>
-    </div>
+
+    </div><!-- /#page-admin -->
 
   </div>
 </div>
@@ -1804,7 +1804,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#2a2a2a;color:#1a1a2e
 }
 
 /* ══ PAGE LAYOUT ══ */
-.page{width:210mm;min-height:297mm;position:relative;overflow:hidden;page-break-after:always;}
+.page{width:210mm;min-height:297mm;position:relative;overflow:hidden;page-break-after:always;background:#fff;color:#1a1a2e;}
 .page:last-child{page-break-after:auto;}
 
 /* ══ PAGE 1 SIDEBAR ══ */
@@ -2246,6 +2246,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#2a2a2a;color:#1a1a2e
       </div>
     </div>
     <div class="p2-bottombar"></div>
+    <div style="text-align:center;font-size:1.4mm;color:#aaa;font-style:italic;margin-top:2mm;letter-spacing:0.02em;line-height:1.6;padding:0 4mm;">BORRADOR NO VINCULANTE · Sujeto a revisión y validación final por el Departamento de Admisiones y, en su caso, por la universidad colaboradora · La admisión definitiva y la formalización de la matrícula quedan condicionadas al cumplimiento de los requisitos académicos y administrativos aplicables · Prevalece la documentación definitiva de admisión y matrícula.</div>
 
   </div>
 </div>
@@ -2721,6 +2722,7 @@ function setPropState(id,estado){
   renderHistory();
   renderAlertBanner();
   countAlerts();
+  if(document.getElementById('page-stats').classList.contains('active')) renderStats();
   const labels={ganada:'Propuesta marcada como Ganada',perdida:'Propuesta marcada como Perdida'};
   if(labels[estado]) showToast(labels[estado],'Movida al Archivo.','success');
 }
@@ -2751,6 +2753,7 @@ async function deletePropDefinitive(id){
   renderArchive();
   renderAlertBanner();
   countAlerts();
+  if(document.getElementById('page-stats').classList.contains('active')) renderStats();
 }
 
 // ══════════════════════════════════════════════
@@ -2759,8 +2762,8 @@ async function deletePropDefinitive(id){
 // ══════════════════════════════════════════════
 // EMAIL TEMPLATE
 // ══════════════════════════════════════════════
-const DEFAULT_EMAIL_SUBJECT = 'Tu propuesta formativa — IM Education';
-const DEFAULT_EMAIL_BODY = "Estimado/a {{nombre}},\n\nEs un placer compartirte tu propuesta formativa personalizada de IM Education.\n\nHemos preparado esta propuesta a medida para ti, con el programa {{programa}} que mejor se adapta a tu perfil y objetivos profesionales.\n\nPuedes consultar tu propuesta en el siguiente enlace:\n{{url}}\n\nRecuerda que esta oferta es válida hasta el {{fecha_validez}}.\n\nQuedo a tu disposición para cualquier consulta.\n\nUn cordial saludo,\n{{comercial}}\nIM Education\nwww.im.education\nBCN 931 593 373 · MAD 911 593 433";
+const DEFAULT_EMAIL_SUBJECT = 'Propuesta académica para {{nombre}} – {{programa}}';
+const DEFAULT_EMAIL_BODY = "Hola {{nombre}},\nTal y como hemos comentado, te envío la propuesta académica del programa {{programa}} para que puedas revisarla con calma.\n\nResumen de la propuesta:\n* Programa: {{programa}}\n* Validez de la propuesta: hasta el {{fecha_validez}}\n\nEste programa está pensado para ayudarte a adquirir una formación actualizada, práctica y orientada a tu desarrollo profesional, con un enfoque adaptado a las necesidades reales del mercado.\n\nTe recomiendo revisar la información cuanto antes, ya que la propuesta económica y las condiciones indicadas estarán vigentes hasta la fecha señalada.\n\nSi te surge cualquier duda o quieres que revisemos juntos la opción que mejor encaja contigo, estaré encantado de ayudarte.\n\nUn saludo,\n{{comercial}}";
 
 function getEmailTemplate(){
   try{
