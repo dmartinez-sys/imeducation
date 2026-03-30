@@ -1309,7 +1309,16 @@ function showPage(id,el){
   ['sw','ft','fm','rc'].forEach(x=>{const el=document.getElementById(x);if(el)el.style.display=show?'':'none';});
   if(id==='summary') renderSummary();
   if(id==='proposals'){renderAlertBanner();renderHistory();checkStorageWarning();}
-  if(id==='admin') renderAdmin();
+  if(id==='admin'){
+    renderAdmin();
+    setTimeout(()=>{
+      const tpl = getEmailTemplate();
+      const subEl = document.getElementById('tpl-subject');
+      const bodyEl = document.getElementById('tpl-body');
+      if(subEl) subEl.value = tpl.subject;
+      if(bodyEl) bodyEl.value = tpl.body;
+    }, 50);
+  }
   if(id==='stats') renderStats();
 }
 
@@ -1668,19 +1677,40 @@ function generateProposal(){
   // ── Calcular titulaciones ──
   // Clean program name removing tipo prefix to avoid duplication
   let nomCorto = p.nombre
+    // Master patterns
+    .replace(/máster de formación permanente global en /i,'')
     .replace(/máster de formación permanente en /i,'')
     .replace(/máster en formación permanente en /i,'')
     .replace(/máster formación permanente en /i,'')
     .replace(/master en formacion permanente en /i,'')
+    .replace(/máster en formación permanente/i,'')
+    .replace(/máster formación permanente/i,'')
+    .replace(/máster propio en /i,'')
+    .replace(/máster en /i,'')
+    // Diploma patterns
     .replace(/diploma de especialización en /i,'')
+    .replace(/diploma de especialización/i,'')
     .replace(/diploma de micro-credencial en /i,'')
     .replace(/diploma de micro-credencial  en /i,'')
+    .replace(/diploma de micro-credencial/i,'')
     .replace(/microcredencial en /i,'')
+    .replace(/microcredencial/i,'')
+    // Grado/FP
+    .replace(/grado universitario en /i,'')
     .replace(/grado universitario /i,'')
     .replace(/grado superior en /i,'')
+    .replace(/grado en /i,'')
     .trim();
-  // Remove ABAT suffix
-  nomCorto = nomCorto.replace(/ ?-? ?abat oliba$/i,'').replace(/ ?-? ?abat oliba ceu$/i,'').trim();
+  // Remove ABAT/UTAMED suffix
+  nomCorto = nomCorto
+    .replace(/ ?-? ?abat oliba ceu$/i,'')
+    .replace(/ ?-? ?abat oliba$/i,'')
+    .replace(/ ?-? ?utamed$/i,'')
+    .replace(/\(abat oliba\)/i,'')
+    .replace(/\(utamed\)/i,'')
+    .trim();
+  // Capitalize first letter
+  if(nomCorto.length > 0) nomCorto = nomCorto.charAt(0).toUpperCase() + nomCorto.slice(1);
 
   let tit1 = null; // Título universitario
   let tit2 = null; // Título IM
@@ -2713,24 +2743,7 @@ async function deletePropDefinitive(id){
 // EMAIL TEMPLATE
 // ══════════════════════════════════════════════
 const DEFAULT_EMAIL_SUBJECT = 'Tu propuesta formativa — IM Education';
-const DEFAULT_EMAIL_BODY = `Estimado/a {{nombre}},
-
-Es un placer compartirte tu propuesta formativa personalizada de IM Education.
-
-Hemos preparado esta propuesta a medida para ti, con el programa {{programa}} que mejor se adapta a tu perfil y objetivos profesionales.
-
-Puedes consultar tu propuesta en el siguiente enlace:
-{{url}}
-
-Recuerda que esta oferta es válida hasta el {{fecha_validez}}.
-
-Quedo a tu disposición para cualquier consulta.
-
-Un cordial saludo,
-{{comercial}}
-IM Education
-www.im.education
-BCN 931 593 373 · MAD 911 593 433`;
+const DEFAULT_EMAIL_BODY = "Estimado/a {{nombre}},\n\nEs un placer compartirte tu propuesta formativa personalizada de IM Education.\n\nHemos preparado esta propuesta a medida para ti, con el programa {{programa}} que mejor se adapta a tu perfil y objetivos profesionales.\n\nPuedes consultar tu propuesta en el siguiente enlace:\n{{url}}\n\nRecuerda que esta oferta es válida hasta el {{fecha_validez}}.\n\nQuedo a tu disposición para cualquier consulta.\n\nUn cordial saludo,\n{{comercial}}\nIM Education\nwww.im.education\nBCN 931 593 373 · MAD 911 593 433";
 
 function getEmailTemplate(){
   try{
