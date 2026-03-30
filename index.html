@@ -2511,7 +2511,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#2a2a2a;color:#1a1a2e
   // Store for later confirmation
   window._pendingHtml2 = html2;
   window._pendingPropData = {
-    nombre, email, tel, tieneEstudios, universidadAlumno,
+    alumno: nombre, nombre, email, tel, tieneEstudios, universidadAlumno,
     programa: p.nombre, progId: p.id, tipo: p.tipo,
     modalidad: mod, descuento: desc, pagoUnico: pago,
     precioBase: base, precioFinal: final,
@@ -2579,6 +2579,9 @@ async function confirmAndPublish(){
     }
   }catch(e){ console.warn('Publish error:', e); }
 
+  // Generate PDF in Drive (async, fire and forget)
+  generateDrivePDF(newProp, html2);
+
   // Close modal and open email editor
   const modal = document.getElementById('proposal-modal');
   if(modal) modal.remove();
@@ -2589,6 +2592,50 @@ async function confirmAndPublish(){
   } else {
     showToast('Propuesta creada','Puedes enviarla por correo desde la pestaña Activas.','success');
   }
+}
+
+async function generateDrivePDF(prop, htmlContent){
+  try{
+    showToast('Generando PDF','El PDF se está guardando en Google Drive...','info', 5000);
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'text/plain'},
+      body: JSON.stringify({
+        action: 'generatePDF',
+        htmlContent: htmlContent,
+        ref: prop.ref,
+        alumno: prop.alumno || prop.nombre || 'alumno'
+      })
+    });
+    const data = await res.json();
+    if(data.pdfUrl){
+      // Save PDF url to Supabase
+      await sbUpdateProp(prop.id, {pub_url: prop.pubUrl || data.pdfUrl});
+      // Update local cache with drive pdf url
+      const p = _proposalsCache.find(x=>x.id===prop.id);
+      if(p) p.drivePdfUrl = data.pdfUrl;
+      // Store in localStorage for quick access
+      try{
+        const pdfs = JSON.parse(localStorage.getItem('im_drive_pdfs')||'{}');
+        pdfs[prop.id] = data.pdfUrl;
+        localStorage.setItem('im_drive_pdfs', JSON.stringify(pdfs));
+      }catch(e){}
+      showToast('PDF guardado en Drive','El PDF está disponible en tu carpeta "IM Propuestas" de Google Drive.','success', 6000);
+      renderHistory();
+    } else {
+      console.warn('generateDrivePDF error:', data.error);
+      showToast('PDF no generado', data.error||'Error desconocido', 'warning');
+    }
+  }catch(e){
+    console.warn('generateDrivePDF fetch error:', e);
+  }
+}
+
+function getDrivePdfUrl(propId){
+  try{
+    const pdfs = JSON.parse(localStorage.getItem('im_drive_pdfs')||'{}');
+    return pdfs[propId]||null;
+  }catch(e){ return null; }
 }
 
 function updatePreviewBarAfterSave(prop){
@@ -2929,6 +2976,7 @@ function renderHistory(){
         <div class="prop-row-actions">
           ${hasPDF?`<button class="pra-btn primary" onclick="openPropPDF(${prop.id})">Ver PDF</button>`:''}
           ${hasPDF?`<button class="pra-btn" id="pub-btn-${prop.id}" onclick="publishToGitHub(${prop.id})">${prop.pubUrl?'Republicar':'Publicar'}</button>`:''}
+          ${getDrivePdfUrl(prop.id)?`<button class="pra-btn" onclick="window.open('${getDrivePdfUrl(prop.id)}','_blank')" style="border-color:#34a853;color:#34a853;">PDF Drive</button>`:''}
           ${prop.pubUrl?`<button class="pra-btn" onclick="sendGmailById(${prop.id})">Enviar correo</button>`:''}
           <button class="pra-btn won" onclick="setPropState(${prop.id},'ganada')">Ganada</button>
           <button class="pra-btn lost" onclick="setPropState(${prop.id},'perdida')">Perdida</button>
@@ -3590,6 +3638,7 @@ function renderArchive(){
         <td><span class="st-badge" style="background:${stColor}22;color:${stColor};border:1px solid ${stColor}44">${stLabel}</span></td>
         <td>
           ${getPropHtml(prop.id)?`<button class="action-btn" style="border-color:var(--teal);color:var(--teal)" onclick="openPropPDF(${prop.id})">Ver PDF</button>`:''}
+          ${getDrivePdfUrl(prop.id)?`<button class="action-btn" onclick="window.open('${getDrivePdfUrl(prop.id)}','_blank')" style="border-color:#34a853;color:#34a853;">PDF Drive</button>`:''}
           ${isAdmin?`<button class="action-btn del" onclick="deletePropDefinitive(${prop.id})">Eliminar</button>`:''}
         </td>
       </tr>`;
