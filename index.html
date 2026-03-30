@@ -931,41 +931,40 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         <button class="add-btn" onclick="addUser()" style="margin-top:0.8rem;">Añadir usuario</button>
         <div id="add-err" style="font-size:0.72rem;color:var(--red);margin-top:0.5rem;display:none;"></div>
       </div>
+    </div>
 
-      <!-- EMAIL TEMPLATE SECTION -->
-      <div style="margin-top:2rem;">
-        <div style="font-size:0.62rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;">
-          <span style="display:inline-block;width:3px;height:12px;background:var(--teal);border-radius:2px"></span>
-          Plantilla de email
+    <!-- EMAIL TEMPLATE SECTION -->
+    <div style="margin-top:2rem;">
+      <div style="font-size:0.62rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;">
+        <span style="display:inline-block;width:3px;height:12px;background:var(--teal);border-radius:2px"></span>
+        Plantilla de email
+      </div>
+      <div class="panel" style="max-width:660px;">
+        <div style="font-size:0.75rem;color:var(--muted);margin-bottom:1rem;line-height:1.6;">
+          Esta plantilla se usa como base cuando se envía una propuesta por email. Los comerciales pueden modificarla antes de enviar. 
+          <br>Variables disponibles: 
+          <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{nombre}}</span> · 
+          <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{url}}</span> · 
+          <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{fecha_validez}}</span> · 
+          <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{comercial}}</span> · 
+          <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{programa}}</span> · 
+          <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{precio}}</span>
         </div>
-        <div class="panel" style="max-width:660px;">
-          <div style="font-size:0.75rem;color:var(--muted);margin-bottom:1rem;line-height:1.6;">
-            Esta plantilla se usa como base cuando se envía una propuesta por email. Los comerciales pueden modificarla antes de enviar. 
-            <br>Variables disponibles: 
-            <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{nombre}}</span> · 
-            <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{url}}</span> · 
-            <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{fecha_validez}}</span> · 
-            <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{comercial}}</span> · 
-            <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{programa}}</span> · 
-            <span style="color:var(--teal);font-family:monospace;font-size:0.72rem;">{{precio}}</span>
-          </div>
-          <div class="field" style="margin-bottom:0.8rem;">
-            <label>Asunto del email</label>
-            <input type="text" id="tpl-subject" placeholder="Asunto del email" style="width:100%;">
-          </div>
-          <div class="field" style="margin-bottom:1rem;">
-            <label>Cuerpo del mensaje</label>
-            <textarea id="tpl-body" rows="12" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:0.6rem 0.8rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;outline:none;resize:vertical;line-height:1.6;"></textarea>
-          </div>
-          <div style="display:flex;gap:0.7rem;align-items:center;">
-            <button onclick="saveEmailTemplate()" style="padding:0.55rem 1.4rem;background:var(--teal);border:none;border-radius:6px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;">Guardar plantilla</button>
-            <button onclick="resetEmailTemplate()" style="padding:0.55rem 1rem;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;cursor:pointer;">Restaurar por defecto</button>
-            <span id="tpl-saved-msg" style="font-size:0.72rem;color:var(--teal);display:none;">Guardada correctamente</span>
-          </div>
+        <div class="field" style="margin-bottom:0.8rem;">
+          <label>Asunto del email</label>
+          <input type="text" id="tpl-subject" placeholder="Asunto del email" style="width:100%;">
+        </div>
+        <div class="field" style="margin-bottom:1rem;">
+          <label>Cuerpo del mensaje</label>
+          <textarea id="tpl-body" rows="12" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:5px;padding:0.6rem 0.8rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.78rem;outline:none;resize:vertical;line-height:1.6;"></textarea>
+        </div>
+        <div style="display:flex;gap:0.7rem;align-items:center;">
+          <button onclick="saveEmailTemplate()" style="padding:0.55rem 1.4rem;background:var(--teal);border:none;border-radius:6px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;">Guardar plantilla</button>
+          <button onclick="resetEmailTemplate()" style="padding:0.55rem 1rem;background:transparent;border:1px solid var(--border);border-radius:6px;color:var(--muted);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;cursor:pointer;">Restaurar por defecto</button>
+          <span id="tpl-saved-msg" style="font-size:0.72rem;color:var(--teal);display:none;">Guardada correctamente</span>
         </div>
       </div>
-
-    </div><!-- /#page-admin -->
+    </div>
 
   </div>
 </div>
@@ -1952,7 +1951,14 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
 
 @media print{body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}}
 </style></head>
-<body>
+<body style="margin:0;padding:0;background:#2a2a2a;">
+<style>
+  @media screen {
+    body{background:#2a2a2a;display:flex;flex-direction:column;align-items:center;padding:2rem 1rem;min-height:100vh;box-sizing:border-box;}
+    .page{margin-bottom:1rem;box-shadow:0 4px 32px rgba(0,0,0,0.5);}
+  }
+  @media print{body{background:#fff;padding:0;display:block;}}
+</style>
 
 <!-- ══ PAGE 1 ══ -->
 <div class="page">
@@ -2240,7 +2246,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#fff;color:#1a1a2e;wi
 </div>
 
 </div></div>
-<style>@media(max-width:220mm){body>div{padding:0.5rem;}}</style>
 </body></html>`;
 
   // Re-enable button
@@ -2711,7 +2716,6 @@ function setPropState(id,estado){
   renderHistory();
   renderAlertBanner();
   countAlerts();
-  if(document.getElementById('page-stats').classList.contains('active')) renderStats();
   const labels={ganada:'Propuesta marcada como Ganada',perdida:'Propuesta marcada como Perdida'};
   if(labels[estado]) showToast(labels[estado],'Movida al Archivo.','success');
 }
@@ -2742,7 +2746,6 @@ async function deletePropDefinitive(id){
   renderArchive();
   renderAlertBanner();
   countAlerts();
-  if(document.getElementById('page-stats').classList.contains('active')) renderStats();
 }
 
 // ══════════════════════════════════════════════
@@ -2751,8 +2754,8 @@ async function deletePropDefinitive(id){
 // ══════════════════════════════════════════════
 // EMAIL TEMPLATE
 // ══════════════════════════════════════════════
-const DEFAULT_EMAIL_SUBJECT = 'Propuesta académica para {{nombre}} – {{programa}}';
-const DEFAULT_EMAIL_BODY = "Hola {{nombre}},\nTal y como hemos comentado, te envío la propuesta académica del programa {{programa}} para que puedas revisarla con calma.\n\nResumen de la propuesta:\n* Programa: {{programa}}\n* Validez de la propuesta: hasta el {{fecha_validez}}\n\nEste programa está pensado para ayudarte a adquirir una formación actualizada, práctica y orientada a tu desarrollo profesional, con un enfoque adaptado a las necesidades reales del mercado.\n\nTe recomiendo revisar la información cuanto antes, ya que la propuesta económica y las condiciones indicadas estarán vigentes hasta la fecha señalada.\n\nSi te surge cualquier duda o quieres que revisemos juntos la opción que mejor encaja contigo, estaré encantado de ayudarte.\n\nUn saludo,\n{{comercial}}";
+const DEFAULT_EMAIL_SUBJECT = 'Tu propuesta formativa — IM Education';
+const DEFAULT_EMAIL_BODY = "Estimado/a {{nombre}},\n\nEs un placer compartirte tu propuesta formativa personalizada de IM Education.\n\nHemos preparado esta propuesta a medida para ti, con el programa {{programa}} que mejor se adapta a tu perfil y objetivos profesionales.\n\nPuedes consultar tu propuesta en el siguiente enlace:\n{{url}}\n\nRecuerda que esta oferta es válida hasta el {{fecha_validez}}.\n\nQuedo a tu disposición para cualquier consulta.\n\nUn cordial saludo,\n{{comercial}}\nIM Education\nwww.im.education\nBCN 931 593 373 · MAD 911 593 433";
 
 function getEmailTemplate(){
   try{
