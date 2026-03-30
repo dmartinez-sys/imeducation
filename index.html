@@ -2163,11 +2163,20 @@ function generateProposal(){
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:#2a2a2a;color:#1a1a2e;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 @media screen {
-  body{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:1.5rem 0.5rem;}
-  .page{width:210mm;max-width:100%;box-shadow:0 4px 32px rgba(0,0,0,0.5);margin-bottom:1rem;transform-origin:top center;}
+  body{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:1rem 0;}
+  .page{width:210mm;max-width:100%;box-shadow:0 4px 32px rgba(0,0,0,0.4);margin-bottom:1rem;transform-origin:top center;}
 }
-@media(max-width:230mm){
-  .page{width:100%;transform:none;}
+@media screen and (max-width:800px){
+  body{padding:0.5rem 0;background:#1a1a1a;}
+  .page{
+    width:100vw;
+    min-height:auto;
+    transform-origin:top left;
+    transform:scale(calc(100vw / 794px));
+    margin-bottom:calc((100vw / 794px) * 1122px - 1122px + 1rem);
+    box-shadow:none;
+    overflow:visible;
+  }
 }
 @media print{
   body{background:#fff;padding:0;display:block;}
