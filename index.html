@@ -2657,6 +2657,51 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#2a2a2a;color:#1a1a2e
   // Show preview - pending confirmation
   showProposalPreview(html2, window._pendingPropData, true);
 }
+function buildWaitingPage(ref){
+  const parts = [
+    '<!DOCTYPE html><html lang="es"><head>',
+    '<meta charset="UTF-8">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+    '<title>Preparando tu propuesta — IM Education</title>',
+    '<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">',
+    '<style>',
+    '*{box-sizing:border-box;margin:0;padding:0;}',
+    'body{background:#0D0D0D;color:#F0F0F0;font-family:"Plus Jakarta Sans",sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}',
+    '.wrap{width:100%;max-width:420px;text-align:center;}',
+    '.logo-row{display:flex;align-items:center;justify-content:center;gap:0.7rem;margin-bottom:2.5rem;}',
+    '.lbox{width:38px;height:38px;border:2.5px solid #fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.9rem;color:#fff;background:#0D0D0D;position:relative;flex-shrink:0;}',
+    '.lname{font-weight:700;font-size:1.05rem;color:#fff;}',
+    '.lclaim{font-size:0.55rem;color:#00C4A0;text-transform:uppercase;letter-spacing:0.12em;font-weight:600;}',
+    '.tline{width:60px;height:2px;background:#00C4A0;margin:0 auto 2rem;border-radius:99px;}',
+    '.spinner{width:48px;height:48px;border:3px solid rgba(0,196,160,0.15);border-top-color:#00C4A0;border-radius:50%;margin:0 auto 1.8rem;animation:spin 1s linear infinite;}',
+    '@keyframes spin{to{transform:rotate(360deg);}}',
+    '.title{font-size:1.1rem;font-weight:700;color:#F0F0F0;margin-bottom:0.8rem;}',
+    '.subtitle{font-size:0.82rem;color:#8B8FA8;line-height:1.7;margin-bottom:2rem;}',
+    '.progress-wrap{width:100%;height:3px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;margin-bottom:2rem;}',
+    '.progress-bar{height:100%;background:#00C4A0;border-radius:99px;animation:progress 3s ease-in-out infinite;}',
+    '@keyframes progress{0%{width:0%;}60%{width:85%;}100%{width:100%;}}',
+    '.ref-box{background:#1A1A1A;border:1px solid #2A2A2A;border-radius:8px;padding:0.9rem 1.2rem;margin-bottom:1.5rem;}',
+    '.ref-lbl{font-size:0.58rem;color:#8B8FA8;text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:0.4rem;}',
+    '.ref-val{font-size:0.95rem;font-weight:700;color:#00C4A0;letter-spacing:0.04em;}',
+    '.note{font-size:0.68rem;color:#555;line-height:1.6;}',
+    '</style></head><body>',
+    '<div class="wrap">',
+    '<div class="logo-row"><div class="lbox">IM</div>',
+    '<div><div class="lname">Education</div><div class="lclaim">Digital Business School</div></div></div>',
+    '<div class="tline"></div>',
+    '<div class="spinner"></div>',
+    '<div class="title">Preparando tu propuesta</div>',
+    '<div class="subtitle">Tu propuesta formativa personalizada está siendo generada.<br>Esta página se actualizará automáticamente en unos segundos.</div>',
+    '<div class="progress-wrap"><div class="progress-bar"></div></div>',
+    '<div class="ref-box"><div class="ref-lbl">Referencia</div><div class="ref-val">'+ref+'</div></div>',
+    '<div class="note">Si esta página no carga en 30 segundos, por favor recárgala manualmente.</div>',
+    '</div>',
+    '<script>setTimeout(function(){location.reload();},5000);<\/script>',
+    '</body></html>'
+  ];
+  return parts.join('');
+}
+
 async function confirmAndPublish(){
   const html2 = window._pendingHtml2;
   const propData = window._pendingPropData;
@@ -2701,69 +2746,8 @@ async function confirmAndPublish(){
     const pubUrl = `https://propuestas.im.education/p/${fileName}`;
 
     // Step 1: Upload waiting page immediately
-    const waitingHtml = `<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Preparando tu propuesta — IM Education</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}
-html{background:#0D0D0D;}
-body{background:#0D0D0D;color:#F0F0F0;font-family:"Plus Jakarta Sans",sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}
-.wrap{width:100%;max-width:420px;text-align:center;}
-.logo-row{display:flex;align-items:center;justify-content:center;gap:0.7rem;margin-bottom:2.5rem;}
-.lbox{width:38px;height:38px;border:2.5px solid #fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.9rem;color:#fff;background:#0D0D0D;position:relative;flex-shrink:0;}
-.lbox::before{content:"";position:absolute;bottom:-2px;left:-2px;width:11px;height:2.5px;background:#0D0D0D;}
-.lname{font-weight:700;font-size:1.05rem;color:#fff;}
-.lclaim{font-size:0.55rem;color:#00C4A0;text-transform:uppercase;letter-spacing:0.12em;font-weight:600;}
-.tline{width:60px;height:2px;background:#00C4A0;margin:0 auto 2rem;border-radius:99px;}
-.spinner{width:48px;height:48px;border:3px solid rgba(0,196,160,0.15);border-top-color:#00C4A0;border-radius:50%;margin:0 auto 1.8rem;animation:spin 1s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.title{font-size:1.1rem;font-weight:700;color:#F0F0F0;margin-bottom:0.8rem;}
-.subtitle{font-size:0.82rem;color:#8B8FA8;line-height:1.7;margin-bottom:2rem;}
-.progress-wrap{width:100%;height:3px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;margin-bottom:2rem;}
-.progress-bar{height:100%;background:#00C4A0;border-radius:99px;animation:progress 3s ease-in-out infinite;}
-@keyframes progress{0%{width:0%;}60%{width:85%;}100%{width:100%;}}
-.ref-box{background:#1A1A1A;border:1px solid #2A2A2A;border-radius:8px;padding:0.9rem 1.2rem;margin-bottom:1.5rem;}
-.ref-lbl{font-size:0.58rem;color:#8B8FA8;text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:0.4rem;}
-.ref-val{font-size:0.95rem;font-weight:700;color:#00C4A0;letter-spacing:0.04em;}
-.note{font-size:0.68rem;color:#555;line-height:1.6;}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <div class="logo-row">
-    <div class="lbox">IM</div>
-    <div>
-      <div class="lname">Education</div>
-      <div class="lclaim">Digital Business School</div>
-    </div>
-  </div>
-  <div class="tline"></div>
-  <div class="spinner"></div>
-  <div class="title">Preparando tu propuesta</div>
-  <div class="subtitle">Tu propuesta formativa personalizada está siendo generada.<br>Esta página se actualizará automáticamente en unos segundos.</div>
-  <div class="progress-wrap"><div class="progress-bar"></div></div>
-  <div class="ref-box">
-    <div class="ref-lbl">Referencia</div>
-    <div class="ref-val">__REF__</div>
-  </div>
-  <div class="note">Si esta página no carga en 30 segundos, por favor recárgala manualmente.</div>
-</div>
-<script>
-setTimeout(function(){location.reload();}, 5000);
-</script>
-</body>
-</html>`.replace('__REF__', ref);
-    const waitRes = await fetch(apiUrl, {
-      method:'PUT',
-      headers:{'Authorization':'token '+token,'Content-Type':'application/json'},
-      body: JSON.stringify({message:'Waiting '+ref, content: btoa(unescape(encodeURIComponent(waitingHtml)))})
-    });
-
-    if(waitRes.ok){
+    const waitingHtml = buildWaitingPage(ref);
+        if(waitRes.ok){
       newProp.pubUrl = pubUrl;
       await sbUpdateProp(newProp.id, {pub_url: pubUrl});
       renderHistory();
