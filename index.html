@@ -626,6 +626,10 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6"/></svg>
         <span>Usuarios</span>
       </div>
+      <div class="nav-item" onclick="showPage('logs',this)" id="nav-logs" style="display:none">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2h12v12H2z"/><path d="M5 6h6M5 9h4"/></svg>
+        <span>Registro Accesos</span>
+      </div>
     </div>
     <div class="sb-counts">
       <div class="cnt-row"><span><span class="cnt-dot" style="background:var(--teal)"></span>Másteres</span><span style="font-weight:700" id="cnt-m">0</span></div>
@@ -888,6 +892,11 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         </div>
         <div id="archive-content"></div>
       </div>
+    </div>
+
+    <!-- LOGS -->
+    <div class="page" id="page-logs">
+      <div id="logs-page-content"></div>
     </div>
 
     <!-- STATS -->
@@ -1437,10 +1446,14 @@ async function doLogin(){
     document.getElementById('sb-uname').textContent = found.name||found.user;
     document.getElementById('sb-urole').textContent = found.role==='admin'?'Administrador':'Comercial';
     if(found.email) document.getElementById('sb-uemail').textContent = found.email;
-    if(found.role==='admin') document.getElementById('nav-admin').style.display='flex';
+    if(found.role==='admin'){
+    document.getElementById('nav-admin').style.display='flex';
+    document.getElementById('nav-logs').style.display='flex';
+  }
     initApp();
     updateSidebarAvatar();
     const syncBtn=document.getElementById('sync-btn'); if(syncBtn) syncBtn.style.display='inline-block';
+    logLogin(found.user, found.name||found.user);
     setTimeout(showMotivPopup, 800);
   }catch(e){
     showToast('Error de conexión','No se pudo conectar con el servidor. '+e.message,'error');
@@ -1449,6 +1462,7 @@ async function doLogin(){
 }
 
 function doLogout(){
+  logLogout();
   currentUser=null;
   _proposalsCache=[];
   _usersCache=null;
@@ -1460,6 +1474,111 @@ function doLogout(){
   document.getElementById('login-err').style.display='none';
   const syncBtn=document.getElementById('sync-btn');
   if(syncBtn) syncBtn.style.display='none';
+  const logsNav=document.getElementById('nav-logs');
+  if(logsNav) logsNav.style.display='none';
+}
+
+// ══════════════════════════════════════════════
+// ACCESS LOG
+// ══════════════════════════════════════════════
+let _currentLogId = null;
+
+function detectDevice(){
+  const ua = navigator.userAgent;
+  if(/Mobi|Android|iPhone|iPad/i.test(ua)) return '📱 Móvil';
+  return '🖥 Escritorio';
+}
+
+async function logLogin(userKey, userName){
+  try{
+    const body = {
+      user_key: userKey,
+      user_name: userName,
+      dispositivo: detectDevice(),
+      login_at: new Date().toISOString()
+    };
+    const result = await sbPost('logs', body);
+    if(result && result[0]) _currentLogId = result[0].id;
+  }catch(e){ console.warn('logLogin error:', e); }
+}
+
+async function logLogout(){
+  if(!_currentLogId) return;
+  try{
+    const logoutAt = new Date().toISOString();
+    // Get login time from cache to calculate duration
+    const rows = await sbGet('logs', `id=eq.${_currentLogId}`);
+    if(rows && rows[0]){
+      const loginAt = new Date(rows[0].login_at);
+      const duracion_min = Math.round((new Date(logoutAt) - loginAt) / 60000);
+      await sbPatch('logs', `id=eq.${_currentLogId}`, {logout_at: logoutAt, duracion_min});
+    }
+    _currentLogId = null;
+  }catch(e){ console.warn('logLogout error:', e); }
+}
+
+async function renderLogsPage(){
+  const el = document.getElementById('logs-page-content');
+  if(!el) return;
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+      <div style="font-size:0.62rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;display:flex;align-items:center;gap:0.5rem;">
+        <span style="display:inline-block;width:3px;height:12px;background:var(--teal);border-radius:2px"></span>
+        Últimos 50 accesos
+      </div>
+      <button onclick="renderLogsPage()" style="padding:0.35rem 0.8rem;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--muted);font-size:0.72rem;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;" onmouseover="this.style.borderColor='var(--teal)';this.style.color='var(--teal)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">↻ Actualizar</button>
+    </div>
+    <div id="logs-content"></div>`;
+  await renderLogs();
+}
+
+async function renderLogs(){
+  const el = document.getElementById('logs-content');
+  if(!el) return;
+  el.innerHTML = '<div style="font-size:0.75rem;color:var(--muted);padding:0.5rem 0;">Cargando...</div>';
+  try{
+    const rows = await sbGet('logs', 'order=login_at.desc&limit=50');
+    if(!rows || !rows.length){
+      el.innerHTML = '<div style="font-size:0.75rem;color:var(--muted);padding:0.5rem 0;">Sin registros aún.</div>';
+      return;
+    }
+    el.innerHTML = `<div class="table-wrap" style="margin-top:0.5rem;">
+      <table class="hist-table">
+        <thead><tr>
+          <th>Fecha entrada</th>
+          <th>Usuario</th>
+          <th>Nombre</th>
+          <th>Dispositivo</th>
+          <th>Duración</th>
+        </tr></thead>
+        <tbody>
+          ${rows.map(r=>{
+            const loginAt = new Date(r.login_at);
+            const fecha = loginAt.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric'}) + ' ' + loginAt.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+            let duracion = '<span style="color:var(--teal);font-size:0.7rem;">En sesión</span>';
+            if(r.duracion_min !== null && r.duracion_min !== undefined){
+              if(r.duracion_min < 1) duracion = '< 1 min';
+              else if(r.duracion_min < 60) duracion = r.duracion_min + ' min';
+              else duracion = Math.floor(r.duracion_min/60) + 'h ' + (r.duracion_min%60) + 'min';
+            } else if(r.logout_at === null && r.login_at){
+              // Check if session is old (more than 8 hours = probably abandoned)
+              const hoursAgo = (Date.now() - loginAt.getTime()) / 3600000;
+              if(hoursAgo > 8) duracion = '<span style="color:var(--muted);font-size:0.7rem;">Sin cerrar</span>';
+            }
+            return `<tr>
+              <td style="font-size:0.72rem;color:var(--muted)">${fecha}</td>
+              <td style="font-weight:600">${r.user_key}</td>
+              <td style="color:var(--muted);font-size:0.75rem">${r.user_name||'—'}</td>
+              <td style="font-size:0.78rem">${r.dispositivo||'—'}</td>
+              <td style="font-size:0.75rem">${duracion}</td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>`;
+  }catch(e){
+    el.innerHTML = '<div style="font-size:0.75rem;color:var(--red);">Error al cargar logs.</div>';
+  }
 }
 
 async function syncFromServer(){
@@ -1544,7 +1663,7 @@ function countAlerts(){
 // ══════════════════════════════════════════════
 // PAGES
 // ══════════════════════════════════════════════
-const pageTitles={catalog:'Catálogo de Programas',simulator:'Simulador de Precios',summary:'Resumen por Tipo',proposals:'Propuestas',stats:'Estadísticas',admin:'Gestión de Usuarios'};
+const pageTitles={catalog:'Catálogo de Programas',simulator:'Simulador de Precios',summary:'Resumen por Tipo',proposals:'Propuestas',stats:'Estadísticas',admin:'Gestión de Usuarios',logs:'Registro de Accesos'};
 
 function showPage(id,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -1571,6 +1690,7 @@ function showPage(id,el){
     });
   }
   if(id==='stats') loadProposalsFromDB().then(renderStats).catch(renderStats);
+  if(id==='logs') renderLogsPage();
 }
 
 // ══════════════════════════════════════════════
@@ -4093,6 +4213,8 @@ async function saveNote(propId){
 // ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
+window.addEventListener('beforeunload', ()=>{ logLogout(); });
+
 async function initApp(){
   // Try to load catalog from Supabase, fallback to localStorage
   const fromDB = await loadCatalogFromDB();
