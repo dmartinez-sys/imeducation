@@ -2572,7 +2572,7 @@ async function confirmAndPublish(){
       body: JSON.stringify({message:'Propuesta '+ref, content: btoa(unescape(encodeURIComponent(html2)))})
     });
     if(res.ok){
-      const pubUrl = `https://dmartinez-sys.github.io/imeducation/p/${fileName}`;
+      const pubUrl = `https://propuestas.im.education/p/${fileName}`;
       newProp.pubUrl = pubUrl;
       await sbUpdateProp(newProp.id, {pub_url: pubUrl});
       renderHistory();
