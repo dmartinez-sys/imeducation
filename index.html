@@ -1313,7 +1313,7 @@ function saveProposals(p){
 async function loadProposalsFromDB(){
   try{
     const rows = await sbGet('propuestas', 'order=created_at.desc&limit=500');
-    _proposalsCache = (rows||[]).map(r=>({
+    _proposalsCache = (rows||[]).filter(r=>r&&r.id).map(r=>({
       id: r.id,
       alumno: r.alumno, email: r.email, tel: r.tel,
       programa: r.programa, progId: r.prog_id, tipo: r.tipo,
@@ -2851,7 +2851,8 @@ function openPropPDF(id){
 // HISTORY
 // ══════════════════════════════════════════════
 function renderAlertBanner(){
-  const props=getProposals();
+  if(!currentUser) return;
+  const props=getProposals().filter(p=>p&&p.id);
   const visible=currentUser.role==='admin'?props:props.filter(p=>p.comercial===currentUser.user);
   let expired=0, soon=0;
   visible.forEach(p=>{
@@ -2874,7 +2875,8 @@ function renderAlertBanner(){
 }
 
 function renderHistory(){
-  const props=getProposals();
+  if(!currentUser) return;
+  const props=getProposals().filter(p=>p&&p.id);
   const allVisible=currentUser.role==='admin'?props:props.filter(p=>p.comercial===currentUser.user);
   const visible=allVisible.filter(p=>p.estado==='activa');
   const el=document.getElementById('hist-content');
@@ -3277,7 +3279,8 @@ function refreshApp(){
 // STATS
 // ══════════════════════════════════════════════
 function renderStats(){
-  const allProps = getProposals();
+  if(!currentUser) return;
+  const allProps = getProposals().filter(p=>p&&p.id);
   const isAdmin = currentUser.role === 'admin';
   const props = isAdmin ? allProps : allProps.filter(p=>p.comercial===currentUser.user);
 
@@ -3534,7 +3537,8 @@ function showMotivPopupForce(){
 // ARCHIVE
 // ══════════════════════════════════════════════
 function renderArchive(){
-  const props = getProposals();
+  if(!currentUser) return;
+  const props = getProposals().filter(p=>p&&p.id);
   const isAdmin = currentUser.role==='admin';
   const archived = (isAdmin?props:props.filter(p=>p.comercial===currentUser.user))
     .filter(p=>p.estado==='ganada'||p.estado==='perdida'||p.estado==='eliminada');
