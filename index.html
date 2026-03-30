@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 <title>IM Education — Plataforma Comercial 2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -14,7 +14,8 @@
   --red:#ff4444; --orange:#ff8c42; --green:#00C4A0;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;}
+html{background:#0D0D0D;}
+body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;min-height:100vh;margin:0;}
 
 /* ── LOGIN ── */
 #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem;}
@@ -2155,19 +2156,25 @@ function generateProposal(){
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 <title>Propuesta IM Education — ${nombre} — ${refNum}</title>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 @page{size:A4;margin:0;}
 *{box-sizing:border-box;margin:0;padding:0;}
+html{background:#0D0D0D;}
 body{font-family:'Plus Jakarta Sans',sans-serif;background:#2a2a2a;color:#1a1a2e;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 @media screen {
-  body{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:1.5rem 0.5rem;}
-  .page{width:210mm;max-width:100%;box-shadow:0 4px 32px rgba(0,0,0,0.5);margin-bottom:1rem;transform-origin:top center;}
+  body{display:flex;flex-direction:column;align-items:center;background:#2a2a2a;min-height:100vh;padding:1.5rem 0.5rem;}
+  .page{width:210mm;max-width:100%;box-shadow:0 4px 32px rgba(0,0,0,0.4);margin-bottom:1rem;}
 }
-@media(max-width:230mm){
-  .page{width:100%;transform:none;}
+@media screen and (max-width:215mm){
+  body{padding:0;background:#1a1a1a;}
+  .page{width:100% !important;min-height:auto;box-shadow:none;margin-bottom:0;}
+  .p1-sidebar{position:relative !important;width:100% !important;min-height:auto;}
+  .p1-main{position:relative !important;left:0 !important;width:100% !important;}
+  .p1-accent-dots,.p1-accent-dots2{display:none;}
+  .p2-content{padding:5vw 5vw !important;}
 }
 @media print{
   body{background:#fff;padding:0;display:block;}
@@ -2645,6 +2652,51 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#2a2a2a;color:#1a1a2e
   // Show preview - pending confirmation
   showProposalPreview(html2, window._pendingPropData, true);
 }
+function buildWaitingPage(ref){
+  const parts = [
+    '<!DOCTYPE html><html lang="es"><head>',
+    '<meta charset="UTF-8">',
+    '<meta name="viewport" content="width=device-width, initial-scale=1.0">',
+    '<title>Preparando tu propuesta — IM Education</title>',
+    '<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">',
+    '<style>',
+    '*{box-sizing:border-box;margin:0;padding:0;}',
+    'body{background:#0D0D0D;color:#F0F0F0;font-family:"Plus Jakarta Sans",sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}',
+    '.wrap{width:100%;max-width:420px;text-align:center;}',
+    '.logo-row{display:flex;align-items:center;justify-content:center;gap:0.7rem;margin-bottom:2.5rem;}',
+    '.lbox{width:38px;height:38px;border:2.5px solid #fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.9rem;color:#fff;background:#0D0D0D;position:relative;flex-shrink:0;}',
+    '.lname{font-weight:700;font-size:1.05rem;color:#fff;}',
+    '.lclaim{font-size:0.55rem;color:#00C4A0;text-transform:uppercase;letter-spacing:0.12em;font-weight:600;}',
+    '.tline{width:60px;height:2px;background:#00C4A0;margin:0 auto 2rem;border-radius:99px;}',
+    '.spinner{width:48px;height:48px;border:3px solid rgba(0,196,160,0.15);border-top-color:#00C4A0;border-radius:50%;margin:0 auto 1.8rem;animation:spin 1s linear infinite;}',
+    '@keyframes spin{to{transform:rotate(360deg);}}',
+    '.title{font-size:1.1rem;font-weight:700;color:#F0F0F0;margin-bottom:0.8rem;}',
+    '.subtitle{font-size:0.82rem;color:#8B8FA8;line-height:1.7;margin-bottom:2rem;}',
+    '.progress-wrap{width:100%;height:3px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;margin-bottom:2rem;}',
+    '.progress-bar{height:100%;background:#00C4A0;border-radius:99px;animation:progress 3s ease-in-out infinite;}',
+    '@keyframes progress{0%{width:0%;}60%{width:85%;}100%{width:100%;}}',
+    '.ref-box{background:#1A1A1A;border:1px solid #2A2A2A;border-radius:8px;padding:0.9rem 1.2rem;margin-bottom:1.5rem;}',
+    '.ref-lbl{font-size:0.58rem;color:#8B8FA8;text-transform:uppercase;letter-spacing:0.1em;font-weight:600;margin-bottom:0.4rem;}',
+    '.ref-val{font-size:0.95rem;font-weight:700;color:#00C4A0;letter-spacing:0.04em;}',
+    '.note{font-size:0.68rem;color:#555;line-height:1.6;}',
+    '</style></head><body>',
+    '<div class="wrap">',
+    '<div class="logo-row"><div class="lbox">IM</div>',
+    '<div><div class="lname">Education</div><div class="lclaim">Digital Business School</div></div></div>',
+    '<div class="tline"></div>',
+    '<div class="spinner"></div>',
+    '<div class="title">Preparando tu propuesta</div>',
+    '<div class="subtitle">Tu propuesta formativa personalizada está siendo generada.<br>Esta página se actualizará automáticamente en unos segundos.</div>',
+    '<div class="progress-wrap"><div class="progress-bar"></div></div>',
+    '<div class="ref-box"><div class="ref-lbl">Referencia</div><div class="ref-val">'+ref+'</div></div>',
+    '<div class="note">Si esta página no carga en 30 segundos, por favor recárgala manualmente.</div>',
+    '</div>',
+    '<script>setTimeout(function(){location.reload();},5000);<\/script>',
+    '</body></html>'
+  ];
+  return parts.join('');
+}
+
 async function confirmAndPublish(){
   const html2 = window._pendingHtml2;
   const propData = window._pendingPropData;
@@ -2680,38 +2732,73 @@ async function confirmAndPublish(){
   window._pendingHtml2 = null;
   window._pendingPropData = null;
 
-  // Publish to GitHub silently
+  // Publish to GitHub - first upload waiting page, then real proposal
   try{
     const ref = newProp.ref;
     const fileName = ref + '.html';
     const token = ['ghp_eoSS','pPbm47rb','1pvmPxxX','iEdOJFq4','HP3vFaMZ'].join('');
     const apiUrl = `https://api.github.com/repos/dmartinez-sys/imeducation/contents/p/${fileName}`;
-    const res = await fetch(apiUrl, {
-      method:'PUT',
-      headers:{'Authorization':'token '+token,'Content-Type':'application/json'},
-      body: JSON.stringify({message:'Propuesta '+ref, content: btoa(unescape(encodeURIComponent(html2)))})
-    });
-    if(res.ok){
-      const pubUrl = `https://propuestas.im.education/p/${fileName}`;
+    const pubUrl = `https://propuestas.im.education/p/${fileName}`;
+
+    // Step 1: Upload waiting page immediately
+    const waitingHtml = buildWaitingPage(ref);
+        if(waitRes.ok){
       newProp.pubUrl = pubUrl;
       await sbUpdateProp(newProp.id, {pub_url: pubUrl});
       renderHistory();
+
+      // Step 2: Upload real proposal (replaces waiting page)
+      setTimeout(async()=>{
+        try{
+          // Get SHA of waiting page to replace it
+          const check = await fetch(apiUrl, {headers:{'Authorization':'token '+token}});
+          const checkData = await check.json();
+          const sha = checkData.sha;
+          await fetch(apiUrl, {
+            method:'PUT',
+            headers:{'Authorization':'token '+token,'Content-Type':'application/json'},
+            body: JSON.stringify({message:'Propuesta '+ref, content: btoa(unescape(encodeURIComponent(html2))), sha})
+          });
+        }catch(e){ console.warn('Real proposal upload error:', e); }
+      }, 3000);
     }
   }catch(e){ console.warn('Publish error:', e); }
 
   // Generate PDF in Drive (async, fire and forget)
   generateDrivePDF(newProp, html2);
 
-  // Close modal and open email editor
+  // Close modal
   const modal = document.getElementById('proposal-modal');
   if(modal) modal.remove();
 
-  // Open email editor with GitHub Pages URL
+  // Wait for GitHub Pages to deploy before opening email editor
   if(newProp.email && newProp.pubUrl){
-    setTimeout(()=>{ openEmailEditor(newProp, newProp.pubUrl); }, 400);
+    showToast('Propuesta creada','Esperando a que el enlace esté listo para enviar...','info', 4000);
+    waitForPageReady(newProp);
   } else {
     showToast('Propuesta creada','Puedes enviarla por correo desde la pestaña Activas.','success');
   }
+}
+
+async function waitForPageReady(prop){
+  // Poll until the page is live on GitHub Pages (max 60 seconds)
+  const maxTries = 12;
+  const interval = 5000; // 5 seconds
+  for(let i=0; i<maxTries; i++){
+    await new Promise(r=>setTimeout(r, interval));
+    try{
+      const res = await fetch(prop.pubUrl, {method:'HEAD', cache:'no-store'});
+      if(res.ok){
+        showToast('Enlace listo','El enlace ya está activo. Abriendo editor de email...','success', 3000);
+        setTimeout(()=>{ openEmailEditor(prop, prop.pubUrl); }, 800);
+        return;
+      }
+    }catch(e){}
+    if(i===0) showToast('Preparando enlace','GitHub está procesando la propuesta, espera un momento...','info', 5000);
+  }
+  // If after 60s still not ready, open editor anyway
+  showToast('Enlace listo','Puedes enviar el correo ahora.','success', 3000);
+  setTimeout(()=>{ openEmailEditor(prop, prop.pubUrl); }, 500);
 }
 
 async function generateDrivePDF(prop, htmlContent){
