@@ -3347,27 +3347,34 @@ function handleExcelUpload(event){
       let id = 1;
       for(let i=1; i<rows.length; i++){
         const r = rows[i];
-        const nombre = String(r[0]||'').trim();
+        // Col 1=Universidad, Col 2=Nombre, Col 3=Tipo, Col 4=Meses, Col 5=ECTS,
+        // Col 6=Horas, Col 9=P.presencial, Col 10=P.videopres, Col 11=Online,
+        // Col 12=Practicas, Col 13=URL PDF
+        const univ_raw = String(r[0]||'').trim().toLowerCase();
+        const nombre   = String(r[1]||'').trim();
         if(!nombre) continue;
-        const tipo_raw = String(r[1]||'').toLowerCase();
+
+        // Universidad
+        let univ = 'UTAMED';
+        if(univ_raw.includes('abat')||univ_raw.includes('oliba')) univ='ABAT';
+        else if(univ_raw.includes('tech')) univ='TECH';
+
+        // Tipo
+        const tipo_raw = String(r[2]||'').toLowerCase();
         let tipo = 'micro';
-        if(tipo_raw.includes('grado universitario')) tipo='grado';
-        else if(tipo_raw.includes('fp')||tipo_raw.includes('fp oficial')) tipo='fp';
+        if(tipo_raw.includes('grado')) tipo='grado';
+        else if(tipo_raw.includes('fp')) tipo='fp';
         else if(tipo_raw.includes('máster')||tipo_raw.includes('master')) tipo='master';
         else if(tipo_raw.includes('diploma')) tipo='diploma';
 
-        // Detect university from name
-        const nombre_lower = nombre.toLowerCase();
-        const univ = (nombre_lower.includes('abat')||nombre_lower.includes('oliba')) ? 'ABAT' : 'UTAMED';
-
-        const meses = parseFloat(r[2])||0;
-        const ects  = parseFloat(r[3])||0;
-        const horas = parseFloat(r[4])||0;
-        const pres  = parseFloat(r[7])||0;
-        const vpres = parseFloat(r[8])||0;
-        const online= parseFloat(r[9])||0;
-        const prac  = String(r[10]||'').toLowerCase().includes('s');
-        const url_pdf = (r[11]&&typeof r[11]==='string'&&r[11].startsWith('http'))?r[11].trim():'';
+        const meses = parseFloat(r[3])||0;
+        const ects  = parseFloat(r[4])||0;
+        const horas = parseFloat(r[5])||0;
+        const pres  = parseFloat(r[8])||0;
+        const vpres = parseFloat(r[9])||0;
+        const online= parseFloat(r[10])||0;
+        const prac  = String(r[11]||'').toLowerCase().includes('s');
+        const url_pdf = (r[12]&&typeof r[12]==='string'&&r[12].startsWith('http'))?r[12].trim():'';
 
         if(pres===0&&online===0) continue;
 
