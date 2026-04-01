@@ -725,7 +725,22 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         <div class="result-box">
           <div class="res-lbl">Resultado del cálculo</div>
           <div id="sim-result" style="color:var(--muted);text-align:center;font-size:0.82rem">Selecciona un programa para calcular</div>
-          <div id="sim-cta" style="display:none;margin-top:1rem;text-align:center;">
+          <!-- Titulaciones box -->
+        <div id="sim-titulaciones" style="display:none;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-top:1rem;">
+          <div style="font-size:0.58rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;">
+            <span style="display:inline-block;width:3px;height:10px;background:var(--teal);border-radius:2px;"></span>
+            Titulaciones que obtendrá
+          </div>
+          <div class="field" style="margin-bottom:0.8rem;">
+            <label>¿Tiene estudios universitarios?</label>
+            <div class="rgroup" id="rg-sim-estudios" style="flex-direction:row;">
+              <div class="rbtn on" data-val="si" onclick="pick(this,'rg-sim-estudios');calcSim()" style="flex:1;text-align:center;">Sí</div>
+              <div class="rbtn" data-val="no" onclick="pick(this,'rg-sim-estudios');calcSim()" style="flex:1;text-align:center;">No</div>
+            </div>
+          </div>
+          <div id="sim-tit-list"></div>
+        </div>
+        <div id="sim-cta" style="display:none;margin-top:1rem;text-align:center;">
             <button onclick="createProposalFromSim()" style="padding:0.65rem 2rem;background:var(--teal);border:none;border-radius:6px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:0.06em;">Crear propuesta con estos datos</button>
           </div>
         </div>
@@ -932,6 +947,7 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
           <select id="nu-role">
             <option value="comercial">Comercial</option>
             <option value="admin">Administrador</option>
+            <option value="gestion">Gestión Académica</option>
           </select>
         </div>
         <button class="add-btn" onclick="addUser()" style="margin-top:0.8rem;">Añadir usuario</button>
@@ -1112,6 +1128,7 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
       <select id="edit-role">
         <option value="comercial">Comercial</option>
         <option value="admin">Administrador</option>
+        <option value="gestion">Gestión Académica</option>
       </select>
     </div>
     <div id="edit-err" style="font-size:0.72rem;color:var(--red);margin-bottom:0.8rem;display:none;"></div>
@@ -1440,11 +1457,18 @@ async function doLogin(){
     document.getElementById('login-screen').style.display='none';
     document.getElementById('app').style.display='flex';
     document.getElementById('sb-uname').textContent = found.name||found.user;
-    document.getElementById('sb-urole').textContent = found.role==='admin'?'Administrador':'Comercial';
+    document.getElementById('sb-urole').textContent = found.role==='admin'?'Administrador':found.role==='gestion'?'Gestión Académica':'Comercial';
     if(found.email) document.getElementById('sb-uemail').textContent = found.email;
     if(found.role==='admin'){
     document.getElementById('nav-admin').style.display='flex';
     document.getElementById('nav-logs').style.display='flex';
+  }
+  if(found.role!=='gestion'){
+    document.getElementById('nav-proposals').style.display='flex';
+    document.getElementById('nav-stats').style.display='flex';
+  } else {
+    document.getElementById('nav-proposals').style.display='none';
+    document.getElementById('nav-stats').style.display='none';
   }
     initApp();
     updateSidebarAvatar();
@@ -1472,6 +1496,10 @@ function doLogout(){
   if(syncBtn) syncBtn.style.display='none';
   const logsNav=document.getElementById('nav-logs');
   if(logsNav) logsNav.style.display='none';
+  const propNav=document.getElementById('nav-proposals');
+  if(propNav) propNav.style.display='flex';
+  const statsNav=document.getElementById('nav-stats');
+  if(statsNav) statsNav.style.display='flex';
 }
 
 // ══════════════════════════════════════════════
@@ -1831,6 +1859,61 @@ function calcSim(){
   const mod=getVal('rg-mod'), desc=parseInt(getVal('rg-desc')), pago=parseInt(getVal('rg-pago'));
   const base=getPrice(p,mod), conDesc=Math.round(base*(1-desc/100)), final=pago?Math.round(conDesc*0.95):conDesc, ahorro=base-final;
   document.getElementById('sim-cta').style.display='block';
+
+  // Render titulaciones
+  const simTitBox = document.getElementById('sim-titulaciones');
+  const simTitList = document.getElementById('sim-tit-list');
+  if(simTitBox && simTitList){
+    simTitBox.style.display='block';
+    const tieneEstudios = getVal('rg-sim-estudios') === 'si';
+    const t = TITULOS[p.tipo];
+    const ck = p.univ==='ABAT'?'abat_con':'utamed_con';
+    const sk = p.univ==='ABAT'?'abat_sin':'utamed_sin';
+    const univStr = p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':'UTAMED';
+
+    let nomCorto = p.nombre
+      .replace(/máster de formación permanente global en /i,'')
+      .replace(/máster de formación permanente en /i,'')
+      .replace(/máster en formación permanente en /i,'')
+      .replace(/máster formación permanente en /i,'')
+      .replace(/master en formacion permanente en /i,'')
+      .replace(/máster en formación permanente/i,'')
+      .replace(/diploma de especialización en /i,'')
+      .replace(/diploma de micro-credencial en /i,'')
+      .replace(/diploma de micro-credencial  en /i,'')
+      .replace(/grado universitario en /i,'')
+      .replace(/grado superior en /i,'')
+      .trim();
+    if(nomCorto.length>0) nomCorto = nomCorto.charAt(0).toUpperCase()+nomCorto.slice(1);
+
+    let tit1 = null, tit2 = null;
+    const tit3 = 'Certificación Soft Skills para el Liderazgo y la Estrategia Digital con IA';
+    if(p.tipo==='master'){
+      tit1 = tieneEstudios ? 'Máster de Formación Permanente en '+nomCorto : (p.univ==='ABAT'?null:'Curso Avanzado en '+nomCorto);
+      tit2 = 'Professional Mastery Program en '+nomCorto;
+    } else if(p.tipo==='diploma'){
+      tit1 = tieneEstudios ? 'Diploma de Especialización en '+nomCorto : (p.univ==='ABAT'?null:'Curso Avanzado en '+nomCorto);
+      tit2 = 'Advanced Diploma Professional en '+nomCorto;
+    } else if(p.tipo==='micro'){
+      tit1 = 'Microcredencial en '+nomCorto;
+      tit2 = 'Professional Certificate en '+nomCorto;
+    } else if(p.tipo==='grado'||p.tipo==='fp'){
+      tit1 = p.nombre;
+      tit2 = 'Professional Mastery Program en Inteligencia Artificial Aplicada al Marketing';
+    }
+    const tits = [tit1, tit2, tit3].filter(Boolean);
+    const colors = ['#00C4A0','#0D0D0D','#F5C842'];
+    const types = ['Titulación universitaria · '+univStr, 'Certificado IM Education', 'Certificación complementaria'];
+    simTitList.innerHTML = tits.map((t,i)=>`
+      <div style="display:flex;align-items:flex-start;gap:0.7rem;padding:0.6rem 0.7rem;border-radius:6px;background:var(--card);margin-bottom:0.5rem;">
+        <div style="width:20px;height:20px;border-radius:50%;background:${colors[i]};display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:#fff;flex-shrink:0;margin-top:0.1rem;">${i+1}</div>
+        <div>
+          <div style="font-size:0.6rem;color:var(--muted);margin-bottom:0.25rem;text-transform:uppercase;letter-spacing:0.05em;">${types[i]}</div>
+          <div style="font-size:0.78rem;font-weight:700;color:${i===0?'var(--teal)':'var(--text)'}">${t}</div>
+        </div>
+      </div>`).join('');
+  }
+
   setTimeout(()=>{ document.getElementById('sim-result').scrollIntoView({behavior:'smooth',block:'nearest'}); },100);
   // Financing calcs for simulator
   const simCuotasMap = {master:p.meses>=12?12:6, diploma:3, micro:3, grado:24, fp:12};
@@ -3222,7 +3305,7 @@ async function renderAdmin(){
         <div style="font-size:0.72rem;color:var(--muted)">@${u.user}</div>
         ${u.email?`<div style="font-size:0.7rem;color:var(--teal)">${u.email}</div>`:''}
       </div>
-      <div class="u-role">${u.role==='admin'?'Administrador':'Comercial'}</div>
+      <div class="u-role">${u.role==='admin'?'Administrador':u.role==='gestion'?'Gestión Académica':'Comercial'}</div>
       <div style="display:flex;gap:0.5rem;align-items:center;">
         <button class="action-btn" style="border-color:var(--teal);color:var(--teal)" onclick="editUser('${u.user}')">Editar</button>
         ${u.user!=='admin'?`<button class="u-del" onclick="deleteUser('${u.user}')">Eliminar</button>`:'<span style="font-size:0.65rem;color:var(--muted)">Protegido</span>'}
