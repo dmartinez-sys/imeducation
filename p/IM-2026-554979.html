@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Propuesta IM Education — Daniel Martinez — IM-2026-554979</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+@page{size:A4;margin:0;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#2a2a2a;color:#1a1a2e;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+@media screen {
+  body{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:100vh;padding:1.5rem 0.5rem;}
+  .page{width:210mm;max-width:100%;box-shadow:0 4px 32px rgba(0,0,0,0.5);margin-bottom:1rem;transform-origin:top center;}
+}
+@media(max-width:230mm){
+  .page{width:100%;transform:none;}
+}
+@media print{
+  body{background:#fff;padding:0;display:block;}
+  .page{width:210mm;box-shadow:none;margin:0;}
+}
+@media screen and (max-width:600px){
+  body{padding:0;background:#1a1a1a;}
+  .page{width:100vw !important;min-height:auto;box-shadow:none;margin-bottom:0;overflow:hidden;}
+  .p1-sidebar{position:relative !important;width:100% !important;min-height:auto;}
+  .p1-main{position:relative !important;left:0 !important;width:100% !important;}
+  .p1-accent-dots,.p1-accent-dots2{display:none;}
+  .p2-content{padding:5vw !important;}
+}
+
+/* ══ PAGE LAYOUT ══ */
+.page{width:210mm;min-height:297mm;position:relative;overflow:hidden;page-break-after:always;background:#fff;color:#1a1a2e;}
+.page:last-child{page-break-after:auto;}
+
+/* ══ PAGE 1 SIDEBAR ══ */
+.p1-sidebar{position:absolute;left:0;top:0;width:62mm;min-height:297mm;background:#0D0D0D;}
+.p1-teal-stripe{position:absolute;top:0;left:0;width:62mm;height:2.5mm;background:#00C4A0;}
+.p1-accent-dots{position:absolute;top:20mm;right:-8mm;width:16mm;height:16mm;border-radius:50%;background:rgba(0,196,160,0.15);}
+.p1-accent-dots2{position:absolute;top:35mm;right:-4mm;width:8mm;height:8mm;border-radius:50%;background:rgba(0,196,160,0.08);}
+
+/* Sidebar logo */
+.sb-logo-wrap{padding:8mm 5mm 6mm;}
+.sb-im-img{width:48mm;height:auto;display:block;margin-bottom:1.5mm;}
+.sb-tline{width:52mm;height:0.5mm;background:#00C4A0;}
+.sb-claim{font-size:2mm;color:#00C4A0;text-transform:uppercase;letter-spacing:0.1em;margin-top:2mm;font-weight:600;}
+
+/* University */
+.sb-univ-wrap{padding:4mm 5mm 5mm;}
+.sb-univ-label{font-size:1.7mm;color:#8B8FA8;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:2mm;font-weight:600;}
+.sb-univ-box{background:#fff;border-radius:1.5mm;padding:2.5mm 3mm;display:flex;align-items:center;justify-content:center;min-height:10mm;}
+.sb-univ-box img{max-width:48mm;max-height:10mm;object-fit:contain;}
+
+/* Separator */
+.sb-sep{width:52mm;height:0.3mm;background:#1e1e1e;margin:0 5mm;}
+
+/* Contact */
+.sb-contact{padding:5mm 5mm 0;}
+.sb-contact-title{font-size:1.7mm;color:#00C4A0;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:3.5mm;}
+.sb-contact-item{margin-bottom:3mm;}
+.sb-contact-lbl{font-size:1.6mm;color:#555;margin-bottom:0.5mm;}
+.sb-contact-val{font-size:2.2mm;color:#e8e8e8;font-weight:500;line-height:1.5;}
+
+/* Ref & Validity */
+.sb-bottom{position:absolute;bottom:5mm;left:5mm;right:5mm;}
+.sb-ref-box{background:#1A1A1A;border:0.3mm solid #2A2A2A;border-radius:2mm;padding:3mm;margin-bottom:2mm;}
+.sb-ref-lbl{font-size:1.6mm;color:#8B8FA8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1mm;font-weight:600;}
+.sb-ref-val{font-size:2.8mm;color:#00C4A0;font-weight:700;letter-spacing:0.04em;}
+.sb-validity{background:#1A1A1A;border:0.3mm solid #2A2A2A;border-radius:2mm;padding:3mm;}
+.sb-v-lbl{font-size:1.6mm;color:#8B8FA8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1mm;font-weight:600;}
+.sb-v-date{font-size:2.8mm;color:#F5C842;font-weight:700;}
+.sb-v-sub{font-size:1.5mm;color:#555;margin-top:0.3mm;}
+
+/* ══ PAGE 1 MAIN ══ */
+.p1-main{position:absolute;left:62mm;top:0;width:148mm;min-height:297mm;background:#fff;}
+.p1-teal-top{position:absolute;top:0;left:0;width:148mm;height:2.5mm;background:#00C4A0;}
+.p1-content{padding:10mm 10mm 8mm 10mm;}
+
+/* Header */
+.p1-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5mm;}
+.p1-doc-label{font-size:2mm;color:#00C4A0;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;}
+.p1-date-block{text-align:right;}
+.p1-date{font-size:2.5mm;color:#8B8FA8;line-height:1.6;}
+.p1-ref{font-size:1.8mm;color:#00C4A0;font-weight:600;}
+
+/* Saludo */
+.saludo-wrap{margin-bottom:4mm;}
+.saludo{font-size:9mm;font-weight:800;color:#0D0D0D;line-height:1.1;margin-bottom:1.5mm;}
+.saludo-name{color:#00C4A0;}
+.saludo-sub{font-size:3.2mm;color:#8B8FA8;}
+
+/* Carta */
+.carta{background:linear-gradient(135deg,#f8fffe 0%,#f0fdf9 100%);border-left:1mm solid #00C4A0;border-radius:0 2mm 2mm 0;padding:3.5mm 4mm;margin-bottom:4mm;font-size:2.7mm;color:#444;line-height:1.7;}
+
+/* Divider */
+.div-line{height:0.3mm;background:#eee;margin-bottom:4mm;}
+
+/* Personas */
+.personas-strip{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2.5mm;margin-bottom:4mm;padding:3.5mm;background:#f8f9fa;border-radius:2mm;}
+.pers-lbl{font-size:1.7mm;color:#8B8FA8;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:1mm;}
+.pers-name{font-size:3.5mm;font-weight:700;color:#0D0D0D;margin-bottom:0.5mm;}
+.pers-sub{font-size:2.2mm;color:#8B8FA8;}
+.pers-teal{color:#00C4A0;}
+
+/* Programme */
+.sec-lbl{font-size:1.8mm;color:#00C4A0;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:2mm;}
+.prog-card{border-radius:2mm;overflow:hidden;margin-bottom:4mm;box-shadow:0 1mm 3mm rgba(0,0,0,0.08);}
+.prog-card-hdr{background:#0D0D0D;padding:4mm 5mm;display:flex;justify-content:space-between;align-items:flex-start;gap:3mm;}
+.prog-name{font-size:4mm;font-weight:800;color:#fff;line-height:1.3;flex:1;}
+.prog-tags{display:flex;flex-direction:column;gap:1mm;align-items:flex-end;flex-shrink:0;}
+.prog-dur{background:rgba(245,200,66,0.2);border:0.3mm solid rgba(245,200,66,0.4);color:#F5C842;font-size:1.8mm;font-weight:700;padding:0.8mm 2mm;border-radius:1mm;text-transform:uppercase;white-space:nowrap;}
+.prog-tipo{background:rgba(0,196,160,0.15);border:0.3mm solid rgba(0,196,160,0.3);color:#00C4A0;font-size:1.8mm;font-weight:700;padding:0.8mm 2mm;border-radius:1mm;white-space:nowrap;}
+.prog-body{padding:4mm 5mm;background:#fff;border:0.3mm solid #eee;border-top:none;border-radius:0 0 2mm 2mm;}
+.prog-metas{display:grid;grid-template-columns:repeat(4,1fr);gap:2mm;margin-bottom:3mm;padding-bottom:3mm;border-bottom:0.3mm solid #f0f0f0;}
+.pm-k{font-size:1.7mm;color:#8B8FA8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.8mm;}
+.pm-v{font-size:3mm;font-weight:700;color:#0D0D0D;}
+
+/* Titulaciones */
+.tit-section-lbl{font-size:1.7mm;color:#8B8FA8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:2mm;font-weight:600;}
+.tit-grid{display:grid;gap:1.5mm;}
+.tit-item{display:flex;align-items:flex-start;gap:2mm;padding:2mm 2.5mm;border-radius:1.5mm;background:#f8f9fa;}
+.tit-num{width:4mm;height:4mm;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8mm;font-weight:800;color:#fff;flex-shrink:0;margin-top:0.3mm;}
+.tit-body{}
+.tit-type{font-size:1.6mm;color:#8B8FA8;margin-bottom:0.3mm;}
+.tit-name{font-size:2.5mm;font-weight:700;color:#0D0D0D;}
+.tit-name.teal{color:#00C4A0;}
+
+/* Stats strip */
+.stats-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5mm;padding:3mm;background:#0D0D0D;border-radius:2mm;margin-top:3mm;}
+.stat-item{text-align:center;padding:1mm 0;}
+.stat-val{font-size:3.5mm;font-weight:800;color:#00C4A0;}
+.stat-lbl{font-size:1.6mm;color:#8B8FA8;margin-top:0.3mm;}
+
+/* ══ PAGE 2 ══ */
+.p2-topbar{height:2mm;background:#0D0D0D;}
+.p2-teal{height:1.5mm;background:#00C4A0;}
+.p2-content{padding:7mm 14mm;}
+.p2-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:5mm;padding-bottom:3.5mm;border-bottom:0.4mm solid #eee;}
+.p2-logo{display:flex;align-items:center;gap:2.5mm;}
+.p2-logo img{height:16mm;width:auto;max-width:60mm;filter:brightness(0);}
+.p2-ref-info{font-size:1.8mm;color:#8B8FA8;text-align:right;}
+.p2-ref-info span{color:#00C4A0;font-weight:600;}
+
+/* Prices */
+.prices-3col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:2.5mm;margin-bottom:3mm;}
+.price-card{border:0.4mm solid #eee;border-radius:2mm;padding:3.5mm;text-align:center;}
+.price-card.hi{border-color:#00C4A0;background:linear-gradient(135deg,rgba(0,196,160,0.04) 0%,rgba(0,196,160,0.08) 100%);}
+.pc-lbl{font-size:1.8mm;color:#8B8FA8;margin-bottom:1.5mm;}
+.pc-val{font-size:7mm;font-weight:800;color:#0D0D0D;line-height:1;}
+.pc-val.strike{text-decoration:line-through;color:#ccc;font-size:5.5mm;}
+.pc-val.teal{color:#00C4A0;font-size:8mm;}
+.pc-sub{font-size:1.7mm;color:#8B8FA8;margin-top:0.8mm;}
+.saving-strip{background:linear-gradient(135deg,rgba(0,196,160,0.06) 0%,rgba(0,196,160,0.1) 100%);border:0.4mm solid rgba(0,196,160,0.2);border-radius:1.5mm;padding:2.5mm;text-align:center;font-size:2.8mm;color:#00C4A0;font-weight:700;margin-bottom:3.5mm;}
+
+/* Financing */
+.fin-table{width:100%;border-collapse:collapse;margin-bottom:3.5mm;font-size:2.3mm;}
+.fin-table th{background:#0D0D0D;color:#8B8FA8;font-size:1.6mm;text-transform:uppercase;letter-spacing:0.06em;padding:2mm 3mm;text-align:left;font-weight:600;}
+.fin-table td{padding:2mm 3mm;border-bottom:0.3mm solid #f0f0f0;color:#333;}
+.fin-table tr:last-child td{border:none;}
+.fin-table tr:nth-child(even) td{background:#fafafa;}
+.fin-hl{font-weight:700;color:#00C4A0;}
+
+/* Steps */
+.steps-row{display:grid;grid-template-columns:repeat(5,1fr);gap:1.5mm;margin-bottom:3.5mm;}
+.step{text-align:center;}
+.step-circle{width:7mm;height:7mm;border-radius:50%;background:#0D0D0D;color:#fff;font-size:2.2mm;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5mm;}
+.step-title{font-size:1.8mm;font-weight:700;color:#0D0D0D;margin-bottom:0.8mm;line-height:1.3;}
+.step-desc{font-size:1.5mm;color:#8B8FA8;line-height:1.4;}
+
+/* Approval */
+.approval-2col{display:grid;grid-template-columns:1fr 1fr;gap:2.5mm;margin-bottom:3mm;}
+.approval-box{border:0.4mm solid #eee;border-radius:2mm;padding:3mm;}
+.appr-lbl{font-size:1.6mm;color:#8B8FA8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:1.5mm;font-weight:600;}
+.appr-name{font-size:3mm;font-weight:700;color:#0D0D0D;margin-bottom:0.5mm;}
+.appr-role{font-size:1.8mm;color:#00C4A0;font-weight:600;margin-bottom:2mm;}
+.appr-stamp{display:inline-block;border:0.4mm solid #00C4A0;color:#00C4A0;font-size:1.6mm;font-weight:700;padding:0.6mm 1.8mm;border-radius:1mm;text-transform:uppercase;letter-spacing:0.05em;}
+.appr-stamp.dark{border-color:#0D0D0D;color:#0D0D0D;}
+
+/* Conditions */
+.conds-box{background:#f8f9fa;border-radius:2mm;padding:3mm 4mm;margin-bottom:3mm;}
+.cond-line{font-size:2mm;color:#8B8FA8;line-height:1.5;margin-bottom:1mm;padding-left:3mm;position:relative;}
+.cond-line::before{content:'·';position:absolute;left:0;color:#00C4A0;font-weight:700;}
+
+/* Footer */
+.p2-footer{border-top:0.4mm solid #eee;padding-top:3mm;display:grid;grid-template-columns:1fr 1fr 1fr;gap:3mm;}
+.footer-col-title{font-weight:700;color:#0D0D0D;margin-bottom:1mm;font-size:2mm;}
+.footer-col-text{font-size:1.7mm;color:#8B8FA8;line-height:1.6;}
+.p2-bottombar{height:1.5mm;background:#00C4A0;margin-top:3mm;}
+
+@media print{body{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}}
+</style></head>
+<body>
+
+<!-- ══ PAGE 1 ══ -->
+<div class="page">
+  <div class="p1-sidebar">
+    <div class="p1-teal-stripe"></div>
+    <div class="p1-accent-dots"></div>
+    <div class="p1-accent-dots2"></div>
+
+    <!-- IM Logo -->
+    <div class="sb-logo-wrap">
+      <img src="data:image/png;base64,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" class="sb-im-img" alt="IM Education">
+      <div class="sb-tline"></div>
+      <div class="sb-claim">Digital Business School</div>
+    </div>
+
+    <!-- University -->
+    <div class="sb-univ-wrap">
+      <div class="sb-univ-label">En colaboración con</div>
+      <div class="sb-univ-box">
+        <img src="data:image/png;base64,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Mxs3I/INhsFXUWe43m1VtBRSxOjkuEFCCJpGxnR0/fUB2J0R6qU1+fuz7lDE4MBvwu9I2vinuVuqMfH/ACZCwblkdPK3bJD+AA3uCex9N3hDaxZuWcTp8RrMmqzXU9NTXSW0sgdEHVFTUskMfRExriXkkEgeugSQF6YNydZcpv8ANjz7Tf8AH7zHB7SyhvdD7NLNDvXmMGyHAE9++x8OxVG0UNXQWmy5qaKprrRjuf3aa5w08RkfHHJKWNmDB3cGHv27je/irFuPNOHV9Rcb9j1oF6o7DaJ6ua+vp3RR00mtMpWF7A4vkcWggEaB7+h1Lh+Q2mGL8nYzkfIt8wW3e1/SdmB86SSNohlLS0SCNwcSSxz2hwIGifet7muUWTDsbqsgyCsbSUFMB1O0S5zidNa1o7ucT2AC5bsdsz3jyiwbkTJLZa4LdR175rtWw1b3VMsVxe3zHTsLQ0dBc3Xc6cB+VXV4lbfcJ8Vx+9UNsmukOO5JR3iupYW9UklND19fS3+MR1A6+RS4TlDbaYfyvYchyOHHZ7TkOPXOqidNRQ3u3mlNYxutmIkkO7HevXW+3Yr0wXlbFsytuQ1lp9sZJj8skddTTsY2YBgcetoDiC13S4A7Hdp3pQDIsrsvLHI+A0uCSVFyZZLobpcrgKSWKKkiazRic57WnreSB0j4d1AbdZbnZOLJOUMZgMtXRVN3oL3SM/55b5KmUF3b+NET1g/AHfYaV4Q2vzFuVMeyK543b6KjukcuRW2W5UhmijDWRRu0RJp5074AbHzW2yHNrVZMxtGLVdPWvrbrTVNTA+JjTG1sDOp4cS4EEg9tA/PS5twLKLBh934gvWSXGO30DcSqozM9jnAOdJ2GmglTvKcksmW8zce3zHbgyvt01ovbY52Nc0OLYg13ZwB7EEeilw1TacYvzHiOScYXTkC2Nr3UFqZK+spHxsFVH5Y3ot6y3Zboj62jv1BBAxbpzRaaa80VooMRzC91lXaYLsI7ZQxTGOCX8Hr3KCCPQ+o7juVzsbPdsa8N1BndhifPQ3yxT2jI6YE60ZJGU1UPmw6YT/JIA95W/mvVosnJ9jqLxntdhkUmAW1jKqlhbI6Z29+WQ6N41oE+g9PVa/jnw26oxm6uvdjpbo613G1GoaSaS4RCOoi0SNPaCQD236nsQtitHgNyoLvh1suFsvct8pJIQGXCVga+p6SWl5Aa0Akg+gC3i4320IiKAvgABJAAJOz819RAREQfmRjJGOjkY17HDRa4bBCRRxwxiOKNkbG+jWjQH5l+kQEREBERAREQEREHxrWtc5zWgFx24gev5V9REBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREH//2Q==" alt="UTAMED">
+      </div>
+    </div>
+
+    <div class="sb-sep"></div>
+
+    <!-- Contact -->
+    <div class="sb-contact">
+      <div class="sb-contact-title">Contacto</div>
+      <div class="sb-contact-item">
+        <div class="sb-contact-lbl">Sede Central · Barcelona</div>
+        <div class="sb-contact-val">Carrer de Can Ràbia, 3-5<br>Planta 4, 08017 Barcelona</div>
+      </div>
+      <div class="sb-contact-item">
+        <div class="sb-contact-lbl">Subsede · Madrid</div>
+        <div class="sb-contact-val">C. de Edgar Neville, 33<br>Tetuán, 28020 Madrid</div>
+      </div>
+      <div class="sb-contact-item">
+        <div class="sb-contact-lbl">Teléfonos</div>
+        <div class="sb-contact-val">BCN 931 593 373<br>MAD 911 593 433<br>WhatsApp 640 08 49 37</div>
+      </div>
+      <div class="sb-contact-item">
+        <div class="sb-contact-lbl">Web</div>
+        <div class="sb-contact-val" style="color:#00C4A0;">www.im.education</div>
+      </div>
+    </div>
+
+    <!-- Ref + Validity -->
+    <div class="sb-bottom">
+      <div class="sb-ref-box">
+        <div class="sb-ref-lbl">Referencia propuesta</div>
+        <div class="sb-ref-val">IM-2026-554979</div>
+      </div>
+      <div class="sb-validity">
+        <div class="sb-v-lbl">Oferta válida hasta</div>
+        <div class="sb-v-date">08/04/2026</div>
+        <div class="sb-v-sub">7 días naturales desde la emisión</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="p1-main">
+    <div class="p1-teal-top"></div>
+    <div class="p1-content">
+
+      <!-- Header -->
+      <div class="p1-header">
+        <div class="p1-doc-label">Propuesta Formativa Personalizada</div>
+        <div class="p1-date-block">
+          <div class="p1-date">Barcelona, 01/04/2026</div>
+          <div class="p1-ref">IM-2026-554979</div>
+        </div>
+      </div>
+
+      <!-- Saludo -->
+      <div class="saludo-wrap">
+        <div class="saludo">Hola, <span class="saludo-name">Daniel</span></div>
+        <div class="saludo-sub">Hemos preparado esta propuesta exclusivamente para ti.</div>
+      </div>
+
+      <!-- Carta -->
+      <div class="carta">
+        En IM Education llevamos más de 20 años formando a los profesionales digitales que lideran las empresas más relevantes de España y Latinoamérica. Con más de 30.000 alumnos en más de 30 países, avalados por QS con 5 Estrellas y un 87% de empleabilidad, somos la escuela de referencia en Marketing Digital e Inteligencia Artificial.<br><br>
+        Tras conocer tu perfil y objetivos profesionales, hemos preparado esta propuesta a medida para que puedas dar el siguiente paso en tu carrera con las mayores garantías académicas y profesionales.
+      </div>
+
+      <div class="div-line"></div>
+
+      <!-- Personas -->
+      <div class="personas-strip">
+        <div>
+          <div class="pers-lbl">Candidato</div>
+          <div class="pers-name">Daniel Martinez</div>
+          <div class="pers-sub">dmartinez@im.education</div>
+          <div class="pers-sub">+34615658243</div>
+          
+        </div>
+        <div>
+          <div class="pers-lbl">Asesor de Admisiones</div>
+          <div class="pers-name">Administrador</div>
+          <div class="pers-sub pers-teal">admin@im.education</div>
+          <div class="pers-sub">IM Education</div>
+        </div>
+        <div>
+          <div class="pers-lbl">Fecha de emisión</div>
+          <div class="pers-name" style="font-size:3mm;">01/04/2026</div>
+          <div class="pers-sub">Válida hasta 08/04/2026</div>
+        </div>
+      </div>
+
+      <!-- Programme -->
+      <div class="sec-lbl">Programa recomendado</div>
+      <div class="prog-card">
+        <div class="prog-card-hdr">
+          <div class="prog-name">Grado Universitario Marketing Digital + AI for Marketing Mastery ( Primer año)</div>
+          <div class="prog-tags">
+            <span class="prog-dur">[48 MESES]</span>
+            <span class="prog-tipo">Grado Universitario</span>
+          </div>
+        </div>
+        <div class="prog-body">
+          <div class="prog-metas">
+            <div><div class="pm-k">ECTS</div><div class="pm-v">240</div></div>
+            <div><div class="pm-k">Modalidad</div><div class="pm-v">Online</div></div>
+            <div><div class="pm-k">Universidad</div><div class="pm-v">UTAMED</div></div>
+            <div><div class="pm-k">Prácticas</div><div class="pm-v">Acceso / Mentoría</div></div>
+          </div>
+
+          <!-- Titulaciones -->
+          <div class="tit-section-lbl">Titulaciones que recibirás</div>
+          <div class="tit-grid">
+            
+            <div class="tit-item">
+              <div class="tit-num" style="background:#00C4A0">1</div>
+              <div class="tit-body">
+                <div class="tit-type">Titulación universitaria</div>
+                <div class="tit-name teal">Grado Universitario Marketing Digital + AI for Marketing Mastery ( Primer año)</div>
+              </div>
+            </div>
+            <div class="tit-item">
+              <div class="tit-num" style="background:#0D0D0D">2</div>
+              <div class="tit-body">
+                <div class="tit-type">Certificado IM Education</div>
+                <div class="tit-name ">Professional Mastery Program en Inteligencia Artificial Aplicada al Marketing</div>
+              </div>
+            </div>
+            <div class="tit-item">
+              <div class="tit-num" style="background:#F5C842">3</div>
+              <div class="tit-body">
+                <div class="tit-type">Certificación complementaria</div>
+                <div class="tit-name ">Certificación Soft Skills para el Liderazgo y la Estrategia Digital con IA</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-strip">
+        
+        <div class="stat-item"><div class="stat-val">87%</div><div class="stat-lbl">Empleabilidad</div></div>
+        <div class="stat-item"><div class="stat-val">QS ★★★★★</div><div class="stat-lbl">5 Estrellas</div></div>
+        <div class="stat-item"><div class="stat-val">20 años</div><div class="stat-lbl">Experiencia</div></div>
+        <div class="stat-item"><div class="stat-val">30.000+</div><div class="stat-lbl">Alumnos</div></div>
+      </div>
+      
+      <div style="margin-top:3mm;text-align:center;">
+        <a href="https://cdn.im.education/pdf/286/" target="_blank" style="display:inline-flex;align-items:center;gap:2mm;padding:2.5mm 5mm;background:rgba(0,196,160,0.08);border:0.4mm solid rgba(0,196,160,0.3);border-radius:2mm;text-decoration:none;color:#00C4A0;font-size:2.8mm;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:0.03em;">
+          <svg width="4mm" height="4mm" viewBox="0 0 16 16" fill="none" stroke="#00C4A0" stroke-width="1.5"><path d="M4 2h6l4 4v8H4V2z"/><path d="M10 2v4h4"/><path d="M6 9h4M6 12h4"/></svg>
+          Ver programa completo
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 2 ══ -->
+<div class="page">
+  <div class="p2-topbar"></div>
+  <div class="p2-teal"></div>
+  <div class="p2-content">
+
+    <!-- Header -->
+    <div class="p2-hdr">
+      <div class="p2-logo">
+        <div style="display:flex;align-items:center;gap:3mm;">
+          <div style="width:12mm;height:12mm;border:1mm solid #0D0D0D;border-radius:2mm;display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;">
+            <span style="font-size:5mm;font-weight:900;color:#0D0D0D;letter-spacing:-0.5px;">IM</span>
+            <div style="position:absolute;bottom:-0.8mm;left:-0.8mm;width:4mm;height:1mm;background:#fff;"></div>
+          </div>
+          <div>
+            <div style="font-size:5.5mm;font-weight:700;color:#0D0D0D;line-height:1;">Education</div>
+            <div style="font-size:2mm;color:#00C4A0;text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Digital Business School</div>
+          </div>
+        </div>
+      </div>
+      <div class="p2-ref-info">
+        Propuesta <span>IM-2026-554979</span> · Daniel Martinez · 01/04/2026
+      </div>
+    </div>
+
+    <!-- Prices -->
+    <div class="sec-lbl">Condiciones económicas</div>
+    <div class="prices-3col">
+      <div class="price-card">
+        <div class="pc-lbl">Precio base</div>
+        <div class="pc-val strike">4680 €</div>
+        <div class="pc-sub">online</div>
+      </div>
+      <div class="price-card">
+        <div class="pc-lbl">Con descuento (30%)</div>
+        <div class="pc-val">3276 €</div>
+        <div class="pc-sub">Ahorro 1404 €</div>
+      </div>
+      <div class="price-card hi">
+        <div class="pc-lbl">Precio final</div>
+        <div class="pc-val teal">3276 €</div>
+        <div class="pc-sub">Descuento total 30%</div>
+      </div>
+    </div>
+    <div class="saving-strip">Ahorro total respecto al precio base: 1404 €</div>
+
+    <!-- Financing -->
+    <div class="sec-lbl">Opciones de financiación</div>
+    <table class="fin-table">
+      <thead><tr><th>Modalidad</th><th>Detalle</th><th>Importe</th></tr></thead>
+      <tbody>
+        <tr><td>Pago único</td><td>Abono íntegro antes del inicio · 5% descuento adicional</td><td class="fin-hl">3112 €</td></tr>
+        <tr><td>Fraccionado IM</td><td>Matrícula 25% + 24 cuotas sin intereses</td><td>Matrícula <strong>819 €</strong> + 24× <strong>102 €</strong>/mes</td></tr>
+        <tr><td>BCAS 12 meses</td><td>Financiación externa sin intereses para el alumno</td><td><strong>278 €</strong>/mes</td></tr>
+        <tr><td>BCAS 24 meses</td><td>Financiación externa · el alumno asume los intereses</td><td><strong>148 €</strong>/mes</td></tr>
+        <tr><td>BCAS 36 meses</td><td>Financiación externa · el alumno asume los intereses</td><td><strong>105 €</strong>/mes</td></tr>
+      </tbody>
+    </table>
+    <div style="font-size:1.8mm;color:#8B8FA8;font-style:italic;margin-bottom:3.5mm;padding:0 1mm;">* Las cuotas de financiación externa (BCAS) son orientativas y pueden variar según las condiciones finales del financiador en el momento de la solicitud.</div>
+
+    <!-- Admission -->
+    <div class="sec-lbl">Proceso de admisión</div>
+    <div class="steps-row">
+      <div class="step">
+        <div class="step-circle">01</div>
+        <div class="step-title">Solicitud</div>
+        <div class="step-desc">Completa el formulario de admisión con tu CV.</div>
+      </div><div class="step">
+        <div class="step-circle">02</div>
+        <div class="step-title">Entrevista</div>
+        <div class="step-desc">Nuestro equipo te contactará en 48h.</div>
+      </div><div class="step">
+        <div class="step-circle">03</div>
+        <div class="step-title">Validación</div>
+        <div class="step-desc">El comité académico evalúa tu perfil.</div>
+      </div><div class="step">
+        <div class="step-circle">04</div>
+        <div class="step-title">Admisión</div>
+        <div class="step-desc">Recibirás tu carta de admisión oficial.</div>
+      </div><div class="step">
+        <div class="step-circle">05</div>
+        <div class="step-title">Matrícula</div>
+        <div class="step-desc">Formaliza e inicia tu formación.</div>
+      </div>
+    </div>
+
+    <!-- Approval -->
+    <div class="sec-lbl">Aprobación y validación</div>
+    <div class="approval-2col">
+      <div class="approval-box">
+        <div class="appr-lbl">Aprobado por</div>
+        <div class="appr-name">Administrador</div>
+        <div class="appr-role">Asesor de Admisiones · IM Education</div>
+        <div class="appr-stamp">Propuesta aprobada</div>
+      </div>
+      <div class="approval-box">
+        <div class="appr-lbl">Departamento de Admisiones</div>
+        <div class="appr-name">Dpto. Admisiones IM Education</div>
+        <div class="appr-role">Validado académicamente</div>
+        <div class="appr-stamp dark">Validado · 01/04/2026</div>
+      </div>
+    </div>
+
+    <!-- Conditions -->
+    <div class="sec-lbl">Condiciones generales</div>
+    <div class="conds-box">
+      <div class="cond-line">Propuesta personal e intransferible, elaborada específicamente para el candidato indicado.</div><div class="cond-line">Los precios incluyen acceso completo al programa, materiales didácticos y titulación universitaria propia expedida por UTAMED.</div><div class="cond-line">Las acceso y mentoría están sujetas a la superación del programa y disponibilidad de empresa colaboradora.</div><div class="cond-line">Propuesta válida hasta el 08/04/2026. Transcurrido este plazo los precios pueden variar sin previo aviso.</div><div class="cond-line">Condiciones de fraccionamiento detalladas en contrato de matrícula.</div><div class="cond-line">IM Education se reserva el derecho a modificar la oferta formativa según planificación académica.</div>
+    </div>
+
+    <!-- Footer -->
+    <div class="p2-footer">
+      <div>
+        <div class="footer-col-title">IM Education</div>
+        <div class="footer-col-text">Carrer de Can Ràbia, 3-5, Pl. 4<br>08017 Barcelona<br>931 593 373</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Madrid</div>
+        <div class="footer-col-text">C. Edgar Neville, 33, Tetuán<br>28020 Madrid<br>911 593 433</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Universidades colaboradoras</div>
+        <div class="footer-col-text">UTAMED<br>Abat Oliba CEU<br>Tech Universidad Tecnológica<br><span style="color:#00C4A0;">www.im.education</span></div>
+      </div>
+    </div>
+    <div class="p2-bottombar"></div>
+    <div style="text-align:center;font-size:1.4mm;color:#aaa;font-style:italic;margin-top:2mm;letter-spacing:0.02em;line-height:1.6;padding:0 4mm;">BORRADOR NO VINCULANTE · Sujeto a revisión y validación final por el Departamento de Admisiones y, en su caso, por la universidad colaboradora · La admisión definitiva y la formalización de la matrícula quedan condicionadas al cumplimiento de los requisitos académicos y administrativos aplicables · Prevalece la documentación definitiva de admisión y matrícula.</div>
+
+  </div>
+</div>
+
+</div></div>
+</body></html>
