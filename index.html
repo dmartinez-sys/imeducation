@@ -3309,6 +3309,12 @@ async function sbSaveCatalog(data){
 
 async function loadCatalogFromDB(){
   try{
+    // Prioritize localStorage (updated by Excel upload) over Supabase
+    const local = JSON.parse(localStorage.getItem('im_catalog')||'null');
+    if(local && local.length>0){
+      _catalogCache = local;
+      return true;
+    }
     const rows = await sbGet('catalogo', 'order=id.asc&limit=1000');
     if(rows && rows.length>0){
       _catalogCache = rows.map((r,i)=>({
@@ -3345,11 +3351,12 @@ function handleExcelUpload(event){
 
       const parsed = [];
       let id = 1;
+      // Columnas Excel (índice 0):
+      // 0=Universidad, 1=Nombre, 2=Tipo, 3=Meses, 4=ECTS, 5=Horas,
+      // 6=Modalidad, 7=Duración, 8=P.presencial, 9=P.videopres, 10=Online,
+      // 11=Practicas, 12=URL PDF
       for(let i=1; i<rows.length; i++){
         const r = rows[i];
-        // Col 1=Universidad, Col 2=Nombre, Col 3=Tipo, Col 4=Meses, Col 5=ECTS,
-        // Col 6=Horas, Col 9=P.presencial, Col 10=P.videopres, Col 11=Online,
-        // Col 12=Practicas, Col 13=URL PDF
         const univ_raw = String(r[0]||'').trim().toLowerCase();
         const nombre   = String(r[1]||'').trim();
         if(!nombre) continue;
@@ -3366,17 +3373,19 @@ function handleExcelUpload(event){
         else if(tipo_raw.includes('fp')) tipo='fp';
         else if(tipo_raw.includes('máster')||tipo_raw.includes('master')) tipo='master';
         else if(tipo_raw.includes('diploma')) tipo='diploma';
+        else if(tipo_raw.includes('micro')) tipo='micro';
 
-        const meses = parseFloat(r[3])||0;
-        const ects  = parseFloat(r[4])||0;
-        const horas = parseFloat(r[5])||0;
-        const pres  = parseFloat(r[8])||0;
-        const vpres = parseFloat(r[9])||0;
-        const online= parseFloat(r[10])||0;
-        const prac  = String(r[11]||'').toLowerCase().includes('s');
+        const meses  = parseFloat(r[3])||0;
+        const ects   = parseFloat(r[4])||0;
+        const horas  = parseFloat(r[5])||0;
+        // r[6]=Modalidad, r[7]=Duración (texto) — saltar
+        const pres   = parseFloat(r[8])||0;
+        const vpres  = parseFloat(r[9])||0;
+        const online = parseFloat(r[10])||0;
+        const prac   = String(r[11]||'').toLowerCase().includes('s');
         const url_pdf = (r[12]&&typeof r[12]==='string'&&r[12].startsWith('http'))?r[12].trim():'';
 
-        if(pres===0&&online===0) continue;
+        if(pres===0&&vpres===0&&online===0) continue;
 
         parsed.push({id:id++, tipo, univ, nombre, meses, ects, horas, pres, vpres, online, prac, url_pdf});
       }
