@@ -670,13 +670,9 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
       </select>
       <select id="fm" onchange="filterCatalog()">
         <option value="">Todas las duraciones</option>
-        <option value="48">48 meses</option>
-        <option value="24">24 meses</option>
-        <option value="12">12 meses</option>
-        <option value="6">6 meses</option>
-        <option value="4">4 meses</option>
-        <option value="3">3 meses</option>
-        <option value="2">2 meses</option>
+      </select>
+      <select id="fu" onchange="filterCatalog()">
+        <option value="">Todas las universidades</option>
       </select>
       <div class="res-count" id="rc"></div>
       <button id="sync-btn" onclick="syncFromServer()" title="Sincronizar datos del servidor" style="display:none;padding:0.38rem 0.75rem;background:transparent;border:1px solid var(--border);border-radius:5px;color:var(--muted);font-size:0.72rem;font-family:'Plus Jakarta Sans',sans-serif;font-weight:600;cursor:pointer;transition:all 0.15s;text-transform:uppercase;letter-spacing:0.04em;" onmouseover="this.style.borderColor='var(--teal)';this.style.color='var(--teal)'" onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">⟳ Sync</button>
@@ -1672,7 +1668,7 @@ function showPage(id,el){
   el.classList.add('active');
   document.getElementById('page-title').textContent=pageTitles[id]||id;
   const show=id==='catalog';
-  ['sw','ft','fm','rc'].forEach(x=>{const el=document.getElementById(x);if(el)el.style.display=show?'':'none';});
+  ['sw','ft','fm','fu','rc'].forEach(x=>{const el=document.getElementById(x);if(el)el.style.display=show?'':'none';});
   if(id==='summary') renderSummary();
   if(id==='proposals'){
     loadProposalsFromDB().then(()=>{
@@ -1721,7 +1717,8 @@ function filterCatalog(){
   const q=document.querySelector('#sw input').value.toLowerCase();
   const t=document.getElementById('ft').value;
   const m=document.getElementById('fm').value;
-  const f=PROGRAMAS.filter(p=>p.nombre.toLowerCase().includes(q)&&(!t||p.tipo===t)&&(!m||String(p.meses)===m));
+  const u=document.getElementById('fu')?document.getElementById('fu').value:'';
+  const f=PROGRAMAS.filter(p=>p.nombre.toLowerCase().includes(q)&&(!t||p.tipo===t)&&(!m||String(p.meses)===m)&&(!u||p.univ===u));
   renderCards(f);
   document.getElementById('rc').textContent=`${f.length} programa${f.length!==1?'s':''}`;
 }
@@ -1734,7 +1731,7 @@ function renderCards(list){
     const t=TITULOS[p.tipo];
     const ck=p.univ==='ABAT'?'abat_con':'utamed_con';
     const sk=p.univ==='ABAT'?'abat_sin':'utamed_sin';
-    const univStr=p.univ==='ABAT'?'Abat Oliba CEU':'UTAMED';
+    const univStr=p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':'UTAMED';
     return `<div class="prog-card ${inC?'selected':''}" data-tipo="${p.tipo}">
       <div class="card-top"><div class="prog-name">${p.nombre}</div><span class="badge ${TB[p.tipo]}">${TL[p.tipo]}</span></div>
       <div><span class="dur-tag">[${p.meses} MESES]</span></div>
@@ -1882,7 +1879,7 @@ function renderCompare(){
   if(!compareList.length){el.innerHTML='<div class="no-results">Ve al Catálogo y pulsa "Añadir a comparar" en hasta 4 programas.</div>';return;}
   const rows=[
     {l:'Tipo',f:p=>`<span class="badge ${TB[p.tipo]}">${TL[p.tipo]}</span>`},
-    {l:'Universidad',f:p=>p.univ==='ABAT'?'Abat Oliba CEU':'UTAMED'},
+    {l:'Universidad',f:p=>p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':'UTAMED'},
     {l:'Duración',f:p=>`<span class="td-gold">[${p.meses} MESES]</span>`},
     {l:'ECTS',f:p=>p.ects},
     {l:'Prácticas',f:p=>p.prac?'Acceso / Mentoría':'No'},
@@ -1955,7 +1952,7 @@ function onPProg(){
   const t=TITULOS[p.tipo];
   const ck=p.univ==='ABAT'?'abat_con':'utamed_con';
   const sk=p.univ==='ABAT'?'abat_sin':'utamed_sin';
-  document.getElementById('pt-univ').textContent=p.univ==='ABAT'?'Abat Oliba CEU':'UTAMED';
+  document.getElementById('pt-univ').textContent=p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':'UTAMED';
   document.getElementById('pt-con').textContent=t[ck];
   document.getElementById('pt-sin').textContent=t[sk];
   document.getElementById('pt-im').textContent=t.im;
@@ -4293,6 +4290,35 @@ async function initApp(){
     propSel.appendChild(g);
   });
 
+  // Populate duration filter dynamically
+  const fmSel = document.getElementById('fm');
+  if(fmSel){
+    const duraciones = [...new Set(PROGRAMAS.map(p=>p.meses))].filter(Boolean).sort((a,b)=>b-a);
+    fmSel.innerHTML = '<option value="">Todas las duraciones</option>' +
+      duraciones.map(m=>`<option value="${m}">${m} meses</option>`).join('');
+  }
+  // Populate university filter dynamically
+  const fuSel = document.getElementById('fu');
+  if(fuSel){
+    const univMap = {UTAMED:'UTAMED', ABAT:'Abat Oliba CEU', TECH:'TECH Formación Profesional'};
+    const univs = [...new Set(PROGRAMAS.map(p=>p.univ))].filter(Boolean).sort();
+    fuSel.innerHTML = '<option value="">Todas las universidades</option>' +
+      univs.map(u=>`<option value="${u}">${univMap[u]||u}</option>`).join('');
+  }
+  // Populate university and duration filters dynamically
+  const fuSelInit = document.getElementById('fu');
+  if(fuSelInit){
+    const univMap = {UTAMED:'UTAMED', ABAT:'Abat Oliba CEU', TECH:'TECH Formación Profesional'};
+    const univs = [...new Set(PROGRAMAS.map(p=>p.univ))].filter(Boolean).sort();
+    fuSelInit.innerHTML = '<option value="">Todas las universidades</option>' +
+      univs.map(u=>`<option value="${u}">${univMap[u]||u}</option>`).join('');
+  }
+  const fmSelInit = document.getElementById('fm');
+  if(fmSelInit){
+    const durs = [...new Set(PROGRAMAS.map(p=>p.meses))].filter(Boolean).sort((a,b)=>b-a);
+    fmSelInit.innerHTML = '<option value="">Todas las duraciones</option>' +
+      durs.map(m=>`<option value="${m}">${m} meses</option>`).join('');
+  }
   filterCatalog();
   updatePV();
   countAlerts();
