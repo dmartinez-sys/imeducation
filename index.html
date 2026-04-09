@@ -2126,6 +2126,17 @@ function generateProposal(){
   const univStr=p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':'UTAMED';
   const showUnivLogo = !(p.univ==='ABAT' && !tieneEstudios);
   const univLogo=p.univ==='ABAT'?LOGO_ABAT:p.univ==='TECH'?LOGO_TECH:LOGO_UTAMED;
+  const displayNombre = !showUnivLogo ? p.nombre
+    .replace(/máster de formación permanente global en /i,'Máster en ')
+    .replace(/máster de formación permanente en /i,'Máster en ')
+    .replace(/máster en formación permanente en /i,'Máster en ')
+    .replace(/máster formación permanente en /i,'Máster en ')
+    .replace(/master en formacion permanente en /i,'Máster en ')
+    .replace(/máster en formación permanente/i,'Máster')
+    .replace(/máster formación permanente/i,'Máster')
+    .replace(/ de formación permanente/i,'')
+    .replace(/ formación permanente/i,'')
+    .trim() : p.nombre;
 
   // ── Calcular titulaciones ──
   // Clean program name removing tipo prefix to avoid duplication
@@ -2538,7 +2549,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#2a2a2a;color:#1a1a2e
       <div class="sec-lbl">Programa recomendado</div>
       <div class="prog-card">
         <div class="prog-card-hdr">
-          <div class="prog-name">${p.nombre}</div>
+          <div class="prog-name">${displayNombre}</div>
           <div class="prog-tags">
             <span class="prog-dur">[${p.meses} MESES]</span>
             ${showUnivLogo?`<span class="prog-tipo">${TLong[p.tipo]||p.tipo}</span>`:''}
