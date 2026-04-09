@@ -685,69 +685,47 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
 
     <!-- SIMULATOR -->
     <div class="page" id="page-simulator">
-      <div class="sim-wrap">
-        <div class="panel">
-          <div class="panel-title"><span class="ptbar"></span>Programa y modalidad</div>
-          <div class="field"><label>Programa</label><select id="sim-prog" onchange="calcSim()"><option value="">— Selecciona —</option></select></div>
-          <div class="field"><label>Modalidad</label>
-            <div class="rgroup" id="rg-mod">
-              <div class="rbtn on" data-val="presencial" onclick="pick(this,'rg-mod');calcSim()">Presencial</div>
-              <div class="rbtn" data-val="videopresencial" onclick="pick(this,'rg-mod');calcSim()">Videopresencial</div>
-              <div class="rbtn" data-val="online" onclick="pick(this,'rg-mod');calcSim()">Online</div>
-            </div>
+
+      <!-- SEARCH BAR -->
+      <div style="display:flex;gap:0.8rem;flex-wrap:wrap;align-items:center;margin-bottom:1.2rem;">
+        <div style="position:relative;flex:1;min-width:200px;max-width:340px;">
+          <span style="position:absolute;left:0.65rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:0.75rem;">&#128269;</span>
+          <input type="text" id="sim-search" placeholder="Buscar programa..." oninput="filterSim()" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:5px;padding:0.48rem 0.8rem 0.48rem 2rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;outline:none;">
+        </div>
+        <select id="sim-ft" onchange="filterSim()" style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:0.48rem 0.8rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;outline:none;cursor:pointer;">
+          <option value="">Todos los tipos</option>
+          <option value="master">Máster F.P.</option>
+          <option value="diploma">Diploma Esp.</option>
+          <option value="micro">Microcredencial</option>
+          <option value="grado">Grado Universitario</option>
+          <option value="fp">FP Oficial</option>
+        </select>
+        <select id="sim-fu" onchange="filterSim()" style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:0.48rem 0.8rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;outline:none;cursor:pointer;">
+          <option value="">Todas las universidades</option>
+        </select>
+        <select id="sim-fm" onchange="filterSim()" style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:0.48rem 0.8rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;outline:none;cursor:pointer;">
+          <option value="">Todas las duraciones</option>
+        </select>
+        <div style="font-size:0.72rem;color:var(--muted);margin-left:auto;" id="sim-rc"></div>
+      </div>
+
+      <!-- TWO COLUMNS: list + detail -->
+      <div style="display:grid;grid-template-columns:320px 1fr;gap:1.2rem;align-items:start;">
+
+        <!-- PROGRAM LIST -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;max-height:calc(100vh - 200px);overflow-y:auto;" id="sim-list"></div>
+
+        <!-- DETAIL PANEL -->
+        <div id="sim-detail">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:2rem;text-align:center;color:var(--muted);">
+            <div style="font-size:2rem;margin-bottom:0.8rem;">&#128269;</div>
+            <div style="font-size:0.88rem;font-weight:600;margin-bottom:0.4rem;">Selecciona un programa</div>
+            <div style="font-size:0.78rem;">Busca y selecciona un programa de la lista para ver toda su información y calcular el precio.</div>
           </div>
         </div>
-        <div class="panel">
-          <div class="panel-title"><span class="ptbar"></span>Descuentos</div>
-          <div class="field"><label>Descuento aplicado</label>
-            <div style="margin-top:0.5rem;">
-              <div class="discount-slider-wrap">
-                <input type="range" class="discount-slider" id="sdesc-slider" min="0" max="100" step="5" value="0" oninput="updateDiscountS(this.value)">
-                <div style="background:var(--teal);color:#000;font-size:1.1rem;font-weight:800;padding:0.3rem 0.7rem;border-radius:6px;min-width:58px;text-align:center;flex-shrink:0;" id="sdesc-badge">0%</div>
-              </div>
-              <div style="display:flex;justify-content:space-between;margin-top:0.3rem;padding:0 2px;">
-                <span style="font-size:0.58rem;color:var(--muted)">0%</span>
-                <span style="font-size:0.58rem;color:var(--muted)">25%</span>
-                <span style="font-size:0.58rem;color:var(--muted)">50%</span>
-                <span style="font-size:0.58rem;color:var(--muted)">75%</span>
-                <span style="font-size:0.58rem;color:var(--muted)">100%</span>
-              </div>
-            </div>
-            <input type="hidden" id="rg-desc-val" value="0">
-          </div>
-          <div class="field"><label>Forma de pago</label>
-            <div class="rgroup" id="rg-pago">
-              <div class="rbtn on" data-val="0" onclick="pick(this,'rg-pago');calcSim()">Fraccionado</div>
-              <div class="rbtn gold" data-val="5" onclick="pick(this,'rg-pago');calcSim()">Pago único — 5% adicional</div>
-            </div>
-          </div>
-        </div>
-        <div class="result-box">
-          <div class="res-lbl">Resultado del cálculo</div>
-          <div id="sim-result" style="color:var(--muted);text-align:center;font-size:0.82rem">Selecciona un programa para calcular</div>
-          <!-- Titulaciones box -->
-        <div id="sim-titulaciones" style="display:none;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-top:1rem;">
-          <div style="font-size:0.58rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.5rem;">
-            <span style="display:inline-block;width:3px;height:10px;background:var(--teal);border-radius:2px;"></span>
-            Titulaciones que obtendrá
-          </div>
-          <div class="field" style="margin-bottom:0.8rem;">
-            <label>¿Tiene estudios universitarios?</label>
-            <div class="rgroup" id="rg-sim-estudios" style="flex-direction:row;">
-              <div class="rbtn on" data-val="si" onclick="pick(this,'rg-sim-estudios');calcSim()" style="flex:1;text-align:center;">Sí</div>
-              <div class="rbtn" data-val="no" onclick="pick(this,'rg-sim-estudios');calcSim()" style="flex:1;text-align:center;">No</div>
-            </div>
-          </div>
-          <div id="sim-tit-list"></div>
-        </div>
-        <div id="sim-cta" style="display:none;margin-top:1rem;text-align:center;">
-            <button onclick="createProposalFromSim()" style="padding:0.65rem 2rem;background:var(--teal);border:none;border-radius:6px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.85rem;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:0.06em;">Crear propuesta con estos datos</button>
-          </div>
-        </div>
+
       </div>
     </div>
-
-
 
     <!-- SUMMARY -->
     <div class="page" id="page-summary">
@@ -1698,6 +1676,7 @@ function showPage(id,el){
   const show=id==='catalog';
   ['sw','ft','fm','fu','rc'].forEach(x=>{const el=document.getElementById(x);if(el)el.style.display=show?'':'none';});
   if(id==='summary') renderSummary();
+  if(id==='simulator') initSimulator();
   if(id==='proposals'){
     loadProposalsFromDB().then(()=>{
       renderAlertBanner(); renderHistory(); checkStorageWarning();
@@ -1810,39 +1789,267 @@ function updateDiscountP(val){
 function setDiscountP(val){ updateDiscountP(val); }
 function updateDiscountS(val){
   val = Math.round(val/5)*5;
-  document.getElementById('sdesc-slider').value=val;
-  document.getElementById('rg-desc-val').value=val;
+  document.getElementById('sdesc-slider') && (document.getElementById('sdesc-slider').value=val);
+  document.getElementById('rg-desc-val') && (document.getElementById('rg-desc-val').value=val);
   const badge=document.getElementById('sdesc-badge');
-  badge.textContent=val+'%';
-  badge.style.background=val===0?'var(--border)':val>=50?'var(--gold)':'var(--teal)';
-  badge.style.color=val===0?'var(--muted)':'#000';
-  calcSim();
+  if(badge){ badge.textContent=val+'%'; badge.style.background=val===0?'var(--border)':val>=50?'var(--gold)':'var(--teal)'; badge.style.color=val===0?'var(--muted)':'#000'; }
+  renderSimDetail();
 }
 function setDiscountS(val){ updateDiscountS(val); }
 
+// ══════════════════════════════════════════════
+// NEW SIMULATOR — Search + Detail
+// ══════════════════════════════════════════════
+let _simSelectedId = null;
+
+function filterSim(){
+  const q = (document.getElementById('sim-search').value||'').toLowerCase();
+  const t = document.getElementById('sim-ft').value;
+  const u = document.getElementById('sim-fu').value;
+  const m = document.getElementById('sim-fm').value;
+  const filtered = PROGRAMAS.filter(p=>
+    p.nombre.toLowerCase().includes(q) &&
+    (!t||p.tipo===t) &&
+    (!u||p.univ===u) &&
+    (!m||String(p.meses)===m)
+  );
+  renderSimList(filtered);
+  const rc = document.getElementById('sim-rc');
+  if(rc) rc.textContent = filtered.length + ' programa' + (filtered.length!==1?'s':'');
+}
+
+function renderSimList(list){
+  const el = document.getElementById('sim-list');
+  if(!el) return;
+  if(!list||!list.length){
+    el.innerHTML='<div style="padding:1.5rem;text-align:center;font-size:0.78rem;color:var(--muted);">Sin resultados</div>';
+    return;
+  }
+  const univMap = {UTAMED:'UTAMED', ABAT:'Abat Oliba CEU', TECH:'TECH FP'};
+  el.innerHTML = list.map(p=>`
+    <div onclick="selectSimProgram(${p.id})" id="sim-item-${p.id}" style="padding:0.75rem 1rem;border-bottom:1px solid var(--border);cursor:pointer;transition:background 0.15s;${_simSelectedId===p.id?'background:rgba(0,196,160,0.08);border-left:3px solid var(--teal);':''}" onmouseover="this.style.background='var(--hover)'" onmouseout="this.style.background='${_simSelectedId===p.id?'rgba(0,196,160,0.08)':'transparent'}'">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:0.5rem;margin-bottom:0.3rem;">
+        <div style="font-size:0.78rem;font-weight:700;color:var(--text);line-height:1.4;flex:1;">${p.nombre.length>60?p.nombre.slice(0,60)+'…':p.nombre}</div>
+        <span class="badge ${TB[p.tipo]}" style="flex-shrink:0;">${TL[p.tipo]}</span>
+      </div>
+      <div style="display:flex;gap:0.8rem;font-size:0.65rem;color:var(--muted);">
+        <span>${univMap[p.univ]||p.univ}</span>
+        <span>[${p.meses} meses]</span>
+        <span style="color:var(--teal);font-weight:600;">${p.online?fmt(p.online):fmt(p.pres)}</span>
+      </div>
+    </div>`).join('');
+}
+
+function selectSimProgram(id){
+  _simSelectedId = id;
+  // Update selected style
+  document.querySelectorAll('[id^="sim-item-"]').forEach(el=>{
+    const itemId = parseInt(el.id.replace('sim-item-',''));
+    el.style.background = itemId===id ? 'rgba(0,196,160,0.08)' : 'transparent';
+    el.style.borderLeft = itemId===id ? '3px solid var(--teal)' : '';
+  });
+  renderSimDetail();
+}
+
+function renderSimDetail(){
+  const el = document.getElementById('sim-detail');
+  if(!el||!_simSelectedId) return;
+  const p = PROGRAMAS.find(x=>x.id===_simSelectedId);
+  if(!p) return;
+
+  const univMap = {UTAMED:'UTAMED', ABAT:'Abat Oliba CEU', TECH:'TECH Formación Profesional'};
+  const univStr = univMap[p.univ]||p.univ;
+
+  // Get current calc values
+  const descEl = document.getElementById('sim-desc-slider');
+  const desc = descEl ? parseInt(descEl.value)||0 : 0;
+  const pagoEl = document.querySelector('#sim-rg-pago .rbtn.on');
+  const pago = pagoEl ? parseInt(pagoEl.dataset.val)||0 : 0;
+  const modEl = document.querySelector('#sim-rg-mod .rbtn.on');
+  const mod = modEl ? modEl.dataset.val : 'online';
+
+  const base = mod==='presencial'?p.pres:mod==='videopresencial'?p.vpres:p.online;
+  const conDesc = Math.round(base*(1-desc/100));
+  const final = pago ? Math.round(conDesc*0.95) : conDesc;
+  const ahorro = base - final;
+
+  // Financing
+  const cuotasMap = {master:p.meses>=12?12:6, diploma:3, micro:3, grado:24, fp:12};
+  const cuotas = cuotasMap[p.tipo]||12;
+  const matricula = Math.round(final*0.25);
+  const cuotaMensual = Math.round((final-matricula)/cuotas);
+  const pagoUnico = Math.round(final*0.95);
+  const bcas12 = Math.round(pagoUnico*1.072/12);
+  const bcas24 = Math.round(pagoUnico*1.144/24);
+  const bcas36 = Math.round(pagoUnico*1.216/36);
+
+  // Titulaciones
+  const tieneEstudios = (document.querySelector('#sim-rg-estudios .rbtn.on')||{dataset:{val:'si'}}).dataset.val === 'si';
+  let nomCorto = p.nombre
+    .replace(/máster de formación permanente global en /i,'')
+    .replace(/máster de formación permanente en /i,'')
+    .replace(/máster en formación permanente en /i,'')
+    .replace(/máster formación permanente en /i,'')
+    .replace(/master en formacion permanente en /i,'')
+    .replace(/diploma de especialización en /i,'')
+    .replace(/diploma de micro-credencial  en /i,'')
+    .replace(/diploma de micro-credencial en /i,'')
+    .replace(/grado universitario en /i,'')
+    .replace(/grado superior en /i,'')
+    .trim();
+  if(nomCorto.length>0) nomCorto = nomCorto.charAt(0).toUpperCase()+nomCorto.slice(1);
+
+  let tit1=null, tit2=null;
+  const tit3='Certificación Soft Skills para el Liderazgo y la Estrategia Digital con IA';
+  if(p.tipo==='master'){
+    tit1 = tieneEstudios?'Máster de Formación Permanente en '+nomCorto:(p.univ==='ABAT'?null:'Curso Avanzado en '+nomCorto);
+    tit2 = 'Professional Mastery Program en '+nomCorto;
+  } else if(p.tipo==='diploma'){
+    tit1 = tieneEstudios?'Diploma de Especialización en '+nomCorto:(p.univ==='ABAT'?null:'Curso Avanzado en '+nomCorto);
+    tit2 = 'Advanced Diploma Professional en '+nomCorto;
+  } else if(p.tipo==='micro'){
+    tit1 = 'Microcredencial en '+nomCorto;
+    tit2 = 'Professional Certificate en '+nomCorto;
+  } else if(p.tipo==='grado'||p.tipo==='fp'){
+    tit1 = p.nombre;
+    tit2 = 'Professional Mastery Program en Inteligencia Artificial Aplicada al Marketing';
+  }
+  const tits = [tit1,tit2,tit3].filter(Boolean);
+  const titColors = ['#00C4A0','#0D0D0D','#F5C842'];
+  const titTypes = ['Titulación universitaria · '+univStr,'Certificado IM Education','Certificación complementaria'];
+
+  // Modalidades disponibles
+  const mods = [];
+  if(p.pres>0) mods.push({val:'presencial',label:'Presencial',price:p.pres});
+  if(p.vpres>0) mods.push({val:'videopresencial',label:'Videopresencial',price:p.vpres});
+  if(p.online>0) mods.push({val:'online',label:'Online',price:p.online});
+
+  el.innerHTML = `
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+
+    <!-- Header -->
+    <div style="background:#111;padding:1.2rem 1.5rem;border-bottom:1px solid var(--border);">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:0.6rem;">
+        <div style="font-weight:800;font-size:1rem;color:var(--text);line-height:1.4;flex:1;">${p.nombre}</div>
+        <span class="badge ${TB[p.tipo]}" style="flex-shrink:0;">${TL[p.tipo]}</span>
+      </div>
+      <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+        <span style="font-size:0.68rem;color:var(--muted);">Universidad: <strong style="color:var(--teal)">${univStr}</strong></span>
+        <span style="font-size:0.68rem;color:var(--muted);">Duración: <strong style="color:var(--text)">${p.meses} meses</strong></span>
+        <span style="font-size:0.68rem;color:var(--muted);">ECTS: <strong style="color:var(--text)">${p.ects}</strong></span>
+        ${p.horas?`<span style="font-size:0.68rem;color:var(--muted);">Horas: <strong style="color:var(--text)">${p.horas}</strong></span>`:''}
+        <span style="font-size:0.68rem;color:var(--muted);">Prácticas: <strong style="color:var(--text)">${p.prac?'Acceso / Mentoría':'No'}</strong></span>
+      </div>
+    </div>
+
+    <div style="padding:1.2rem 1.5rem;display:grid;grid-template-columns:1fr 1fr;gap:1.2rem;">
+
+      <!-- LEFT: Titulaciones + Estudios -->
+      <div>
+        <div style="font-size:0.6rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.4rem;"><span style="width:3px;height:10px;background:var(--teal);border-radius:2px;display:inline-block;"></span>Titulaciones que obtendrá</div>
+        <div style="display:flex;gap:0.4rem;margin-bottom:0.8rem;">
+          <div class="rbtn on" data-val="si" id="sim-est-si" onclick="document.getElementById('sim-est-si').classList.add('on');document.getElementById('sim-est-no').classList.remove('on');renderSimDetail()" style="flex:1;text-align:center;font-size:0.72rem;">Con título univ.</div>
+          <div class="rbtn" data-val="no" id="sim-est-no" onclick="document.getElementById('sim-est-no').classList.add('on');document.getElementById('sim-est-si').classList.remove('on');renderSimDetail()" style="flex:1;text-align:center;font-size:0.72rem;">Sin título univ.</div>
+        </div>
+        ${tits.map((t,i)=>`
+        <div style="display:flex;align-items:flex-start;gap:0.6rem;padding:0.55rem 0.65rem;border-radius:6px;background:var(--bg);margin-bottom:0.4rem;border:1px solid var(--border);">
+          <div style="width:18px;height:18px;border-radius:50%;background:${titColors[i]};display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800;color:#fff;flex-shrink:0;">${i+1}</div>
+          <div>
+            <div style="font-size:0.58rem;color:var(--muted);margin-bottom:0.2rem;text-transform:uppercase;letter-spacing:0.04em;">${titTypes[i]}</div>
+            <div style="font-size:0.75rem;font-weight:700;color:${i===0?'var(--teal)':'var(--text)'};">${t}</div>
+          </div>
+        </div>`).join('')}
+        ${p.url_pdf?`<a href="${p.url_pdf}" target="_blank" style="display:inline-flex;align-items:center;gap:0.4rem;margin-top:0.6rem;padding:0.5rem 1rem;background:rgba(0,196,160,0.08);border:1px solid rgba(0,196,160,0.25);border-radius:5px;text-decoration:none;color:var(--teal);font-size:0.75rem;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;">
+          📄 Ver catálogo PDF del programa
+        </a>`:''}
+      </div>
+
+      <!-- RIGHT: Price calculator -->
+      <div>
+        <div style="font-size:0.6rem;color:var(--teal);text-transform:uppercase;letter-spacing:0.1em;font-weight:700;margin-bottom:0.8rem;display:flex;align-items:center;gap:0.4rem;"><span style="width:3px;height:10px;background:var(--teal);border-radius:2px;display:inline-block;"></span>Calcular precio</div>
+
+        <!-- Modalidad -->
+        <div style="font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:0.4rem;">Modalidad</div>
+        <div style="display:flex;gap:0.4rem;margin-bottom:0.8rem;" id="sim-rg-mod">
+          ${mods.map((m,i)=>`<div class="rbtn ${i===0?'on':''}" data-val="${m.val}" onclick="document.querySelectorAll('#sim-rg-mod .rbtn').forEach(r=>r.classList.remove('on'));this.classList.add('on');renderSimDetail()" style="flex:1;text-align:center;font-size:0.72rem;">${m.label}</div>`).join('')}
+        </div>
+
+        <!-- Descuento -->
+        <div style="font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:0.4rem;">Descuento</div>
+        <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.3rem;">
+          <input type="range" class="discount-slider" id="sim-desc-slider" min="0" max="100" step="5" value="${desc}" oninput="updateDiscountS(this.value)" style="flex:1;">
+          <div id="sdesc-badge" style="background:${desc===0?'var(--border)':'var(--teal)'};color:${desc===0?'var(--muted)':'#000'};font-size:1rem;font-weight:800;padding:0.25rem 0.6rem;border-radius:5px;min-width:52px;text-align:center;">${desc}%</div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:0.58rem;color:var(--muted);margin-bottom:0.8rem;"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>
+        <input type="hidden" id="rg-desc-val" value="${desc}">
+
+        <!-- Pago -->
+        <div style="font-size:0.62rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:0.4rem;">Forma de pago</div>
+        <div style="display:flex;gap:0.4rem;margin-bottom:1rem;" id="sim-rg-pago">
+          <div class="rbtn on" data-val="0" onclick="document.querySelectorAll('#sim-rg-pago .rbtn').forEach(r=>r.classList.remove('on'));this.classList.add('on');renderSimDetail()" style="flex:1;text-align:center;font-size:0.72rem;">Fraccionado</div>
+          <div class="rbtn gold" data-val="5" onclick="document.querySelectorAll('#sim-rg-pago .rbtn').forEach(r=>r.classList.remove('on'));this.classList.add('on');renderSimDetail()" style="flex:1;text-align:center;font-size:0.72rem;">Pago único −5%</div>
+        </div>
+
+        <!-- Result -->
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:0.8rem;margin-bottom:0.8rem;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;margin-bottom:0.5rem;">
+            <div style="text-align:center;">
+              <div style="font-size:0.58rem;color:var(--muted);text-transform:uppercase;margin-bottom:0.3rem;">Precio base</div>
+              <div style="font-size:1rem;font-weight:700;color:var(--muted);text-decoration:line-through;">${fmt(base)}</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:0.58rem;color:var(--muted);text-transform:uppercase;margin-bottom:0.3rem;">Precio final</div>
+              <div style="font-size:1.4rem;font-weight:800;color:var(--teal);">${fmt(final)}</div>
+            </div>
+          </div>
+          ${ahorro>0?`<div style="text-align:center;font-size:0.72rem;color:var(--teal);font-weight:600;padding:0.4rem;background:rgba(0,196,160,0.07);border-radius:4px;">Ahorro: ${fmt(ahorro)}</div>`:''}
+        </div>
+
+        <!-- Financing -->
+        <div style="font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;margin-bottom:0.5rem;">Financiación</div>
+        <div style="display:flex;flex-direction:column;gap:0.3rem;">
+          <div style="display:flex;justify-content:space-between;padding:0.45rem 0.6rem;background:var(--bg);border:1px solid var(--border);border-radius:5px;font-size:0.72rem;">
+            <span style="color:var(--muted);">Pago único</span><span style="font-weight:700;color:var(--gold);">${fmt(pagoUnico)}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.45rem 0.6rem;background:var(--bg);border:1px solid var(--border);border-radius:5px;font-size:0.72rem;">
+            <span style="color:var(--muted);">Fraccionado IM</span><span style="font-weight:700;color:var(--teal);">Mat. ${fmt(matricula)} + ${cuotas}× ${fmt(cuotaMensual)}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.45rem 0.6rem;background:var(--bg);border:1px solid var(--border);border-radius:5px;font-size:0.72rem;">
+            <span style="color:var(--muted);">BCAS 12 meses</span><span style="font-weight:700;">${fmt(bcas12)}/mes</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.45rem 0.6rem;background:var(--bg);border:1px solid var(--border);border-radius:5px;font-size:0.72rem;">
+            <span style="color:var(--muted);">BCAS 24 / 36 meses</span><span style="font-weight:700;">${fmt(bcas24)} / ${fmt(bcas36)}/mes</span>
+          </div>
+        </div>
+
+        <button onclick="createProposalFromSim()" style="margin-top:1rem;width:100%;padding:0.65rem;background:var(--teal);border:none;border-radius:6px;color:#000;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.82rem;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:0.05em;">Crear propuesta con estos datos</button>
+      </div>
+
+    </div>
+  </div>`;
+}
+
 function createProposalFromSim(){
-  const sel = document.getElementById('sim-prog').value;
-  if(!sel) return;
-  const mod = getVal('rg-mod');
-  const desc = parseInt(getVal('rg-desc'));
-  const pago = parseInt(getVal('rg-pago'));
-  // Navigate to proposals
+  if(!_simSelectedId) return;
+  const p = PROGRAMAS.find(x=>x.id===_simSelectedId);
+  const modEl = document.querySelector('#sim-rg-mod .rbtn.on');
+  const mod = modEl ? modEl.dataset.val : 'online';
+  const descEl = document.getElementById('sim-desc-slider');
+  const desc = descEl ? parseInt(descEl.value)||0 : 0;
+  const pagoEl = document.querySelector('#sim-rg-pago .rbtn.on');
+  const pago = pagoEl ? parseInt(pagoEl.dataset.val)||0 : 0;
   const navItem = document.querySelector('.nav-item[onclick*="proposals"]');
   if(navItem) showPage('proposals', navItem);
   setTimeout(()=>{
     const tab = document.querySelector('.ptab');
     if(tab) showPropTab('generator', tab);
-    // Set program
     const pSel = document.getElementById('p-prog');
-    if(pSel){ pSel.value = sel; onPProg(); }
-    // Set modalidad
+    if(pSel){ pSel.value = p.id; onPProg(); }
     document.querySelectorAll('#rg-pmod .rbtn').forEach(r=>{
       r.classList.remove('on');
       if(r.dataset.val===mod) r.classList.add('on');
     });
-    // Set descuento
     setDiscountP(desc);
-    // Set pago
     document.querySelectorAll('#rg-ppago .rbtn').forEach(r=>{
       r.classList.remove('on');
       if(r.dataset.val===String(pago)) r.classList.add('on');
@@ -1851,112 +2058,24 @@ function createProposalFromSim(){
   }, 100);
 }
 
-function calcSim(){
-  const sel=document.getElementById('sim-prog').value;
-  const res=document.getElementById('sim-result');
-  if(!sel){res.innerHTML='<span style="color:var(--muted)">Selecciona un programa</span>';return;}
-  const p=PROGRAMAS.find(x=>x.id===parseInt(sel));
-  const mod=getVal('rg-mod'), desc=parseInt(getVal('rg-desc')), pago=parseInt(getVal('rg-pago'));
-  const base=getPrice(p,mod), conDesc=Math.round(base*(1-desc/100)), final=pago?Math.round(conDesc*0.95):conDesc, ahorro=base-final;
-  document.getElementById('sim-cta').style.display='block';
 
-  // Render titulaciones
-  const simTitBox = document.getElementById('sim-titulaciones');
-  const simTitList = document.getElementById('sim-tit-list');
-  if(simTitBox && simTitList){
-    simTitBox.style.display='block';
-    const tieneEstudios = getVal('rg-sim-estudios') === 'si';
-    const t = TITULOS[p.tipo];
-    const ck = p.univ==='ABAT'?'abat_con':'utamed_con';
-    const sk = p.univ==='ABAT'?'abat_sin':'utamed_sin';
-    const univStr = p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':'UTAMED';
-
-    let nomCorto = p.nombre
-      .replace(/máster de formación permanente global en /i,'')
-      .replace(/máster de formación permanente en /i,'')
-      .replace(/máster en formación permanente en /i,'')
-      .replace(/máster formación permanente en /i,'')
-      .replace(/master en formacion permanente en /i,'')
-      .replace(/máster en formación permanente/i,'')
-      .replace(/diploma de especialización en /i,'')
-      .replace(/diploma de micro-credencial en /i,'')
-      .replace(/diploma de micro-credencial  en /i,'')
-      .replace(/grado universitario en /i,'')
-      .replace(/grado superior en /i,'')
-      .trim();
-    if(nomCorto.length>0) nomCorto = nomCorto.charAt(0).toUpperCase()+nomCorto.slice(1);
-
-    let tit1 = null, tit2 = null;
-    const tit3 = 'Certificación Soft Skills para el Liderazgo y la Estrategia Digital con IA';
-    if(p.tipo==='master'){
-      tit1 = tieneEstudios ? 'Máster de Formación Permanente en '+nomCorto : (p.univ==='ABAT'?null:'Curso Avanzado en '+nomCorto);
-      tit2 = 'Professional Mastery Program en '+nomCorto;
-    } else if(p.tipo==='diploma'){
-      tit1 = tieneEstudios ? 'Diploma de Especialización en '+nomCorto : (p.univ==='ABAT'?null:'Curso Avanzado en '+nomCorto);
-      tit2 = 'Advanced Diploma Professional en '+nomCorto;
-    } else if(p.tipo==='micro'){
-      tit1 = 'Microcredencial en '+nomCorto;
-      tit2 = 'Professional Certificate en '+nomCorto;
-    } else if(p.tipo==='grado'||p.tipo==='fp'){
-      tit1 = p.nombre;
-      tit2 = 'Professional Mastery Program en Inteligencia Artificial Aplicada al Marketing';
-    }
-    const tits = [tit1, tit2, tit3].filter(Boolean);
-    const colors = ['#00C4A0','#0D0D0D','#F5C842'];
-    const types = ['Titulación universitaria · '+univStr, 'Certificado IM Education', 'Certificación complementaria'];
-    simTitList.innerHTML = tits.map((t,i)=>`
-      <div style="display:flex;align-items:flex-start;gap:0.7rem;padding:0.6rem 0.7rem;border-radius:6px;background:var(--card);margin-bottom:0.5rem;">
-        <div style="width:20px;height:20px;border-radius:50%;background:${colors[i]};display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:800;color:#fff;flex-shrink:0;margin-top:0.1rem;">${i+1}</div>
-        <div>
-          <div style="font-size:0.6rem;color:var(--muted);margin-bottom:0.25rem;text-transform:uppercase;letter-spacing:0.05em;">${types[i]}</div>
-          <div style="font-size:0.78rem;font-weight:700;color:${i===0?'var(--teal)':'var(--text)'}">${t}</div>
-        </div>
-      </div>`).join('');
+function initSimulator(){
+  const fuSim = document.getElementById('sim-fu');
+  if(fuSim){
+    const univMap = {UTAMED:'UTAMED', ABAT:'Abat Oliba CEU', TECH:'TECH Formación Profesional'};
+    const univs = [...new Set(PROGRAMAS.map(p=>p.univ))].filter(Boolean).sort();
+    fuSim.innerHTML = '<option value="">Todas las universidades</option>' +
+      univs.map(u=>`<option value="${u}">${univMap[u]||u}</option>`).join('');
   }
-
-  setTimeout(()=>{ document.getElementById('sim-result').scrollIntoView({behavior:'smooth',block:'nearest'}); },100);
-  // Financing calcs for simulator
-  const simCuotasMap = {master:p.meses>=12?12:6, diploma:3, micro:3, grado:24, fp:12};
-  const simCuotas = simCuotasMap[p.tipo]||12;
-  const simMatricula = Math.round(final*0.25);
-  const simCuotaMensual = Math.round((final-simMatricula)/simCuotas);
-  const simPagoUnicoBase = Math.round(final*0.95);
-  const simBcas12 = Math.round(simPagoUnicoBase*1.072/12);
-  const simBcas24 = Math.round(simPagoUnicoBase*1.144/24);
-  const simBcas36 = Math.round(simPagoUnicoBase*1.216/36);
-  const simPagoUnico = Math.round(final*0.95);
-  res.innerHTML=`<div class="res-cols">
-    <div class="rc"><div class="rc-lbl">Precio base</div><div class="rc-val" style="color:var(--muted);text-decoration:line-through;font-size:1.1rem">${fmt(base)}</div><div class="rc-sub">${mod}</div></div>
-    <div class="rc"><div class="rc-lbl">Descuento</div><div class="rc-val" style="font-size:1.2rem">${desc}%</div><div class="rc-sub">${desc?'− '+fmt(base-conDesc):'—'}</div></div>
-    <div class="rc"><div class="rc-lbl">Pago único (-5%)</div><div class="rc-val" style="color:var(--gold);font-size:1.1rem">${fmt(simPagoUnico)}</div><div class="rc-sub">− ${fmt(final-simPagoUnico)}</div></div>
-    <div class="rc"><div class="rc-lbl">Precio final</div><div class="rc-val" style="color:var(--teal)">${fmt(final)}</div><div class="rc-sub">Descuento ${desc}%</div></div>
-  </div>
-  ${ahorro>0?`<div class="saving-bar">Ahorro respecto al precio base: ${fmt(ahorro)}</div>`:''}
-  <div style="margin-top:1rem;background:var(--bg);border:1px solid var(--border);border-radius:6px;overflow:hidden;">
-    <div style="background:#111;padding:0.5rem 1rem;font-size:0.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em;font-weight:600;">Opciones de financiación</div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);">
-      <div style="padding:0.7rem 1rem;border-right:1px solid var(--border);text-align:center;">
-        <div style="font-size:0.6rem;color:var(--muted);margin-bottom:0.3rem;text-transform:uppercase">Fraccionado IM</div>
-        <div style="font-size:0.82rem;font-weight:700;color:var(--teal)">Mat. ${fmt(simMatricula)} + ${simCuotas}× ${fmt(simCuotaMensual)}</div>
-        <div style="font-size:0.6rem;color:var(--muted);margin-top:0.2rem">Sin intereses · 25% matrícula</div>
-      </div>
-      <div style="padding:0.7rem 1rem;border-right:1px solid var(--border);text-align:center;">
-        <div style="font-size:0.6rem;color:var(--muted);margin-bottom:0.3rem;text-transform:uppercase">BCAS 12 meses</div>
-        <div style="font-size:0.82rem;font-weight:700;">${fmt(simBcas12)}/mes</div>
-        <div style="font-size:0.6rem;color:var(--muted);margin-top:0.2rem">Sin intereses para el alumno</div>
-      </div>
-      <div style="padding:0.7rem 1rem;text-align:center;">
-        <div style="font-size:0.6rem;color:var(--muted);margin-bottom:0.3rem;text-transform:uppercase">BCAS 24 / 36 meses</div>
-        <div style="font-size:0.82rem;font-weight:700;">${fmt(simBcas24)} / ${fmt(simBcas36)}/mes</div>
-        <div style="font-size:0.6rem;color:var(--muted);margin-top:0.2rem">El alumno asume los intereses</div>
-      </div>
-    </div>
-  </div>`;
+  const fmSim = document.getElementById('sim-fm');
+  if(fmSim){
+    const durs = [...new Set(PROGRAMAS.map(p=>p.meses))].filter(Boolean).sort((a,b)=>b-a);
+    fmSim.innerHTML = '<option value="">Todas las duraciones</option>' +
+      durs.map(m=>`<option value="${m}">${m} meses</option>`).join('');
+  }
+  filterSim();
 }
 
-// ══════════════════════════════════════════════
-// COMPARE
-// ══════════════════════════════════════════════
 function renderCompare(){
   const el=document.getElementById('compare-out');
   if(!compareList.length){el.innerHTML='<div class="no-results">Ve al Catálogo y pulsa "Añadir a comparar" en hasta 4 programas.</div>';return;}
@@ -2123,6 +2242,7 @@ function generateProposal(){
   const ck=p.univ==='ABAT'?'abat_con':'utamed_con';
   const sk=p.univ==='ABAT'?'abat_sin':'utamed_sin';
   const univStr=p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':'UTAMED';
+  const showUnivLogo = !(p.univ==='ABAT' && !tieneEstudios);
   const univLogo=p.univ==='ABAT'?LOGO_ABAT:p.univ==='TECH'?LOGO_TECH:LOGO_UTAMED;
 
   // ── Calcular titulaciones ──
@@ -2439,14 +2559,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#2a2a2a;color:#1a1a2e
     </div>
 
     <!-- University -->
-    <div class="sb-univ-wrap">
+    ${showUnivLogo ? `<div class="sb-univ-wrap">
       <div class="sb-univ-label">En colaboración con</div>
       <div class="sb-univ-box">
         <img src="${univLogo}" alt="${univStr}">
       </div>
     </div>
-
-    <div class="sb-sep"></div>
+    <div class="sb-sep"></div>` : '<div class="sb-sep"></div>'}
 
     <!-- Contact -->
     <div class="sb-contact">
@@ -2547,7 +2666,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#2a2a2a;color:#1a1a2e
           <div class="prog-metas">
             <div><div class="pm-k">ECTS</div><div class="pm-v">${p.ects}</div></div>
             <div><div class="pm-k">Modalidad</div><div class="pm-v">${mod.charAt(0).toUpperCase()+mod.slice(1)}</div></div>
-            <div><div class="pm-k">Universidad</div><div class="pm-v">${univStr}</div></div>
+            ${showUnivLogo?`<div><div class="pm-k">Universidad</div><div class="pm-v">${univStr}</div></div>`:''}
             <div><div class="pm-k">Prácticas</div><div class="pm-v">${p.prac?'Acceso / Mentoría':'No'}</div></div>
           </div>
 
@@ -2701,7 +2820,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#2a2a2a;color:#1a1a2e
       </div>
       <div>
         <div class="footer-col-title">Universidades colaboradoras</div>
-        <div class="footer-col-text">UTAMED<br>Abat Oliba CEU<br>Tech Universidad Tecnológica<br><span style="color:#00C4A0;">www.im.education</span></div>
+        <div class="footer-col-text">${showUnivLogo&&p.univ==='ABAT'?'Abat Oliba CEU<br>':showUnivLogo&&p.univ==='TECH'?'TECH Formación Profesional<br>':'UTAMED<br>'}<span style="color:#00C4A0;">www.im.education</span></div>
       </div>
     </div>
     <div class="p2-bottombar"></div>
