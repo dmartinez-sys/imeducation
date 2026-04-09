@@ -2541,7 +2541,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:#2a2a2a;color:#1a1a2e
           <div class="prog-name">${p.nombre}</div>
           <div class="prog-tags">
             <span class="prog-dur">[${p.meses} MESES]</span>
-            <span class="prog-tipo">${TLong[p.tipo]||p.tipo}</span>
+            ${showUnivLogo?`<span class="prog-tipo">${TLong[p.tipo]||p.tipo}</span>`:''}
           </div>
         </div>
         <div class="prog-body">
