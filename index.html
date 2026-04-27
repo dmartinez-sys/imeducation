@@ -2081,7 +2081,7 @@ function onPProg(){
 
 function updatePV(){
   const today=new Date(), valido=new Date(today);
-  valido.setDate(valido.getDate()+7);
+  valido.setDate(valido.getDate()+3);
   document.getElementById('pv-valid').textContent=`Validez: ${fmtDate(today)} — ${fmtDate(valido)} (7 días naturales)`;
   const sel=document.getElementById('p-prog').value;
   if(!sel){
@@ -2121,7 +2121,7 @@ function generateProposal(){
   const mod=getVal('rg-pmod'), desc=parseInt(getVal('rg-pdesc')), pago=parseInt(getVal('rg-ppago'));
   const base=getPrice(p,mod), conDesc=Math.round(base*(1-desc/100)), final=pago?Math.round(conDesc*0.95):conDesc, ahorro=base-final;
   const today=new Date(), valido=new Date(today);
-  valido.setDate(valido.getDate()+7);
+  valido.setDate(valido.getDate()+3);
   const t=TITULOS[p.tipo];
   const ck=p.univ==='ABAT'?'abat_con':'utamed_con';
   const sk=p.univ==='ABAT'?'abat_sin':'utamed_sin';
