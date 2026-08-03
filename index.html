@@ -3586,6 +3586,16 @@ function downloadCatalogExcel(){
   XLSX.writeFile(wb, `Catalogo_IM_${new Date().toISOString().slice(0,10)}.xlsx`);
 }
 
+function populateTipoFilter(){
+  const ftSel=document.getElementById('ft');
+  if(!ftSel) return;
+  const cur=ftSel.value;
+  const labels={master:'Máster F.P.',diploma:'Diploma Esp.',micro:'Microcredencial',grado:'Grado Universitario',fp:'FP Oficial',bachelor:'Bachelor',grado_oficial:'Grado Oficial Universitario',ciclo_gs:'Ciclo Grado Superior Univ.'};
+  const present=['master','diploma','micro','grado','fp','bachelor','grado_oficial','ciclo_gs'].filter(t=>PROGRAMAS.some(p=>p.tipo===t));
+  ftSel.innerHTML='<option value="">Todos los tipos</option>'+present.map(t=>`<option value="${t}">${labels[t]||t}</option>`).join('');
+  if(present.includes(cur)) ftSel.value=cur;
+}
+
 function refreshApp(){
   // Update sidebar counts
   document.getElementById('cnt-m').textContent=PROGRAMAS.filter(p=>p.tipo==='master').length;
@@ -3613,6 +3623,7 @@ function refreshApp(){
       sel.appendChild(g);
     });
   });
+  populateTipoFilter();
   filterCatalog();
 }
 
@@ -4632,6 +4643,7 @@ async function initApp(){
     fmSelInit.innerHTML = '<option value="">Todas las duraciones</option>' +
       durs.map(m=>`<option value="${m}">${m} meses</option>`).join('');
   }
+  populateTipoFilter();
   filterCatalog();
   updatePV();
   countAlerts();
