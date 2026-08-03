@@ -85,6 +85,9 @@ body{background:var(--bg);color:var(--text);font-family:'Plus Jakarta Sans',sans
 .prog-card[data-tipo="micro"]::before{background:var(--muted);}
 .prog-card[data-tipo="grado"]::before{background:#a78bfa;}
 .prog-card[data-tipo="fp"]::before{background:#fb923c;}
+.prog-card[data-tipo="bachelor"]::before{background:#a78bfa;}
+.prog-card[data-tipo="grado_oficial"]::before{background:#60a5fa;}
+.prog-card[data-tipo="ciclo_gs"]::before{background:#fb923c;}
 .prog-card:hover{border-color:var(--hover);background:#1e1e1e;}
 .prog-card.selected{border-color:var(--teal);background:rgba(0,196,160,0.03);}
 .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;margin-bottom:0.75rem;}
@@ -630,6 +633,10 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 2h12v12H2z"/><path d="M5 6h6M5 9h4"/></svg>
         <span>Registro Accesos</span>
       </div>
+      <div class="nav-item" onclick="showPage('catadmin',this)" id="nav-catadmin" style="display:none">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 2l3 3-8 8H3v-3l8-8z"/><path d="M9 4l3 3"/></svg>
+        <span>Gestión Catálogo</span>
+      </div>
     </div>
     <div class="sb-counts">
       <div class="cnt-row"><span><span class="cnt-dot" style="background:var(--teal)"></span>Másteres</span><span style="font-weight:700" id="cnt-m">0</span></div>
@@ -667,6 +674,9 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         <option value="micro">Microcredencial</option>
         <option value="grado">Grado Universitario</option>
         <option value="fp">FP Oficial</option>
+        <option value="bachelor">Bachelor</option>
+        <option value="grado_oficial">Grado Oficial Universitario</option>
+        <option value="ciclo_gs">Ciclo Grado Superior Univ.</option>
       </select>
       <select id="fm" onchange="filterCatalog()">
         <option value="">Todas las duraciones</option>
@@ -905,6 +915,39 @@ tbody tr:hover td{background:rgba(255,255,255,0.01);}
         </div>
         <div id="archive-content"></div>
       </div>
+    </div>
+
+    <!-- CATALOG ADMIN -->
+    <div class="page" id="page-catadmin">
+      <div style="display:flex;gap:0.7rem;flex-wrap:wrap;align-items:center;margin-bottom:1.2rem;max-width:900px;">
+        <input type="text" id="ca-search" placeholder="Buscar programa..." oninput="renderCatAdmin()" style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:0.48rem 0.8rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;outline:none;min-width:220px;flex:1;">
+        <select id="ca-tipo" onchange="renderCatAdmin()" style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:0.48rem 0.8rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;outline:none;cursor:pointer;">
+          <option value="">Todos los tipos</option>
+          <option value="master">Máster F.P.</option>
+          <option value="diploma">Diploma Esp.</option>
+          <option value="micro">Microcredencial</option>
+          <option value="grado">Grado Universitario</option>
+          <option value="fp">FP Oficial</option>
+          <option value="bachelor">Bachelor</option>
+          <option value="grado_oficial">Grado Oficial Universitario</option>
+          <option value="ciclo_gs">Ciclo Grado Superior Univ.</option>
+        </select>
+        <select id="ca-univ" onchange="renderCatAdmin()" style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:0.48rem 0.8rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;outline:none;cursor:pointer;">
+          <option value="">Todas las universidades</option>
+          <option value="UTAMED">UTAMED</option>
+          <option value="ABAT">Abat Oliba CEU</option>
+          <option value="TECH">TECH</option>
+          <option value="IM">IM Education</option>
+        </select>
+        <select id="ca-estado" onchange="renderCatAdmin()" style="background:var(--card);border:1px solid var(--border);border-radius:5px;padding:0.48rem 0.8rem;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;font-size:0.8rem;outline:none;cursor:pointer;">
+          <option value="">Todos</option>
+          <option value="activo">Activos</option>
+          <option value="inactivo">Inactivos</option>
+        </select>
+        <span id="ca-count" style="font-size:0.72rem;color:var(--muted);"></span>
+        <button class="add-btn" style="width:auto;padding:0.5rem 1.2rem;" onclick="newCatProg()">+ Nuevo programa</button>
+      </div>
+      <div id="catadmin-list" style="max-width:900px;"></div>
     </div>
 
     <!-- LOGS -->
@@ -1204,6 +1247,9 @@ const TITULOS = {
   micro:   {utamed_con:'Microcredencial',utamed_sin:'Microcredencial',abat_con:'—',abat_sin:'—',im:'Professional Certificate'},
   grado:   {utamed_con:'Grado Universitario',utamed_sin:'Grado Universitario',abat_con:'—',abat_sin:'—',im:'AI for Marketing Mastery'},
   fp:      {utamed_con:'FP Oficial + Certificado IM',utamed_sin:'FP Oficial + Certificado IM',abat_con:'—',abat_sin:'—',im:'AI for Marketing Mastery'},
+  bachelor:{utamed_con:'Bachelor',utamed_sin:'Bachelor',abat_con:'—',abat_sin:'—',im:'Bachelor Degree'},
+  grado_oficial:{utamed_con:'Grado Oficial Universitario',utamed_sin:'Grado Oficial Universitario',abat_con:'—',abat_sin:'—',im:'AI for Marketing Mastery'},
+  ciclo_gs:{utamed_con:'Ciclo de Grado Superior Universitario',utamed_sin:'Ciclo de Grado Superior Universitario',abat_con:'—',abat_sin:'—',im:'AI for Marketing Mastery'},
 };
 const PROGRAMAS_DEFAULT = [
   {id:1,tipo:'master',univ:'UTAMED',nombre:'Máster de Formación Permanente Global en Marketing Digital, Comunicación y Emprendimiento con IA',meses:24,ects:120,horas:3000,pres:12000,vpres:9600,online:8400,prac:true,url_pdf:'https://cdn.im.education/pdf/219/'},
@@ -1464,6 +1510,7 @@ async function doLogin(){
     if(found.role==='admin'){
     document.getElementById('nav-admin').style.display='flex';
     document.getElementById('nav-logs').style.display='flex';
+    document.getElementById('nav-catadmin').style.display='flex';
   }
   if(found.role!=='gestion'){
     document.getElementById('nav-proposals').style.display='flex';
@@ -1498,6 +1545,8 @@ function doLogout(){
   if(syncBtn) syncBtn.style.display='none';
   const logsNav=document.getElementById('nav-logs');
   if(logsNav) logsNav.style.display='none';
+  const catAdminNav=document.getElementById('nav-catadmin');
+  if(catAdminNav) catAdminNav.style.display='none';
   const propNav=document.getElementById('nav-proposals');
   if(propNav) propNav.style.display='flex';
   const statsNav=document.getElementById('nav-stats');
@@ -1644,9 +1693,9 @@ async function syncFromServer(){
 // ══════════════════════════════════════════════
 const fmt = n => n.toLocaleString('es-ES',{style:'currency',currency:'EUR',minimumFractionDigits:0});
 const fmtDate = d => new Date(d).toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit',year:'numeric'});
-const TL = {master:'Máster F.P.',diploma:'Diploma Esp.',micro:'Microcredencial',grado:'Grado Univ.',fp:'FP Oficial'};
-const TB = {master:'badge-master',diploma:'badge-diploma',micro:'badge-micro',grado:'badge-grado',fp:'badge-fp'};
-const TLong = {master:'Máster de Formación Permanente',diploma:'Diploma de Especialización',micro:'Microcredencial',grado:'Grado Universitario',fp:'FP Oficial'};
+const TL = {master:'Máster F.P.',diploma:'Diploma Esp.',micro:'Microcredencial',grado:'Grado Univ.',fp:'FP Oficial',bachelor:'Bachelor',grado_oficial:'Grado Oficial',ciclo_gs:'Ciclo G.S. Univ.'};
+const TB = {master:'badge-master',diploma:'badge-diploma',micro:'badge-micro',grado:'badge-grado',fp:'badge-fp',bachelor:'badge-grado',grado_oficial:'badge-grado',ciclo_gs:'badge-fp'};
+const TLong = {master:'Máster de Formación Permanente',diploma:'Diploma de Especialización',micro:'Microcredencial',grado:'Grado Universitario',fp:'FP Oficial',bachelor:'Bachelor',grado_oficial:'Grado Oficial Universitario',ciclo_gs:'Ciclo de Grado Superior Universitario'};
 const getPrice = (p,m) => m==='presencial'?p.pres:m==='videopresencial'?p.vpres:p.online;
 const getVal = id => {
   if(id==='rg-pdesc') return document.getElementById('rg-pdesc-val')?.value||'0';
@@ -1689,7 +1738,7 @@ function countAlerts(){
 // ══════════════════════════════════════════════
 // PAGES
 // ══════════════════════════════════════════════
-const pageTitles={catalog:'Catálogo de Programas',simulator:'Simulador de Precios',summary:'Resumen por Tipo',proposals:'Propuestas',stats:'Estadísticas',admin:'Gestión de Usuarios',logs:'Registro de Accesos'};
+const pageTitles={catalog:'Catálogo de Programas',simulator:'Simulador de Precios',summary:'Resumen por Tipo',proposals:'Propuestas',stats:'Estadísticas',admin:'Gestión de Usuarios',logs:'Registro de Accesos',catadmin:'Gestión de Catálogo'};
 
 function showPage(id,el){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -1717,6 +1766,7 @@ function showPage(id,el){
   }
   if(id==='stats') loadProposalsFromDB().then(renderStats).catch(renderStats);
   if(id==='logs') renderLogsPage();
+  if(id==='catadmin') renderCatAdmin();
 }
 
 // ══════════════════════════════════════════════
@@ -1761,7 +1811,7 @@ function renderCards(list){
     const t=TITULOS[p.tipo];
     const ck=p.univ==='ABAT'?'abat_con':'utamed_con';
     const sk=p.univ==='ABAT'?'abat_sin':'utamed_sin';
-    const univStr=p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':'UTAMED';
+    const univStr=p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':p.univ==='IM'?'IM Education':'UTAMED';
     return `<div class="prog-card ${inC?'selected':''}" data-tipo="${p.tipo}">
       <div class="card-top"><div class="prog-name">${p.nombre}</div><span class="badge ${TB[p.tipo]}">${TL[p.tipo]}</span></div>
       <div><span class="dur-tag">[${p.meses} MESES]</span></div>
@@ -1871,7 +1921,7 @@ function calcSim(){
     const t = TITULOS[p.tipo];
     const ck = p.univ==='ABAT'?'abat_con':'utamed_con';
     const sk = p.univ==='ABAT'?'abat_sin':'utamed_sin';
-    const univStr = p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':'UTAMED';
+    const univStr = p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':p.univ==='IM'?'IM Education':'UTAMED';
 
     let nomCorto = p.nombre
       .replace(/máster de formación permanente global en /i,'')
@@ -1899,7 +1949,7 @@ function calcSim(){
     } else if(p.tipo==='micro'){
       tit1 = 'Microcredencial en '+nomCorto;
       tit2 = 'Professional Certificate en '+nomCorto;
-    } else if(p.tipo==='grado'||p.tipo==='fp'){
+    } else if(p.tipo==='grado'||p.tipo==='fp'||p.tipo==='bachelor'||p.tipo==='grado_oficial'||p.tipo==='ciclo_gs'){
       tit1 = p.nombre;
       tit2 = 'Professional Mastery Program en Inteligencia Artificial Aplicada al Marketing';
     }
@@ -1919,7 +1969,7 @@ function calcSim(){
 
   setTimeout(()=>{ document.getElementById('sim-result').scrollIntoView({behavior:'smooth',block:'nearest'}); },100);
   // Financing calcs for simulator
-  const simCuotasMap = {master:p.meses>=12?12:6, diploma:3, micro:3, grado:24, fp:12};
+  const simCuotasMap = {master:p.meses>=12?12:6, diploma:3, micro:3, grado:24, fp:12, bachelor:24, grado_oficial:24, ciclo_gs:12};
   const simCuotas = simCuotasMap[p.tipo]||12;
   const simMatricula = Math.round(final*0.25);
   const simCuotaMensual = Math.round((final-simMatricula)/simCuotas);
@@ -1965,7 +2015,7 @@ function renderCompare(){
   if(!compareList.length){el.innerHTML='<div class="no-results">Ve al Catálogo y pulsa "Añadir a comparar" en hasta 4 programas.</div>';return;}
   const rows=[
     {l:'Tipo',f:p=>`<span class="badge ${TB[p.tipo]}">${TL[p.tipo]}</span>`},
-    {l:'Universidad',f:p=>p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':'UTAMED'},
+    {l:'Universidad',f:p=>p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':p.univ==='IM'?'IM Education':'UTAMED'},
     {l:'Duración',f:p=>`<span class="td-gold">[${p.meses} MESES]</span>`},
     {l:'ECTS',f:p=>p.ects},
     {l:'Prácticas',f:p=>p.prac?'Acceso / Mentoría':'No'},
@@ -1989,10 +2039,11 @@ function renderCompare(){
 // SUMMARY
 // ══════════════════════════════════════════════
 function renderSummary(){
-  const tipos=['master','diploma','micro','grado','fp'];
-  const colors={master:'var(--teal)',diploma:'var(--gold)',micro:'var(--muted)',grado:'#a78bfa',fp:'#fb923c'};
+  const tipos=['master','diploma','micro','grado','fp','bachelor','grado_oficial','ciclo_gs'];
+  const colors={master:'var(--teal)',diploma:'var(--gold)',micro:'var(--muted)',grado:'#a78bfa',fp:'#fb923c',bachelor:'#a78bfa',grado_oficial:'#60a5fa',ciclo_gs:'#fb923c'};
   document.getElementById('sum-grid').innerHTML=tipos.map(tipo=>{
     const list=PROGRAMAS.filter(p=>p.tipo===tipo);
+    if(!list.length) return '';
     const minO=Math.min(...list.map(p=>p.online)), maxP=Math.max(...list.map(p=>p.pres));
     const durs=[...new Set(list.map(p=>p.meses))].sort((a,b)=>a-b);
     return `<div class="sum-card">
@@ -2038,7 +2089,7 @@ function onPProg(){
   const t=TITULOS[p.tipo];
   const ck=p.univ==='ABAT'?'abat_con':'utamed_con';
   const sk=p.univ==='ABAT'?'abat_sin':'utamed_sin';
-  document.getElementById('pt-univ').textContent=p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':'UTAMED';
+  document.getElementById('pt-univ').textContent=p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':p.univ==='IM'?'IM Education':'UTAMED';
   document.getElementById('pt-con').textContent=t[ck];
   document.getElementById('pt-sin').textContent=t[sk];
   document.getElementById('pt-im').textContent=t.im;
@@ -2125,9 +2176,9 @@ function generateProposal(){
   const t=TITULOS[p.tipo];
   const ck=p.univ==='ABAT'?'abat_con':'utamed_con';
   const sk=p.univ==='ABAT'?'abat_sin':'utamed_sin';
-  const univStr=p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':'UTAMED';
+  const univStr=p.univ==='ABAT'?'Abat Oliba CEU':p.univ==='TECH'?'TECH Formación Profesional':p.univ==='IM'?'IM Education':'UTAMED';
   const showUnivLogo = !(p.univ==='ABAT' && !tieneEstudios);
-  const univLogo=p.univ==='ABAT'?LOGO_ABAT:p.univ==='TECH'?LOGO_TECH:LOGO_UTAMED;
+  const univLogo=p.univ==='ABAT'?LOGO_ABAT:p.univ==='TECH'?LOGO_TECH:p.univ==='IM'?LOGO_IM_BLACK:LOGO_UTAMED;
   const displayNombre = !showUnivLogo ? p.nombre
     .replace(/máster de formación permanente global en /i,'Máster en ')
     .replace(/máster de formación permanente en /i,'Máster en ')
@@ -2207,7 +2258,7 @@ function generateProposal(){
   } else if(p.tipo==='micro'){
     tit1 = 'Microcredencial en ' + nomCorto;
     tit2 = 'Professional Certificate en ' + nomCorto;
-  } else if(p.tipo==='grado'||p.tipo==='fp'){
+  } else if(p.tipo==='grado'||p.tipo==='fp'||p.tipo==='bachelor'||p.tipo==='grado_oficial'||p.tipo==='ciclo_gs'){
     tit1 = p.nombre; // nombre completo del grado/fp
     tit2 = 'Professional Mastery Program en Inteligencia Artificial Aplicada al Marketing';
   }
@@ -2218,7 +2269,7 @@ function generateProposal(){
   const refNum = 'IM-' + today.getFullYear() + '-' + String(Date.now()).slice(-6);
 
   // Financing table — updated logic
-  const cuotasMap = {master:p.meses>=12?12:6, diploma:3, micro:3, grado:24, fp:12};
+  const cuotasMap = {master:p.meses>=12?12:6, diploma:3, micro:3, grado:24, fp:12, bachelor:24, grado_oficial:24, ciclo_gs:12};
   const cuotas = cuotasMap[p.tipo]||12;
   const matriculaPct = 0.25; // 25% matrícula IM
   const matricula = Math.round(final * matriculaPct);
@@ -3395,32 +3446,36 @@ async function sbSaveCatalog(data){
     const chunk = data.slice(i,i+50).map(p=>({
       tipo:p.tipo, univ:p.univ, nombre:p.nombre, meses:p.meses,
       ects:p.ects, horas:p.horas||0, pres:p.pres, vpres:p.vpres,
-      online:p.online, prac:p.prac, url_pdf:p.url_pdf||null
+      online:p.online, prac:p.prac, url_pdf:p.url_pdf||null,
+      activo: p.activo!==false
     }));
     await sbFetch('catalogo', {method:'POST', body:JSON.stringify(chunk), headers:{'Prefer':'return=minimal'}});
   }
 }
 
+let _catalogFull = null;
 async function loadCatalogFromDB(){
   try{
-    // Prioritize localStorage (updated by Excel upload) over Supabase
-    const local = JSON.parse(localStorage.getItem('im_catalog')||'null');
-    if(local && local.length>0){
-      _catalogCache = local;
-      return true;
-    }
     const rows = await sbGet('catalogo', 'order=id.asc&limit=1000');
     if(rows && rows.length>0){
-      _catalogCache = rows.map((r,i)=>({
-        id: i+1, tipo:r.tipo, univ:r.univ, nombre:r.nombre,
-        meses:r.meses, ects:r.ects, horas:r.horas||0,
-        pres:r.pres, vpres:r.vpres, online:r.online,
-        prac:r.prac, url_pdf:r.url_pdf||''
+      _catalogFull = rows.map(r=>({
+        db_id: r.id, tipo:r.tipo, univ:r.univ, nombre:r.nombre,
+        meses:parseFloat(r.meses)||0, ects:parseFloat(r.ects)||0, horas:parseFloat(r.horas)||0,
+        pres:parseFloat(r.pres)||0, vpres:parseFloat(r.vpres)||0, online:parseFloat(r.online)||0,
+        prac:r.prac===true||r.prac==='true', url_pdf:r.url_pdf||'',
+        activo: r.activo!==false && r.activo!=='false'
       }));
+      _catalogCache = _catalogFull.filter(p=>p.activo).map((r,i)=>Object.assign({id:i+1}, r));
       localStorage.setItem('im_catalog', JSON.stringify(_catalogCache));
       return true;
     }
-  }catch(e){ console.warn('loadCatalog fallback:', e); }
+  }catch(e){
+    console.warn('loadCatalog fallback:', e);
+    try{
+      const local = JSON.parse(localStorage.getItem('im_catalog')||'null');
+      if(local && local.length>0){ _catalogCache = local; return true; }
+    }catch(e2){}
+  }
   return false;
 }
 
@@ -3459,11 +3514,15 @@ function handleExcelUpload(event){
         let univ = 'UTAMED';
         if(univ_raw.includes('abat')||univ_raw.includes('oliba')) univ='ABAT';
         else if(univ_raw.includes('tech')) univ='TECH';
+        else if(univ_raw.includes('im education')||univ_raw==='im') univ='IM';
 
         // Tipo
         const tipo_raw = String(r[2]||'').toLowerCase();
         let tipo = 'micro';
-        if(tipo_raw.includes('grado')) tipo='grado';
+        if(tipo_raw.includes('bachelor')) tipo='bachelor';
+        else if(tipo_raw.includes('ciclo')) tipo='ciclo_gs';
+        else if(tipo_raw.includes('oficial')) tipo='grado_oficial';
+        else if(tipo_raw.includes('grado')) tipo='grado';
         else if(tipo_raw.includes('fp')) tipo='fp';
         else if(tipo_raw.includes('máster')||tipo_raw.includes('master')) tipo='master';
         else if(tipo_raw.includes('diploma')) tipo='diploma';
@@ -3535,15 +3594,17 @@ function refreshApp(){
   document.getElementById('cnt-g').textContent=PROGRAMAS.filter(p=>p.tipo==='grado').length;
   document.getElementById('cnt-fp').textContent=PROGRAMAS.filter(p=>p.tipo==='fp').length;
   // Repopulate selects
-  const TLabels={master:'Másteres',diploma:'Diplomas',micro:'Microcredenciales',grado:'Grados Universitarios',fp:'FP Oficial'};
+  const TLabels={master:'Másteres',diploma:'Diplomas',micro:'Microcredenciales',grado:'Grados Universitarios',fp:'FP Oficial',bachelor:'Bachelor',grado_oficial:'Grados Oficiales Universitarios',ciclo_gs:'Ciclos de Grado Superior Univ.'};
   ['sim-prog','p-prog'].forEach(selId=>{
     const sel=document.getElementById(selId);
     const placeholder=selId==='sim-prog'?'— Selecciona —':'— Selecciona un programa —';
     sel.innerHTML=`<option value="">${placeholder}</option>`;
-    ['master','diploma','micro','grado','fp'].forEach(tipo=>{
+    ['master','diploma','micro','grado','fp','bachelor','grado_oficial','ciclo_gs'].forEach(tipo=>{
+      const progsOfType=PROGRAMAS.filter(p=>p.tipo===tipo);
+      if(!progsOfType.length) return;
       const g=document.createElement('optgroup');
       g.label=TLabels[tipo];
-      PROGRAMAS.filter(p=>p.tipo===tipo).forEach(p=>{
+      progsOfType.forEach(p=>{
         const o=document.createElement('option');
         o.value=p.id;
         o.textContent=p.nombre.length>65?p.nombre.slice(0,65)+'…':p.nombre;
@@ -4329,6 +4390,157 @@ async function saveNote(propId){
 }
 
 // ══════════════════════════════════════════════
+// CATALOG ADMIN (solo admin)
+// ══════════════════════════════════════════════
+const CA_TIPOS=[['master','Máster F.P.'],['diploma','Diploma Esp.'],['micro','Microcredencial'],['grado','Grado Universitario'],['fp','FP Oficial'],['bachelor','Bachelor'],['grado_oficial','Grado Oficial Universitario'],['ciclo_gs','Ciclo de Grado Superior Univ.']];
+const CA_UNIVS=[['UTAMED','UTAMED'],['ABAT','Abat Oliba CEU'],['TECH','TECH'],['IM','IM Education']];
+const caEsc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+
+async function renderCatAdmin(){
+  const el=document.getElementById('catadmin-list');
+  if(!el) return;
+  if(!_catalogFull){
+    el.innerHTML='<div style="color:var(--muted);font-size:0.8rem;padding:1rem 0;">Cargando catálogo desde el servidor...</div>';
+    await loadCatalogFromDB();
+    if(!_catalogFull){ el.innerHTML='<div style="color:var(--red);font-size:0.8rem;padding:1rem 0;">No se pudo cargar el catálogo desde Supabase.</div>'; return; }
+  }
+  const q=(document.getElementById('ca-search').value||'').toLowerCase();
+  const ft=document.getElementById('ca-tipo').value;
+  const fu=document.getElementById('ca-univ').value;
+  const fe=document.getElementById('ca-estado').value;
+  let list=_catalogFull.slice().sort((a,b)=>a.db_id-b.db_id);
+  if(q) list=list.filter(p=>(p.nombre||'').toLowerCase().includes(q));
+  if(ft) list=list.filter(p=>p.tipo===ft);
+  if(fu) list=list.filter(p=>p.univ===fu);
+  if(fe==='activo') list=list.filter(p=>p.activo);
+  if(fe==='inactivo') list=list.filter(p=>!p.activo);
+  const cnt=document.getElementById('ca-count');
+  if(cnt) cnt.textContent=list.length+' programa'+(list.length!==1?'s':'');
+  el.innerHTML=list.length?list.map(p=>caCard(p,false)).join(''):'<div class="no-results">No hay programas con esos filtros.</div>';
+}
+
+function caCard(p,isNew){
+  const i=p.db_id;
+  const sel=(opts,val)=>opts.map(o=>`<option value="${o[0]}" ${o[0]===val?'selected':''}>${o[1]}</option>`).join('');
+  const saveBtn=isNew
+    ?`<button class="add-btn" style="width:auto;padding:0.45rem 1.4rem;" onclick="createCatProg()">Crear programa</button>
+      <button class="action-btn" style="margin:0;" onclick="document.getElementById('ca-card-new').remove()">Cancelar</button>`
+    :`<span id="ca-msg-${i}" style="font-size:0.7rem;color:var(--teal);display:none;">Guardado ✓</span>
+      <button class="add-btn" style="width:auto;padding:0.45rem 1.4rem;" onclick="saveCatProg(${i})">Guardar cambios</button>`;
+  const header=isNew
+    ?`<span style="font-size:0.72rem;color:var(--teal);font-weight:700;text-transform:uppercase;letter-spacing:0.06em;">Nuevo programa</span>`
+    :`<span style="font-size:0.65rem;color:var(--muted);">ID ${i} · ${TL[p.tipo]||p.tipo}</span>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <span class="st-badge ${p.activo?'st-active':'st-expired'}">${p.activo?'Activo':'Inactivo'}</span>
+        <button class="action-btn" style="margin:0;" onclick="toggleCatProg(${i},${p.activo})">${p.activo?'Desactivar':'Activar'}</button>
+      </div>`;
+  return `<div class="panel" style="margin-bottom:0.9rem;${p.activo?'':'opacity:0.55;border-color:rgba(255,68,68,0.35);'}" id="ca-card-${i}">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem;">${header}</div>
+    <div class="field" style="margin-bottom:0.7rem;"><label>Nombre del programa</label><input type="text" id="ca-nombre-${i}" value="${caEsc(p.nombre)}"></div>
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 0.6fr 0.6fr 0.6fr;gap:0.6rem;margin-bottom:0.7rem;">
+      <div class="field" style="margin:0;"><label>Tipo</label><select id="ca-tipo-${i}">${sel(CA_TIPOS,p.tipo)}</select></div>
+      <div class="field" style="margin:0;"><label>Universidad</label><select id="ca-univ-${i}">${sel(CA_UNIVS,p.univ)}</select></div>
+      <div class="field" style="margin:0;"><label>Meses</label><input type="number" min="0" id="ca-meses-${i}" value="${p.meses||0}"></div>
+      <div class="field" style="margin:0;"><label>ECTS</label><input type="number" min="0" id="ca-ects-${i}" value="${p.ects||0}"></div>
+      <div class="field" style="margin:0;"><label>Horas</label><input type="number" min="0" id="ca-horas-${i}" value="${p.horas||0}"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 0.8fr;gap:0.6rem;margin-bottom:0.7rem;align-items:end;">
+      <div class="field" style="margin:0;"><label>Precio presencial</label><input type="number" min="0" id="ca-pres-${i}" value="${p.pres||0}"></div>
+      <div class="field" style="margin:0;"><label>Precio videopres.</label><input type="number" min="0" id="ca-vpres-${i}" value="${p.vpres||0}"></div>
+      <div class="field" style="margin:0;"><label>Precio online</label><input type="number" min="0" id="ca-online-${i}" value="${p.online||0}"></div>
+      <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.75rem;color:var(--muted);padding-bottom:0.55rem;cursor:pointer;"><input type="checkbox" id="ca-prac-${i}" ${p.prac?'checked':''}> Prácticas</label>
+    </div>
+    <div class="field" style="margin-bottom:0.8rem;"><label>Enlace PDF del programa (url_pdf)</label>
+      <div style="display:flex;gap:0.5rem;">
+        <input type="text" id="ca-url-${i}" value="${caEsc(p.url_pdf||'')}" placeholder="https://cdn.im.education/pdf/..." style="flex:1;">
+        <button class="action-btn" style="margin:0;flex-shrink:0;" onclick="testCatUrl('${i}')">Probar</button>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;gap:0.6rem;align-items:center;">${saveBtn}</div>
+  </div>`;
+}
+
+function readCatForm(i){
+  const nombre=document.getElementById('ca-nombre-'+i).value.trim();
+  const url=document.getElementById('ca-url-'+i).value.trim();
+  if(!nombre){ showToast('Falta el nombre','El nombre del programa es obligatorio.','warning'); return null; }
+  if(url && !/^https?:\/\//.test(url)){ showToast('URL no válida','El enlace debe empezar por http:// o https://','warning'); return null; }
+  const num=id=>{ const v=parseFloat(document.getElementById('ca-'+id+'-'+i).value); return isNaN(v)||v<0?0:v; };
+  const data={
+    nombre,
+    tipo: document.getElementById('ca-tipo-'+i).value,
+    univ: document.getElementById('ca-univ-'+i).value,
+    meses: num('meses'), ects: num('ects'), horas: num('horas'),
+    pres: num('pres'), vpres: num('vpres'), online: num('online'),
+    prac: document.getElementById('ca-prac-'+i).checked,
+    url_pdf: url||null
+  };
+  if(data.pres===0&&data.vpres===0&&data.online===0){
+    showToast('Sin precios','Indica al menos un precio (presencial, videopresencial u online).','warning');
+    return null;
+  }
+  return data;
+}
+
+async function saveCatProg(i){
+  const data=readCatForm(i); if(!data) return;
+  try{
+    await sbPatch('catalogo','id=eq.'+i, data);
+    await reloadCatalogEverywhere();
+    const m=document.getElementById('ca-msg-'+i);
+    if(m){ m.style.display='inline'; setTimeout(()=>{ if(m) m.style.display='none'; },2500); }
+    showToast('Programa actualizado','Los cambios ya están disponibles para todos los usuarios.','success');
+  }catch(e){ showToast('Error al guardar',e.message,'error'); }
+}
+
+async function toggleCatProg(i,isActive){
+  if(isActive){
+    const ok=await customConfirm('Desactivar programa','Dejará de aparecer en el catálogo, simulador y propuestas nuevas. Las propuestas ya emitidas no se ven afectadas. Podrás reactivarlo cuando quieras.');
+    if(!ok) return;
+  }
+  try{
+    await sbPatch('catalogo','id=eq.'+i,{activo:!isActive});
+    await reloadCatalogEverywhere();
+    showToast(isActive?'Programa desactivado':'Programa activado','','success');
+  }catch(e){ showToast('Error',e.message,'error'); }
+}
+
+function testCatUrl(i){
+  const u=document.getElementById('ca-url-'+i).value.trim();
+  if(!u){ showToast('Sin enlace','Introduce primero una URL.','warning'); return; }
+  window.open(u,'_blank');
+}
+
+function newCatProg(){
+  const el=document.getElementById('catadmin-list');
+  if(!el) return;
+  if(document.getElementById('ca-card-new')){ document.getElementById('ca-nombre-new').focus(); return; }
+  const blank={db_id:'new',nombre:'',tipo:'master',univ:'UTAMED',meses:0,ects:0,horas:0,pres:0,vpres:0,online:0,prac:false,url_pdf:'',activo:true};
+  el.insertAdjacentHTML('afterbegin', caCard(blank,true));
+  document.getElementById('ca-nombre-new').focus();
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+async function createCatProg(){
+  const data=readCatForm('new'); if(!data) return;
+  try{
+    data.activo=true;
+    await sbPost('catalogo', data);
+    await reloadCatalogEverywhere();
+    showToast('Programa creado','Ya está disponible en el catálogo para todos.','success');
+  }catch(e){ showToast('Error al crear',e.message,'error'); }
+}
+
+async function reloadCatalogEverywhere(){
+  await loadCatalogFromDB();
+  const saved=getCatalog();
+  PROGRAMAS.length=0; saved.forEach(p=>PROGRAMAS.push(p));
+  refreshApp();
+  updatePV();
+  renderCatAdmin();
+}
+
+// ══════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════
 window.addEventListener('beforeunload', ()=>{ logLogout(); });
@@ -4359,11 +4571,13 @@ async function initApp(){
   // Populate simulator select
   const simSel=document.getElementById('sim-prog');
   simSel.innerHTML='<option value="">— Selecciona —</option>';
-  const TLabels={master:'Másteres',diploma:'Diplomas',micro:'Microcredenciales',grado:'Grados Universitarios',fp:'FP Oficial'};
-  ['master','diploma','micro','grado','fp'].forEach(tipo=>{
+  const TLabels={master:'Másteres',diploma:'Diplomas',micro:'Microcredenciales',grado:'Grados Universitarios',fp:'FP Oficial',bachelor:'Bachelor',grado_oficial:'Grados Oficiales Universitarios',ciclo_gs:'Ciclos de Grado Superior Univ.'};
+  ['master','diploma','micro','grado','fp','bachelor','grado_oficial','ciclo_gs'].forEach(tipo=>{
+    const progsOfType=PROGRAMAS.filter(p=>p.tipo===tipo);
+    if(!progsOfType.length) return;
     const g=document.createElement('optgroup');
     g.label=TLabels[tipo];
-    PROGRAMAS.filter(p=>p.tipo===tipo).forEach(p=>{
+    progsOfType.forEach(p=>{
       const o=document.createElement('option');
       o.value=p.id;
       o.textContent=p.nombre.length>65?p.nombre.slice(0,65)+'…':p.nombre;
@@ -4375,10 +4589,12 @@ async function initApp(){
   // Populate proposal select
   const propSel=document.getElementById('p-prog');
   propSel.innerHTML='<option value="">— Selecciona un programa —</option>';
-  ['master','diploma','micro','grado','fp'].forEach(tipo=>{
+  ['master','diploma','micro','grado','fp','bachelor','grado_oficial','ciclo_gs'].forEach(tipo=>{
+    const progsOfType=PROGRAMAS.filter(p=>p.tipo===tipo);
+    if(!progsOfType.length) return;
     const g=document.createElement('optgroup');
     g.label=TLabels[tipo];
-    PROGRAMAS.filter(p=>p.tipo===tipo).forEach(p=>{
+    progsOfType.forEach(p=>{
       const o=document.createElement('option');
       o.value=p.id;
       o.textContent=p.nombre.length>65?p.nombre.slice(0,65)+'…':p.nombre;
@@ -4397,7 +4613,7 @@ async function initApp(){
   // Populate university filter dynamically
   const fuSel = document.getElementById('fu');
   if(fuSel){
-    const univMap = {UTAMED:'UTAMED', ABAT:'Abat Oliba CEU', TECH:'TECH Formación Profesional'};
+    const univMap = {UTAMED:'UTAMED', ABAT:'Abat Oliba CEU', TECH:'TECH Formación Profesional', IM:'IM Education'};
     const univs = [...new Set(PROGRAMAS.map(p=>p.univ))].filter(Boolean).sort();
     fuSel.innerHTML = '<option value="">Todas las universidades</option>' +
       univs.map(u=>`<option value="${u}">${univMap[u]||u}</option>`).join('');
@@ -4405,7 +4621,7 @@ async function initApp(){
   // Populate university and duration filters dynamically
   const fuSelInit = document.getElementById('fu');
   if(fuSelInit){
-    const univMap = {UTAMED:'UTAMED', ABAT:'Abat Oliba CEU', TECH:'TECH Formación Profesional'};
+    const univMap = {UTAMED:'UTAMED', ABAT:'Abat Oliba CEU', TECH:'TECH Formación Profesional', IM:'IM Education'};
     const univs = [...new Set(PROGRAMAS.map(p=>p.univ))].filter(Boolean).sort();
     fuSelInit.innerHTML = '<option value="">Todas las universidades</option>' +
       univs.map(u=>`<option value="${u}">${univMap[u]||u}</option>`).join('');
